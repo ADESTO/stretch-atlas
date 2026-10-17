@@ -1,0 +1,1276 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}[hidden]{display:none!important}</style>
+</head>
+<body>
+<title>Stretch Atlas</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: a three-bench dissection lab. Library, pain intake and joints on the left, the specimen in the middle, inspector and instructor on the right. */
+:root{
+  --bg:#e8ecec; --panel:#f6f8f8; --panel-2:#e0e6e7; --ink:#152024; --muted:#59676c;
+  --accent:#c97507; --accent-ink:#ffffff; --accent-soft:#f5dfb8; --pale:#efe2bf;
+  --pain:#c42a5e; --pain-soft:#f6d7e1; --ok:#2f7d55; --ok-soft:#d6ebde; --warn-soft:#f6e6c2;
+  --cool:#4f68b0; --stage-a:#dde4e6; --stage-b:#c8d2d5; --overlay:rgba(246,248,248,.9);
+  --display:'Bricolage Grotesque','Segoe UI',system-ui,sans-serif;
+  --body:'IBM Plex Sans',system-ui,-apple-system,sans-serif;
+  --mono:'IBM Plex Mono',ui-monospace,Menlo,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0f1417; --panel:#161d21; --panel-2:#212a2f; --ink:#e3e9eb; --muted:#91a0a5;
+  --accent:#f0a23a; --accent-ink:#1b1206; --accent-soft:#3e2d12; --pale:#3a3424;
+  --pain:#ff5d8f; --pain-soft:#42202d; --ok:#6fcf98; --ok-soft:#1d3528; --warn-soft:#3b3220;
+  --cool:#7d93d8; --stage-a:#182025; --stage-b:#0b1013; --overlay:rgba(22,29,33,.9); color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0f1417; --panel:#161d21; --panel-2:#212a2f; --ink:#e3e9eb; --muted:#91a0a5;
+  --accent:#f0a23a; --accent-ink:#1b1206; --accent-soft:#3e2d12; --pale:#3a3424;
+  --pain:#ff5d8f; --pain-soft:#42202d; --ok:#6fcf98; --ok-soft:#1d3528; --warn-soft:#3b3220;
+  --cool:#7d93d8; --stage-a:#182025; --stage-b:#0b1013; --overlay:rgba(22,29,33,.9); color-scheme:dark}
+
+*{box-sizing:border-box}
+html,body{height:100%}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:14px;line-height:1.45}
+button,input,textarea{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+h1,h2,h3{font-family:var(--display);font-weight:700;margin:0;text-wrap:balance;letter-spacing:-.01em}
+.label{font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+a{color:inherit}
+
+.app{height:100%;display:grid;grid-template-columns:310px minmax(0,1fr) 370px;gap:14px;
+  padding-block:14px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.pane{background:var(--panel);border-radius:14px;display:flex;flex-direction:column;min-height:0;min-width:0;overflow:hidden}
+
+.brand{padding:18px 18px 12px;display:grid;gap:4px}
+.brand h1{font-size:26px;line-height:1}
+.brand p{margin:0;color:var(--muted);font-size:12.5px}
+.seg{display:flex;gap:2px;background:var(--panel-2);border-radius:9px;padding:3px}
+.seg button{flex:1;border:0;background:transparent;border-radius:7px;padding:6px 6px;font-size:12.5px;font-weight:500;color:var(--muted);white-space:nowrap}
+.seg button[aria-pressed="true"]{background:var(--ink);color:var(--bg)}
+.tabs{margin:0 14px 10px}
+.scroll{overflow:auto;min-height:0;flex:1;padding:0 14px 16px}
+.row2{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:2px 0 10px}
+.row2 .seg{width:150px}
+.stretch{width:100%;text-align:left;border:0;background:transparent;border-radius:10px;padding:9px 10px;display:grid;grid-template-columns:1fr auto;gap:2px 10px;align-items:baseline}
+.stretch:hover{background:var(--panel-2)}
+.stretch.on{background:var(--accent-soft)}
+.stretch b{font-weight:600;font-size:14px}
+.stretch .area{grid-column:1;color:var(--muted);font-size:12.5px}
+.stretch .tag{grid-row:1/3;grid-column:2;align-self:center;font-family:var(--mono);font-size:10.5px;color:var(--muted);background:var(--panel-2);padding:2px 7px;border-radius:20px}
+.stretch.on .tag{background:var(--accent);color:var(--accent-ink)}
+.group-h{margin:14px 2px 6px}
+.slider{display:grid;grid-template-columns:1fr auto;gap:2px 8px;padding:5px 2px}
+.slider label{font-size:12.5px}
+.slider output{font-family:var(--mono);font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums}
+.slider input{grid-column:1/3;width:100%;accent-color:var(--accent);margin:2px 0}
+.btn{border:0;background:var(--panel-2);border-radius:8px;padding:7px 12px;font-size:13px;font-weight:500}
+.btn:hover{filter:brightness(.97)}
+.btn.primary{background:var(--ink);color:var(--bg)}
+.btn[aria-pressed="true"]{background:var(--pain);color:#fff}
+.btn.sm{padding:4px 10px;font-size:12px}
+.mtable{width:100%;border-collapse:collapse;font-size:12.5px}
+.mtable th{text-align:left;font-weight:500;padding:6px 4px}
+.mtable td{padding:3px 4px;vertical-align:middle}
+.mtable tr:hover td{background:var(--panel-2)}
+.mtable .nm{cursor:pointer}
+.bar{display:flex;align-items:center;gap:6px;cursor:pointer;width:96px;border:0;background:transparent;padding:2px 0}
+.bar i{display:block;height:6px;border-radius:3px;background:var(--panel-2);flex:1;position:relative;overflow:hidden}
+.bar i s{position:absolute;top:0;bottom:0;left:50%;background:var(--accent)}
+.bar i s.neg{background:var(--cool)}
+.bar span{font-family:var(--mono);font-size:11px;width:42px;text-align:right;font-variant-numeric:tabular-nums;color:var(--muted)}
+.note{color:var(--muted);font-size:12px;margin:10px 2px 0}
+.pick{display:flex;flex-wrap:wrap;gap:5px}
+.pick button{border:0;background:var(--panel-2);border-radius:16px;padding:4px 10px;font-size:12.5px}
+.pick button[aria-pressed="true"]{background:var(--ink);color:var(--bg)}
+.pick.pain button[aria-pressed="true"]{background:var(--pain);color:#fff}
+.checks{display:grid;gap:2px}
+.checks label{display:flex;gap:8px;align-items:flex-start;font-size:12.5px;padding:4px 2px;border-radius:6px}
+.checks label:hover{background:var(--panel-2)}
+.checks input{margin-top:3px;accent-color:var(--pain)}
+.fieldset{display:grid;gap:7px;margin-top:14px}
+
+.stage{position:relative;border-radius:14px;overflow:hidden;min-height:0;
+  background:radial-gradient(120% 90% at 50% 35%,var(--stage-a),var(--stage-b))}
+.stage canvas{position:absolute;inset:0;width:100%;height:100%;display:block;touch-action:none}
+.stage.locating canvas{cursor:crosshair}
+.ov{position:absolute;display:flex;gap:8px;flex-wrap:wrap;align-items:center;pointer-events:none}
+.ov > *{pointer-events:auto}
+.ov.tl{top:12px;left:12px;right:12px}
+.ov.bl{bottom:12px;left:12px}
+.ov.br{bottom:12px;right:12px;max-width:50%;justify-content:flex-end}
+.chipbar{background:var(--overlay);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border-radius:10px;padding:3px;display:flex;gap:2px;flex-wrap:wrap}
+.chipbar button{border:0;background:transparent;border-radius:7px;padding:5px 10px;font-size:12.5px;font-weight:500;color:var(--muted)}
+.chipbar button[aria-pressed="true"]{background:var(--ink);color:var(--bg)}
+.chipbar .lbl{font-family:var(--mono);font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);padding:5px 6px 5px 8px;align-self:center}
+.opacity{display:flex;align-items:center;gap:6px;padding:0 8px}
+.opacity input{width:80px;accent-color:var(--accent)}
+.legend,.hint{background:var(--overlay);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border-radius:10px;padding:8px 10px;font-size:12px}
+.legend{display:grid;gap:5px}
+.legend .row{display:flex;align-items:center;gap:8px}
+.hint{color:var(--muted);padding:7px 10px}
+.dot{width:10px;height:10px;border-radius:50%;display:inline-block;flex:none}
+.grad{width:150px;height:8px;border-radius:4px;background:linear-gradient(90deg,#5068b4,#b0453c,#ffc93c)}
+.tip{position:absolute;pointer-events:none;background:var(--ink);color:var(--bg);font-size:12px;padding:4px 8px;border-radius:6px;white-space:nowrap;transform:translate(12px,12px);z-index:3}
+.loader{position:absolute;inset:0;display:grid;place-content:center;gap:10px;text-align:center;z-index:4;background:radial-gradient(120% 90% at 50% 35%,var(--stage-a),var(--stage-b))}
+.loader .track{width:220px;height:6px;border-radius:3px;background:var(--panel-2);overflow:hidden}
+.loader .track i{display:block;height:100%;width:0;background:var(--accent);transition:width .2s}
+.credit{position:absolute;bottom:12px;left:50%;transform:translateX(-50%);font-size:10.5px;color:var(--muted);white-space:nowrap}
+
+.inspector{padding:16px 16px 12px;overflow:auto;max-height:56%;flex:none;display:grid;gap:14px;align-content:start}
+.card{display:grid;gap:8px}
+.card h2{font-size:21px;line-height:1.1}
+.card .sub{color:var(--muted);font-size:13px;margin-top:-4px}
+.chips{display:flex;flex-wrap:wrap;gap:5px}
+.chip{border:0;font-size:12px;padding:3px 9px;border-radius:20px;background:var(--panel-2);font-weight:500}
+.chip.p{background:var(--accent);color:var(--accent-ink)}
+.chip.s{background:var(--pale)}
+.cues{margin:0;padding-left:18px;display:grid;gap:3px}
+.kv{display:grid;grid-template-columns:96px 1fr;gap:5px 10px;font-size:13px;margin:0}
+.kv dt{color:var(--muted)}
+.kv dd{margin:0}
+.live{font-family:var(--mono);font-variant-numeric:tabular-nums;font-weight:500}
+.divider{height:1px;background:var(--panel-2)}
+.gate{border-radius:10px;padding:10px 12px;background:var(--pain-soft);display:grid;gap:4px}
+.gate b{font-size:14px}
+.gate ul{margin:0;padding-left:18px}
+.sugg{border-radius:10px;padding:10px 12px;background:var(--panel-2);display:grid;gap:5px}
+.sugg .top{display:flex;justify-content:space-between;gap:8px;align-items:center}
+.sugg b{font-size:14px}
+.status{font-family:var(--mono);font-size:10.5px;padding:2px 8px;border-radius:12px;white-space:nowrap}
+.status.ok{background:var(--ok-soft);color:var(--ok)}
+.status.caution{background:var(--warn-soft)}
+.status.avoid{background:var(--pain-soft);color:var(--pain)}
+.sugg ul{margin:0;padding-left:18px;font-size:12.5px;color:var(--muted)}
+.sugg .why{font-size:12.5px}
+details summary{cursor:pointer;font-size:12.5px;color:var(--muted)}
+.chat{flex:1;display:flex;flex-direction:column;min-height:0;background:var(--panel-2);border-radius:0 0 14px 14px}
+.chat-h{display:flex;justify-content:space-between;align-items:center;padding:12px 16px 4px}
+.chat-h h3{font-size:16px}
+.msgs{flex:1;overflow:auto;padding:8px 16px;display:flex;flex-direction:column;gap:10px;min-height:110px}
+.msg{max-width:92%;padding:8px 11px;border-radius:12px;white-space:pre-wrap;font-size:13.5px;overflow-wrap:anywhere}
+.msg.u{align-self:flex-end;background:var(--ink);color:var(--bg);border-bottom-right-radius:4px}
+.msg.a{align-self:flex-start;background:var(--panel);border-bottom-left-radius:4px}
+.msg .acts{display:flex;flex-wrap:wrap;gap:4px;margin-top:6px}
+.msg .act{font-family:var(--mono);font-size:10.5px;background:var(--accent-soft);padding:2px 7px;border-radius:10px;white-space:nowrap}
+.msg.err{color:var(--muted);font-size:12.5px;background:transparent;padding:0 2px}
+.starters{display:flex;flex-wrap:wrap;gap:6px;padding:0 16px 8px}
+.starters button{border:0;background:var(--panel);border-radius:16px;padding:5px 10px;font-size:12.5px;text-align:left}
+.composer{display:flex;gap:6px;padding:8px 12px 12px}
+.composer textarea{flex:1;resize:none;border:0;border-radius:10px;padding:9px 11px;background:var(--panel);min-height:40px;max-height:110px;font-size:13.5px}
+
+@media (max-width:1180px){
+  html,body{height:auto}
+  .app{height:auto;grid-template-columns:1fr 1fr}
+  .stage{grid-column:1/-1;grid-row:1;height:64vh;min-height:400px}
+  .pane{max-height:760px}
+  .inspector{max-height:none}
+  .chat{min-height:420px}
+}
+@media (max-width:720px){
+  .app{grid-template-columns:minmax(0,1fr)}
+  .stage{height:60vh;min-height:360px}
+  .ov.br,.credit{display:none}
+}
+</style>
+
+<div class="app">
+  <aside class="pane" aria-label="Library, pain and joints">
+    <div class="brand">
+      <h1>Stretch Atlas</h1>
+      <p>Pose a real anatomical body, find what hurts, and see which stretches fit the person.</p>
+    </div>
+    <div class="tabs"><div class="seg">
+      <button id="tab-lib" aria-pressed="true">Stretches</button>
+      <button id="tab-pain" aria-pressed="false">Pain</button>
+      <button id="tab-joint" aria-pressed="false">Joints</button>
+      <button id="tab-mus" aria-pressed="false">Muscles</button>
+    </div></div>
+
+    <div class="scroll" id="panel-lib">
+      <div class="row2"><span class="label">Working side</span>
+        <div class="seg"><button id="side-L" aria-pressed="true">Left</button><button id="side-R" aria-pressed="false">Right</button></div>
+      </div>
+      <div id="lib"></div>
+      <div style="display:flex;gap:6px;margin-top:10px"><button class="btn" id="reset">Stand neutral</button></div>
+    </div>
+
+    <div class="scroll" id="panel-pain" hidden>
+      <p class="note" style="margin-top:0">Tap where it hurts on the body, or choose an area. The suggestions screen for warning signs, age and health conditions first. They are not a diagnosis.</p>
+      <div style="display:flex;gap:6px;margin:10px 0"><button class="btn" id="locate" aria-pressed="false">Tap the body</button><button class="btn" id="pain-clear">Clear</button></div>
+      <div class="pick pain" id="regions"></div>
+      <div id="intake" hidden>
+        <div class="fieldset"><div class="label">Side</div><div class="pick" id="p-side"></div></div>
+        <div class="fieldset"><div class="label">What does it feel like?</div><div class="pick" id="p-type"></div></div>
+        <div class="fieldset"><div class="slider" style="padding:0"><label for="p-int">How bad is it right now?</label><output id="p-int-o">3 / 10</output><input type="range" id="p-int" min="0" max="10" value="3"></div></div>
+        <div class="fieldset"><div class="label">Age</div><div class="pick" id="p-age"></div></div>
+        <div class="fieldset"><div class="label">Anything that applies</div><div class="checks" id="p-cond"></div></div>
+        <div class="fieldset"><div class="label">Warning signs for this area</div><div class="checks" id="p-flags"></div></div>
+        <p class="note">Nothing here is saved or sent anywhere except to the instructor when you ask it a question. Reloading the page clears it.</p>
+      </div>
+    </div>
+
+    <div class="scroll" id="panel-joint" hidden>
+      <p class="note" style="margin-top:0">Each slider is held to a typical healthy range of motion. You can also drag the amber handles on the hands and feet.</p>
+      <div id="sliders"></div>
+    </div>
+    <div class="scroll" id="panel-mus" hidden>
+      <p class="note" style="margin-top:0">Length change versus standing, measured live along each muscle's centre line as the real mesh deforms. For groups, the most lengthened part is shown.</p>
+      <table class="mtable"><thead><tr><th>Muscle</th><th class="label">Left</th><th class="label">Right</th></tr></thead><tbody id="mrows"></tbody></table>
+    </div>
+  </aside>
+
+  <main class="stage" id="stage">
+    <canvas id="c" aria-label="Interactive 3D anatomy model"></canvas>
+    <div class="loader" id="loader"><div class="label">Loading anatomy</div><div class="track"><i id="load-bar"></i></div><div class="note" id="load-msg" style="margin:0">470 muscles and bones, about 4.6 MB</div></div>
+    <div class="ov tl">
+      <div class="chipbar" id="views"><span class="lbl">View</span><button data-v="front">Front</button><button data-v="side">Side</button><button data-v="back">Back</button></div>
+      <div class="chipbar" id="modes"><span class="lbl">Colour</span><button data-m="targets" aria-pressed="true">Targets</button><button data-m="length" aria-pressed="false">Length change</button></div>
+      <div class="chipbar"><span class="lbl">Layers</span><button id="lay-sk" aria-pressed="true">Skeleton</button><button id="lay-mu" aria-pressed="true">Muscles</button>
+        <span class="opacity"><input type="range" id="opac" min="15" max="100" value="100" aria-label="Muscle opacity"></span></div>
+    </div>
+    <div class="ov bl"><div class="legend" id="legend"></div></div>
+    <div class="ov br"><div class="hint" id="hint">Drag to orbit · drag amber handles to pose · click a muscle to inspect</div></div>
+    <div class="credit">Anatomy: <a href="https://github.com/LluisV/Z-Anatomy" target="_blank" rel="noopener">Z-Anatomy</a>, <a href="https://creativecommons.org/licenses/by-sa/4.0/" target="_blank" rel="noopener">CC BY-SA 4.0</a>, simplified and rigged</div>
+    <div class="tip" id="tip" hidden></div>
+  </main>
+
+  <aside class="pane" aria-label="Inspector and instructor">
+    <div class="inspector" id="inspector"></div>
+    <section class="chat" aria-label="Instructor">
+      <div class="chat-h"><h3>Instructor</h3><span class="label" id="ai-status">Connecting…</span></div>
+      <div class="msgs" id="msgs" aria-live="polite"></div>
+      <div class="starters" id="starters"></div>
+      <form class="composer" id="composer">
+        <textarea id="q" rows="1" placeholder="Ask about a stretch, a movement or a pain"></textarea>
+        <button class="btn primary" id="send" type="submit">Ask</button>
+        <button class="btn" id="stop" type="button" hidden>Stop</button>
+      </form>
+    </section>
+  </aside>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/three@0.147.0/build/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.147.0/examples/js/controls/OrbitControls.js"></script>
+<script>
+(async () => {
+const DEG = Math.PI / 180;
+const $ = s => document.querySelector(s);
+const V = (x, y, z) => new THREE.Vector3(x, y, z);
+const clamp = (v, a, b) => Math.min(b, Math.max(a, v));
+const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+THREE.ColorManagement.legacyMode = false;
+
+/* ================= curated anatomy ================= */
+const MUSCLES = [
+ ['rectusFemoris','Rectus femoris','Quadriceps','Anterior inferior iliac spine and the ilium above the hip socket','Tibial tuberosity, via the patella and patellar tendon','Extends the knee and flexes the hip','Knee flexion combined with hip extension','Hip, knee'],
+ ['vastusLateralis','Vastus lateralis','Quadriceps','Greater trochanter and lateral lip of the linea aspera','Tibial tuberosity, via the patella and patellar tendon','Extends the knee','Knee flexion; hip position has no effect','Knee'],
+ ['vastusMedialis','Vastus medialis','Quadriceps','Intertrochanteric line and medial lip of the linea aspera','Tibial tuberosity, via the patella and patellar tendon','Extends the knee; its lowest fibres help steady the patella','Knee flexion','Knee'],
+ ['vastusIntermedius','Vastus intermedius','Quadriceps','Front and lateral shaft of the femur','Tibial tuberosity, via the patella and patellar tendon','Extends the knee','Knee flexion','Knee'],
+ ['bicepsFemoris','Biceps femoris','Hamstrings','Ischial tuberosity (long head); linea aspera (short head)','Head of the fibula','Flexes the knee and extends the hip','Hip flexion with the knee straight','Hip, knee'],
+ ['semitendinosus','Semitendinosus & semimembranosus','Hamstrings','Ischial tuberosity','Medial upper tibia (pes anserinus and medial condyle)','Flexes the knee and extends the hip','Hip flexion with the knee straight','Hip, knee'],
+ ['gluteusMaximus','Gluteus maximus','Gluteals','Posterior ilium, sacrum, coccyx and thoracolumbar fascia','Gluteal tuberosity of the femur and the iliotibial tract','Extends and externally rotates the hip','Hip flexion, more so with adduction','Hip'],
+ ['gluteusMedius','Gluteus medius','Gluteals','Outer surface of the ilium','Lateral surface of the greater trochanter','Abducts the hip and steadies the pelvis in single-leg stance','Hip adduction, for example crossing the leg behind','Hip'],
+ ['gluteusMinimus','Gluteus minimus','Gluteals','Outer ilium between the anterior and inferior gluteal lines','Front of the greater trochanter','Abducts and internally rotates the hip','Hip adduction with external rotation','Hip'],
+ ['piriformis','Piriformis','Deep hip rotators','Front surface of the sacrum','Upper border of the greater trochanter','Externally rotates the extended hip; abducts the flexed hip','Hip flexion with external rotation, as in figure-4 positions. Beyond about 60° of flexion its rotation action reverses','Hip'],
+ ['iliopsoas','Iliopsoas','Hip flexors','Lumbar vertebrae T12 to L5 (psoas) and the iliac fossa (iliacus)','Lesser trochanter of the femur','Flexes the hip; psoas also helps steady the lumbar spine','Hip extension, helped by a posterior pelvic tilt','Hip, lumbar spine'],
+ ['tfl','Tensor fasciae latae','Hip flexors','Anterior superior iliac spine and front of the iliac crest','Iliotibial tract, continuing to the lateral tibia','Flexes, abducts and internally rotates the hip','Hip extension with adduction','Hip'],
+ ['sartorius','Sartorius','Hip flexors','Anterior superior iliac spine','Medial upper tibia (pes anserinus)','Flexes, abducts and externally rotates the hip; flexes the knee','Hip extension with adduction and the knee straight','Hip, knee'],
+ ['adductors','Adductor group','Adductors','Pubis and ischiopubic ramus (magnus also the ischial tuberosity)','Linea aspera of the femur and adductor tubercle','Adducts the hip','Hip abduction','Hip'],
+ ['gracilis','Gracilis','Adductors','Body and lower ramus of the pubis','Medial upper tibia (pes anserinus)','Adducts the hip and flexes the knee','Hip abduction with the knee straight','Hip, knee'],
+ ['gastrocnemius','Gastrocnemius','Calf','Medial and lateral femoral condyles','Calcaneus, via the Achilles tendon','Plantarflexes the ankle and assists knee flexion','Ankle dorsiflexion with the knee straight','Knee, ankle'],
+ ['soleus','Soleus','Calf','Head of the fibula and soleal line of the tibia','Calcaneus, via the Achilles tendon','Plantarflexes the ankle; a key postural muscle in standing','Ankle dorsiflexion. A bent knee slackens gastrocnemius and shifts the stretch here','Ankle'],
+ ['tibialisAnterior','Tibialis anterior','Shin','Lateral condyle and upper lateral tibia','Medial cuneiform and base of the first metatarsal','Dorsiflexes and inverts the foot','Plantarflexion, pointing the toes','Ankle'],
+ ['fibularis','Fibularis longus & brevis','Shin','Lateral surface of the fibula','First metatarsal and medial cuneiform (longus); fifth metatarsal (brevis)','Everts and plantarflexes the foot','Dorsiflexion with inversion','Ankle'],
+ ['pectoralisMajor','Pectoralis major','Chest','Medial clavicle, sternum and upper costal cartilages','Lateral lip of the bicipital groove of the humerus','Adducts and internally rotates the shoulder','Horizontal abduction and external rotation; lower fibres also lengthen overhead','Shoulder'],
+ ['latissimusDorsi','Latissimus dorsi','Back','Spinous processes T7 to L5, thoracolumbar fascia, iliac crest and lower ribs','Floor of the bicipital groove of the humerus','Extends, adducts and internally rotates the shoulder','Shoulder flexion overhead, more with a side bend away','Shoulder'],
+ ['deltoid','Deltoid','Shoulder','Lateral clavicle, acromion and spine of the scapula','Deltoid tuberosity of the humerus','Abducts the shoulder; front fibres flex, back fibres extend','Cross-body reach for the back fibres; shoulder extension for the front','Shoulder'],
+ ['rotatorCuff','Rotator cuff','Shoulder','Supraspinous, infraspinous and subscapular fossae of the scapula','Greater and lesser tubercles of the humerus','Holds the humeral head in the socket and rotates the arm','Cross-body reach and internal rotation (back of the cuff)','Shoulder'],
+ ['bicepsBrachii','Biceps brachii','Upper arm','Coracoid process (short head) and supraglenoid tubercle (long head)','Radial tuberosity and bicipital aponeurosis','Flexes the elbow and supinates the forearm','Elbow extension with the shoulder extended','Shoulder, elbow'],
+ ['brachialis','Brachialis','Upper arm','Lower half of the front of the humerus','Coronoid process and tuberosity of the ulna','Flexes the elbow','Elbow extension','Elbow'],
+ ['tricepsBrachii','Triceps brachii','Upper arm','Infraglenoid tubercle (long head) and back of the humerus','Olecranon of the ulna','Extends the elbow; the long head assists shoulder extension','Elbow flexion with the shoulder flexed overhead','Shoulder, elbow'],
+ ['forearmFlexors','Wrist and finger flexors','Forearm','Medial epicondyle of the humerus (common flexor origin)','Carpal bones, metacarpals and phalanges on the palm side','Flex the wrist and fingers','Wrist and finger extension with the elbow straight','Elbow, wrist'],
+ ['forearmExtensors','Wrist and finger extensors','Forearm','Lateral epicondyle of the humerus (common extensor origin)','Metacarpals and phalanges on the back of the hand','Extend the wrist and fingers','Wrist flexion with the elbow straight','Elbow, wrist'],
+ ['rectusAbdominis','Rectus abdominis','Trunk','Pubic crest and symphysis','Xiphoid process and costal cartilages 5 to 7','Flexes the trunk','Trunk extension','Spine'],
+ ['externalOblique','External oblique','Trunk','Outer surfaces of ribs 5 to 12','Iliac crest, linea alba and pubic tubercle','Flexes, side-bends and rotates the trunk','Trunk extension and side bend away','Spine'],
+ ['quadratusLumborum','Quadratus lumborum','Lower back','Iliac crest and iliolumbar ligament','Twelfth rib and lumbar transverse processes','Side-bends the lumbar spine and hitches the hip','Side bend away and trunk flexion','Spine'],
+ ['erectorSpinae','Erector spinae','Back','Sacrum, iliac crest and lumbar spinous processes','Ribs and vertebrae up toward the skull','Extends and side-bends the spine','Trunk flexion','Spine'],
+ ['multifidus','Multifidus','Lower back','Sacrum, ilium and vertebral processes','Spinous processes two to four levels above','Steadies and extends the spine segment by segment','Trunk flexion','Spine'],
+ ['trapezius','Trapezius','Neck and upper back','Occipital bone, nuchal ligament and spinous processes C7 to T12','Lateral clavicle, acromion and spine of the scapula','Elevates, retracts and rotates the scapula; upper fibres side-bend the neck','Neck side bend away with the shoulder held down (upper fibres)','Neck, shoulder girdle'],
+ ['levatorScapulae','Levator scapulae','Neck and upper back','Transverse processes of C1 to C4','Upper medial border of the scapula','Elevates the scapula and side-bends the neck','Neck flexion and side bend away with the shoulder held down','Neck, shoulder girdle'],
+ ['rhomboids','Rhomboids','Neck and upper back','Spinous processes C7 to T5','Medial border of the scapula','Retract and elevate the scapula','Cross-body reach that draws the shoulder blade forward','Shoulder girdle'],
+ ['sternocleidomastoid','Sternocleidomastoid','Neck and upper back','Manubrium and medial clavicle','Mastoid process','Flexes the neck, side-bends it and turns the head to the other side','Neck extension with side bend away','Neck'],
+].map(([id, name, group, origin, insertion, action, lengthened, joints]) => ({id, name, group, origin, insertion, action, lengthened, joints}));
+const MBYID = Object.fromEntries(MUSCLES.map(m => [m.id, m]));
+const mname = id => MBYID[id] ? MBYID[id].name : id;
+
+// tags: floor, supine, prone, kneel, standing, balance (one leg), flexSpine, deepHipFlex, hipRotate, hipAdd, headDown
+const STRETCHES = [
+ {id:'seated-hamstring', name:'Seated forward fold', area:'Back of thigh', sided:false, tags:['floor','flexSpine'],
+  body:{pitch:30, spineFlex:25}, both:{hipFlex:120, ankle:10, shFlex:120, shAbd:5, elbow:10},
+  primary:['bicepsFemoris','semitendinosus'], secondary:['gastrocnemius','gluteusMaximus','erectorSpinae'],
+  cues:['Sit tall on the sit bones with legs straight','Hinge forward from the hips with a long chest','Reach toward the shins without forcing','Pull the toes back to add the calves'], hold:'30 s, 2 to 3 rounds', watch:'Rounding hard through the lower back moves the stretch away from the hamstrings.'},
+ {id:'supine-hamstring', name:'Lying hamstring stretch with strap', area:'Back of thigh', sided:true, tags:['floor','supine'],
+  body:{pitch:-90}, both:{shFlex:125, shAbd:5, elbow:30}, W:{hipFlex:80, ankle:10},
+  primary:['bicepsFemoris','semitendinosus'], secondary:['gastrocnemius'],
+  cues:['Lie on your back, other leg straight on the floor','Loop a strap or towel around the working foot','Raise the leg with the knee straight','Keep the lower back resting on the floor'], hold:'30 s per side', watch:'Bending the knee to get the leg higher takes the stretch off the hamstrings.'},
+ {id:'standing-quad', name:'Standing quad stretch', area:'Front of thigh', sided:true, tags:['standing','balance'],
+  W:{hipFlex:-10, knee:140, ankle:-35, shFlex:-35, shAbd:5, elbow:20}, O:{shAbd:35, elbow:10},
+  primary:['rectusFemoris','vastusLateralis','vastusMedialis','vastusIntermedius'], secondary:['iliopsoas','tibialisAnterior'],
+  cues:['Stand tall, holding a wall for balance','Bring the heel toward the glute','Keep the knees side by side','Tuck the pelvis slightly to bias rectus femoris'], hold:'30 s per side', watch:'Letting the knee drift forward or arching the back takes tension out of rectus femoris.'},
+ {id:'kneeling-hip-flexor', name:'Half-kneeling hip flexor', area:'Front of hip', sided:true, tags:['floor','kneel'],
+  body:{pitch:-10, spineFlex:5}, W:{hipFlex:-25, knee:75, ankle:-60, shFlex:20, shAbd:5, elbow:30}, O:{hipFlex:90, knee:100, ankle:8, shFlex:25, shAbd:5, elbow:40},
+  ground:['kneeW','heelO','toeO'],
+  primary:['iliopsoas'], secondary:['rectusFemoris','sartorius','tfl'],
+  cues:['Back knee down on a pad, front foot flat','Tuck the pelvis and squeeze the back-side glute','Shift the hips forward a few centimetres','Keep the ribs down and the torso tall'], hold:'30 to 45 s per side', watch:'Leaning far forward with an arched back feels big but stretches the hip flexor less.'},
+ {id:'figure-four', name:'Lying figure-4', area:'Deep hip and glute', sided:true, tags:['floor','supine','deepHipFlex','hipRotate'],
+  body:{pitch:-90}, W:{hipFlex:95, hipAbd:20, hipRot:55, knee:100, ankle:5, shFlex:80, shAbd:10, elbow:70}, O:{hipFlex:85, knee:90, shFlex:80, shAbd:10, elbow:70},
+  primary:['piriformis','gluteusMaximus'], secondary:['gluteusMedius','gluteusMinimus'],
+  cues:['Lie on your back, both knees bent','Cross the working ankle over the other thigh','Draw the bottom thigh toward the chest','Keep head and shoulders relaxed on the floor'], hold:'30 to 45 s per side', watch:'If the crossed knee is painful, keep the bottom foot on the floor instead.'},
+ {id:'seated-figure-four', name:'Seated figure-4', area:'Deep hip and glute', sided:true, tags:['floor','deepHipFlex','hipRotate'],
+  body:{pitch:20, spineFlex:15}, W:{hipFlex:110, hipAbd:25, hipRot:55, knee:110}, O:{hipFlex:110, knee:15}, both:{shFlex:60, shAbd:10, elbow:30},
+  primary:['piriformis','gluteusMaximus'], secondary:['gluteusMedius'],
+  cues:['Sit tall with the other leg out in front','Rest the working ankle across the other knee','Hinge forward from the hips with a long back','Press the working knee gently away'], hold:'30 to 45 s per side', watch:'A chair version works well for anyone who struggles to sit on the floor.'},
+ {id:'knee-to-chest', name:'Knees to chest', area:'Lower back and glutes', sided:false, tags:['floor','supine','deepHipFlex','flexSpine'],
+  body:{pitch:-90, spineFlex:15}, both:{hipFlex:115, knee:120, shFlex:70, shAbd:15, elbow:90},
+  primary:['erectorSpinae','gluteusMaximus'], secondary:['multifidus','quadratusLumborum'],
+  cues:['Lie on your back','Hug both knees toward the chest','Let the lower back round gently into the floor','Breathe slowly into the belly'], hold:'20 to 30 s, repeat 3 times', watch:'Pulling hard with the arms can strain the knees. Hold behind the thighs instead.'},
+ {id:'childs-pose', name:"Child's pose", area:'Lower back and lats', sided:false, tags:['floor','kneel','deepHipFlex','flexSpine','headDown'],
+  body:{pitch:70, spineFlex:25, neckFlex:10}, both:{hipFlex:130, knee:155, ankle:-60, shFlex:170, shAbd:10, elbow:5}, ground:['kneeL','kneeR','toeL','toeR'],
+  primary:['erectorSpinae','latissimusDorsi'], secondary:['gluteusMaximus','quadratusLumborum','multifidus'],
+  cues:['Kneel and sit back toward the heels','Fold forward and rest the forehead down','Reach the arms long in front','Let the back widen as you breathe'], hold:'30 to 60 s', watch:'A cushion between heels and hips helps if the knees complain.'},
+ {id:'sphinx', name:'Sphinx', area:'Abdomen and front of trunk', sided:false, tags:['floor','prone'],
+  body:{pitch:90, spineFlex:-25, neckFlex:-10}, both:{shFlex:65, shAbd:10, elbow:90},
+  ground:['kneeL','kneeR','toeL','toeR','pubis','elbowL','elbowR'],
+  primary:['rectusAbdominis'], secondary:['externalOblique','iliopsoas'],
+  cues:['Lie face down','Prop up on the forearms, elbows under the shoulders','Let the hips stay heavy on the floor','Keep the neck long and the shoulders away from the ears'], hold:'20 to 30 s', watch:'Stop if this sends pain into the lower back or down a leg.'},
+ {id:'wall-calf', name:'Wall calf stretch', area:'Calf', sided:true, tags:['standing'],
+  body:{pitch:10}, W:{hipFlex:-15, ankle:25}, O:{hipFlex:40, knee:48, ankle:18}, both:{shFlex:85, shAbd:8, elbow:20},
+  primary:['gastrocnemius'], secondary:['soleus'],
+  cues:['Hands on the wall, working leg back','Back heel down, toes pointing forward','Keep the back knee straight','Lean the hips toward the wall'], hold:'30 s per side', watch:'A heel that lifts off the floor removes most of the stretch.'},
+ {id:'bent-knee-calf', name:'Bent-knee calf stretch', area:'Lower calf', sided:true, tags:['standing'],
+  body:{pitch:5}, W:{hipFlex:-5, knee:25, ankle:28}, O:{hipFlex:35, knee:40, ankle:15}, both:{shFlex:80, shAbd:8, elbow:25},
+  primary:['soleus'], secondary:[],
+  cues:['Same set-up as the wall calf stretch','Bend the back knee while the heel stays down','Sink the knee forward over the toes','Feel it lower in the calf'], hold:'30 s per side', watch:'This version shifts the stretch from gastrocnemius into soleus.'},
+ {id:'kneeling-shin', name:'Kneeling shin stretch', area:'Shin and top of foot', sided:false, tags:['floor','kneel'],
+  both:{hipFlex:50, knee:150, ankle:-50, shAbd:10, elbow:10},
+  primary:['tibialisAnterior'], secondary:['rectusFemoris','vastusLateralis','vastusMedialis'],
+  cues:['Kneel with the tops of the feet flat','Sit back toward the heels','Lean back slightly on the hands to deepen it','Keep the ankles in line, not rolled out'], hold:'20 to 30 s', watch:'Skip it if kneeling hurts the knees.'},
+ {id:'butterfly', name:'Butterfly stretch', area:'Inner thigh', sided:false, tags:['floor','hipRotate'],
+  body:{pitch:15, spineFlex:20}, both:{hipFlex:105, hipAbd:45, hipRot:40, knee:125, ankle:15, shFlex:55, shAbd:5, elbow:30},
+  primary:['adductors'], secondary:['gracilis'],
+  cues:['Sit tall, soles of the feet together','Let the knees fall out to the sides','Hinge forward slightly from the hips','Use gentle elbow pressure on the thighs if comfortable'], hold:'30 to 45 s', watch:'Bouncing the knees or forcing them down strains the groin.'},
+ {id:'crossover-hip', name:'Standing cross-over hip stretch', area:'Outer hip', sided:true, tags:['standing','hipAdd'],
+  body:{sideAway:18}, W:{hipFlex:-5, hipAbd:-15, shFlex:165, shAbd:5}, O:{hipFlex:8, hipAbd:-6, knee:5, shAbd:8},
+  primary:['gluteusMedius','tfl'], secondary:['gluteusMinimus','quadratusLumborum','latissimusDorsi'],
+  cues:['Cross the working leg behind the other','Push the working hip out to the side','Reach the working arm up and over','Hold a wall with the other hand'], hold:'20 to 30 s per side', watch:'Twisting the pelvis forward reduces the stretch on the outer hip.'},
+ {id:'overhead-lat', name:'Overhead side reach', area:'Side of trunk and lat', sided:true, tags:['standing'],
+  body:{sideAway:18}, W:{shFlex:170, shAbd:5}, O:{shAbd:5},
+  primary:['latissimusDorsi'], secondary:['quadratusLumborum','externalOblique','pectoralisMajor'],
+  cues:['Stand with feet hip-width apart','Reach the working arm straight overhead','Lean away from the working side','Keep the ribs from flaring forward'], hold:'20 to 30 s per side', watch:'Twisting the chest toward the floor turns this into a different stretch.'},
+ {id:'overhead-triceps', name:'Overhead triceps stretch', area:'Back of arm', sided:true, tags:[],
+  W:{shFlex:165, shAbd:5, elbow:145}, O:{shFlex:125, shAbd:10, elbow:110},
+  primary:['tricepsBrachii'], secondary:['latissimusDorsi'],
+  cues:['Raise the working arm overhead','Bend the elbow so the hand drops behind the head','Use the other hand to ease the elbow back','Keep the head upright'], hold:'20 to 30 s per side', watch:'Arching the lower back to get the arm higher is a common cheat.'},
+ {id:'cross-body-shoulder', name:'Cross-body shoulder stretch', area:'Back of shoulder', sided:true, tags:[],
+  W:{shFlex:90, shHoriz:40}, O:{shFlex:75, shHoriz:25, elbow:100},
+  primary:['deltoid','rotatorCuff'], secondary:['rhomboids','trapezius'],
+  cues:['Bring the working arm across the chest','Hold it above the elbow with the other hand','Keep the shoulder down, away from the ear','Turn the chest square to the front'], hold:'30 s per side', watch:'Pulling at the elbow joint itself strains it. Hold the upper arm.'},
+ {id:'wall-pec', name:'Wall chest stretch', area:'Chest and front of shoulder', sided:true, tags:['standing'],
+  W:{shAbd:85, shHoriz:-35, elbow:5},
+  primary:['pectoralisMajor'], secondary:['bicepsBrachii','deltoid'],
+  cues:['Place the palm on a wall at shoulder height','Keep the arm straight','Turn the chest slowly away from the wall','Keep the shoulder blade drawn back and down'], hold:'30 s per side', watch:'Stop if you feel pinching at the front of the shoulder or tingling in the hand.'},
+ {id:'wall-biceps', name:'Wall biceps stretch', area:'Front of upper arm', sided:true, tags:['standing'],
+  W:{shFlex:-45, shAbd:15, wrist:30},
+  primary:['bicepsBrachii'], secondary:['brachialis','deltoid','pectoralisMajor'],
+  cues:['Stand side-on to a wall','Place the palm behind you at shoulder height, thumb down','Keep the elbow straight','Turn the body gently away from the wall'], hold:'20 to 30 s per side', watch:'Ease off if you feel pain at the front of the shoulder.'},
+ {id:'wrist-flexor', name:'Wrist flexor stretch', area:'Inside of forearm', sided:true, tags:[],
+  W:{shFlex:90, wrist:70}, O:{shFlex:80, shHoriz:20, elbow:35},
+  primary:['forearmFlexors'], secondary:[],
+  cues:['Hold the working arm out straight, palm up','Use the other hand to ease the fingers down and back','Keep the elbow straight','Hold gently'], hold:'20 to 30 s per side', watch:'Tingling in the fingers means ease off.'},
+ {id:'wrist-extensor', name:'Wrist extensor stretch', area:'Back of forearm', sided:true, tags:[],
+  W:{shFlex:90, wrist:-70}, O:{shFlex:80, shHoriz:20, elbow:35},
+  primary:['forearmExtensors'], secondary:[], modelNote:'The model cannot turn the forearm over yet, so the palm shows facing up.',
+  cues:['Hold the working arm out straight, palm down','Use the other hand to curl the hand down','Keep the elbow straight','Hold gently'], hold:'20 to 30 s per side', watch:'Tingling in the fingers means ease off.'},
+ {id:'neck-side', name:'Neck side stretch', area:'Side of neck', sided:true, tags:[],
+  body:{neckAway:35}, W:{shAbd:5}, O:{shFlex:150, shAbd:40, elbow:125},
+  primary:['trapezius','levatorScapulae'], secondary:['sternocleidomastoid'],
+  cues:['Sit or stand tall','Let the ear drop toward the other shoulder','Keep the working shoulder down','Rest the other hand on the head without pulling'], hold:'20 to 30 s per side', watch:'Stop if this causes dizziness or tingling into the arm.'},
+];
+const SBYID = Object.fromEntries(STRETCHES.map(s => [s.id, s]));
+
+/* ================= pain regions and screening ================= */
+const REGIONS = [
+ {id:'neck', name:'Neck and upper back', muscles:['trapezius','levatorScapulae','sternocleidomastoid','rhomboids'], related:['pectoralisMajor'],
+  flags:[['Pain began after whiplash, a fall or a blow to the head','urgent'],['Numbness, tingling or weakness in an arm or hand','urgent'],['Sudden severe headache, dizziness, or trouble speaking, seeing or swallowing','emergency'],['Neck stiffness with fever or a rash','emergency']]},
+ {id:'shoulder', name:'Shoulder', muscles:['deltoid','rotatorCuff'], related:['pectoralisMajor','latissimusDorsi','trapezius'],
+  flags:[['Chest pain, pressure or breathlessness along with the shoulder or arm pain','emergency'],['Cannot lift the arm after a fall, or the shoulder looks out of place','urgent'],['Pain that wakes you at night with weakness that is getting worse','assess']]},
+ {id:'chest', name:'Chest', muscles:['pectoralisMajor'], related:['deltoid','bicepsBrachii'],
+  flags:[['Chest pain or pressure, especially with breathlessness, sweating, nausea or pain spreading to the arm, jaw or back','emergency'],['Pain after a fall or a blow to the ribs','urgent']]},
+ {id:'frontArm', name:'Front of upper arm', muscles:['bicepsBrachii','brachialis'], related:['pectoralisMajor','deltoid'],
+  flags:[['A sudden pop or tearing feeling, then bruising or a bulge in the upper arm','urgent'],['Arm pain together with chest pain, pressure or breathlessness','emergency'],['The arm is swollen, red or hot','urgent']]},
+ {id:'backArm', name:'Back of upper arm', muscles:['tricepsBrachii'], related:['latissimusDorsi'],
+  flags:[['Pain after a fall onto the elbow, or the elbow will not straighten','urgent'],['The arm is swollen, red or hot','urgent']]},
+ {id:'forearm', name:'Forearm and wrist', muscles:['forearmFlexors','forearmExtensors'], related:[],
+  flags:[['Numbness or tingling in the fingers, especially at night','assess'],['Pain after a fall onto the hand','urgent'],['The wrist or forearm is swollen, red or hot','urgent']]},
+ {id:'abdomen', name:'Abdomen and side', muscles:['rectusAbdominis','externalOblique'], related:['iliopsoas','quadratusLumborum'],
+  flags:[['Pain feels deep inside the belly, or comes with fever, vomiting or blood in urine or stool','emergency'],['A painful bulge in the belly or groin','urgent']]},
+ {id:'lowerBack', name:'Lower back', muscles:['erectorSpinae','multifidus','quadratusLumborum'], related:['iliopsoas','bicepsFemoris','semitendinosus','gluteusMaximus','piriformis'],
+  flags:[['Numbness around the groin, buttocks or inner thighs, or new trouble controlling the bladder or bowels','emergency'],['Pain spreading below the knee with numbness, tingling or weakness in the leg','urgent'],['Pain started after a fall, car accident or other impact','urgent'],['Fever, unexplained weight loss, a history of cancer, or pain that is worse at night or at rest','urgent']]},
+ {id:'hipFront', name:'Front of hip', muscles:['iliopsoas','tfl','sartorius'], related:['rectusFemoris','adductors'],
+  flags:[['Groin or hip pain after a fall, especially if you cannot bear weight','emergency'],['Hip pain with fever','urgent']]},
+ {id:'buttock', name:'Buttock and deep hip', muscles:['gluteusMaximus','piriformis'], related:['gluteusMedius','bicepsFemoris','erectorSpinae'],
+  flags:[['Pain shooting down the leg with numbness, tingling or weakness','urgent'],['Numbness around the groin, or new bladder or bowel problems','emergency']]},
+ {id:'outerHip', name:'Outer hip', muscles:['gluteusMedius','gluteusMinimus','tfl'], related:['quadratusLumborum'],
+  flags:[['Pain after a fall onto the hip, or you cannot bear weight','emergency']]},
+ {id:'thighFront', name:'Front of thigh', muscles:['rectusFemoris','vastusLateralis','vastusMedialis','vastusIntermedius'], related:['iliopsoas'],
+  flags:[['A sudden sharp pain with bruising or a dent in the thigh during sprinting or kicking','urgent']]},
+ {id:'thighBack', name:'Back of thigh', muscles:['bicepsFemoris','semitendinosus'], related:['gastrocnemius','gluteusMaximus'],
+  flags:[['A sudden sharp pain or pop during sprinting, then bruising','urgent'],['Pain shooting from the back down the leg with tingling or numbness','urgent'],['The leg is swollen, warm and tender, especially after a long trip or surgery','emergency']]},
+ {id:'innerThigh', name:'Inner thigh and groin', muscles:['adductors','gracilis'], related:['iliopsoas'],
+  flags:[['A painful bulge in the groin','urgent'],['Sudden sharp groin pain during a change of direction, then bruising','urgent']]},
+ {id:'knee', name:'Knee', muscles:[], related:['rectusFemoris','vastusLateralis','vastusMedialis','bicepsFemoris','semitendinosus','gastrocnemius'],
+  note:'Stretching does not treat the knee joint itself. These options work on the muscles around it.',
+  flags:[['The knee is swollen, locks or gives way','urgent'],['It started with a twist or a pop','urgent'],['The knee is hot, red and swollen','urgent']]},
+ {id:'calf', name:'Calf and Achilles', muscles:['gastrocnemius','soleus'], related:['bicepsFemoris'],
+  flags:[['A sudden snap or kick-like feeling at the back of the heel, and trouble pushing off','urgent'],['One calf is swollen, warm, red or tender, especially after a long trip, surgery or bed rest','emergency']]},
+ {id:'shin', name:'Shin and outer leg', muscles:['tibialisAnterior','fibularis'], related:['gastrocnemius','soleus'],
+  flags:[['Pain in one spot on the shin bone that gets worse with running or hopping','assess'],['Severe, tight pain in the shin during exercise with numbness in the foot','urgent']]},
+];
+const RBYID = Object.fromEntries(REGIONS.map(r => [r.id, r]));
+const REGION_OF = {}; for (const r of REGIONS) for (const m of r.muscles) REGION_OF[m] ||= r.id;
+const NAME_REGION = [
+  [/quadratus lumborum|multifidus lumborum|iliocostalis lumborum|longissimus thoracis|serratus posterior inferior/i, 'lowerBack'],
+  [/trapezius|levator scapulae|splenius|sternocleidomastoid|semispinalis|longissimus c|spinalis|rhomboid|serratus posterior superior|multifidus thoracis|iliocostalis/i, 'neck'],
+  [/pectoralis/i, 'chest'], [/deltoid|spinatus|teres|subscapularis|serratus anterior/i, 'shoulder'],
+  [/biceps brachii|brachialis|coracobrachialis/i, 'frontArm'], [/triceps|anconeus/i, 'backArm'],
+  [/carpi|digitorum superficialis|profundus|palmaris|pronator|supinator|brachioradialis|pollicis|extensor digit|extensor indicis|digiti minimi/i, 'forearm'],
+  [/abdominis|oblique|pyramidalis/i, 'abdomen'], [/iliacus|psoas|sartorius|tensor/i, 'hipFront'],
+  [/gluteus maximus|piriformis|gemellus|obturator|quadratus femoris/i, 'buttock'], [/gluteus|iliotibial/i, 'outerHip'],
+  [/vastus|rectus femoris/i, 'thighFront'], [/biceps femoris|semitendinosus|semimembranosus/i, 'thighBack'],
+  [/adductor|gracilis|pectineus/i, 'innerThigh'], [/tibialis anterior|extensor digitorum longus|extensor hallucis longus|fibularis/i, 'shin'],
+  [/gastrocnemius|soleus|plantaris|calcaneal|flexor digitorum longus|flexor hallucis longus|tibialis posterior|popliteus|of foot|hallucis/i, 'calf'],
+];
+const BONE_REGION = [[/vertebra l|sacrum|coccyx/i,'lowerBack'],[/vertebra t|scapula|vertebra c|atlas|axis/i,'neck'],[/rib|sternum|xiphoid|manubrium|cartilage/i,'chest'],[/clavicle|humerus/i,'shoulder'],
+  [/radius|ulna|carpal|metacarpal|of hand|scaphoid|lunate|triquetrum|pisiform|trapezi|capitate|hamate/i,'forearm'],[/hip bone/i,'buttock'],[/femur/i,'thighFront'],[/patella|tibia|fibula/i,'knee'],[/talus|calcaneus|navicular|cuboid|cuneiform|metatarsal|of foot/i,'calf']];
+
+const PAIN_TYPES = [['tight','Tight or stiff'],['sore','Sore after training'],['sharp','Sharp or stabbing'],['nerve','Burning, numb or tingling'],['injury','Started with a fall, accident or pop']];
+const AGES = [['teen','Under 18'],['adult','18 to 64'],['older','65 and over']];
+const CONDITIONS = [
+ {id:'surgery', label:'Surgery or injury in this area in the last 3 months', gate:'Get clearance from the surgeon or physiotherapist before stretching this area.'},
+ {id:'pregnancy', label:'Pregnant', note:'Ease off about a quarter short of full range, since ligaments are looser in pregnancy. Check with the midwife or doctor if there are complications.',
+  check:st => st.tags.includes('supine') || st.tags.includes('prone') ? ['avoid','Lying flat on the back or front is usually avoided after the first trimester.'] : null},
+ {id:'osteoporosis', label:'Osteoporosis or low bone density',
+  check:st => st.tags.includes('flexSpine') ? ['avoid','Rounding the spine forward raises the risk of a vertebral fracture with low bone density.'] : st.tags.includes('balance') ? ['caution','Hold a wall or sturdy chair, because a fall is the bigger risk.'] : null},
+ {id:'hipReplacement', label:'Hip replacement', note:"Follow the surgeon's or physiotherapist's hip precautions. They depend on how the operation was done.",
+  check:st => ['deepHipFlex','hipRotate','hipAdd'].some(t => st.tags.includes(t)) ? ['avoid','Deep hip bending, crossing or turning the leg can break common hip precautions.'] : null},
+ {id:'kneeReplacement', label:'Knee replacement', check:st => st.tags.includes('kneel') ? ['caution','Kneeling is often uncomfortable after a knee replacement. Use thick padding or choose another option.'] : null},
+ {id:'disc', label:'Disc problem or sciatica', note:'Stop if leg symptoms spread further down the leg.',
+  check:st => st.tags.includes('flexSpine') ? ['avoid','Rounding the spine forward often aggravates disc-related pain.'] : null},
+ {id:'hypermobility', label:'Very flexible joints (hypermobility)', note:'Stop at the first feeling of stretch and do not hang at the end of range. Strength and control work usually helps more than extra flexibility.'},
+ {id:'arthritis', label:'Inflammatory arthritis flare', note:'Skip stretching joints that are hot or swollen right now; keep to gentle movement.'},
+ {id:'hypertension', label:'High blood pressure', note:'Breathe steadily and never hold your breath during a stretch.',
+  check:st => st.tags.includes('headDown') ? ['caution','Head-below-heart positions can cause dizziness. Come up slowly.'] : null},
+ {id:'balance', label:'Balance problems or recent falls',
+  check:st => st.tags.includes('balance') || st.tags.includes('standing') ? ['caution','Stand next to a wall or sturdy chair and hold on.'] : st.tags.includes('floor') ? ['caution','Getting down to the floor and back up needs support. Use a chair or choose another option.'] : null},
+];
+const CBYID = Object.fromEntries(CONDITIONS.map(c => [c.id, c]));
+const AGE_RULES = {
+  teen:{hold:'15 to 30 s', note:'Keep it gentle, with no bouncing and no partner pushing. Growth spurts can make muscles feel tight for a while, and strength work helps too.'},
+  adult:{},
+  older:{hold:'30 to 60 s', note:'Hold for 30 to 60 seconds and move into and out of positions slowly. Muscles and tendons get stiffer with age, so progress takes longer and gentler is better.',
+   check:st => st.tags.includes('floor') ? ['caution','Only choose floor stretches if getting down and back up is easy.'] : st.tags.includes('balance') ? ['caution','Hold a wall or chair for balance.'] : null},
+};
+let pain = {region:null, side:'B', type:null, intensity:3, age:'adult', conds:new Set(), flags:new Set(), pinPart:null};
+
+function evaluatePain() {
+  const r = RBYID[pain.region]; if (!r) return null;
+  const gates = [];
+  r.flags.forEach(([text, level], i) => { if (pain.flags.has(i)) gates.push([level, text]); });
+  if (pain.type === 'sharp') gates.push(['assess','Sharp or stabbing pain is a reason to get checked before stretching. Stretching into it can make an injury worse.']);
+  if (pain.type === 'nerve') gates.push(['assess','Burning, numbness or tingling can come from an irritated nerve. A clinician should look at it before you stretch.']);
+  if (pain.type === 'injury') gates.push(['urgent','Pain that started with a fall, an accident or a pop needs checking first, because there may be a tear or fracture.']);
+  if (pain.intensity >= 7) gates.push(['assess','Pain this strong (7 or more out of 10) should be assessed before stretching.']);
+  for (const c of pain.conds) if (CBYID[c].gate) gates.push(['assess', CBYID[c].gate]);
+  const order = {emergency:0, urgent:1, assess:2};
+  gates.sort((a, b) => order[a[0]] - order[b[0]]);
+  const gate = gates.length ? {level: gates[0][0], reasons: gates.map(g => g[1])} : null;
+  const notes = [];
+  const age = AGE_RULES[pain.age]; if (age.note) notes.push(age.note);
+  for (const c of pain.conds) if (CBYID[c].note) notes.push(CBYID[c].note);
+  if (pain.type === 'sore') notes.push('Soreness after training usually settles within 2 to 5 days. Light movement and gentle stretching are fine, though stretching does little to speed recovery.');
+  if (r.note) notes.push(r.note);
+  const targets = new Set(r.muscles), related = new Set(r.related);
+  const list = [];
+  for (const st of STRETCHES) {
+    let score = 0; const hitT = [], hitR = [];
+    for (const id of st.primary) { if (targets.has(id)) { score += 3; hitT.push(id); } else if (related.has(id)) { score += 1; hitR.push(id); } }
+    for (const id of st.secondary) { if (targets.has(id)) { score += 1.5; hitT.push(id); } else if (related.has(id)) { score += .5; hitR.push(id); } }
+    if (!score) continue;
+    let status = 'ok'; const reasons = [];
+    const apply = res => { if (!res) return; const [s, why] = res; reasons.push(why); if (s === 'avoid' || (s === 'caution' && status === 'ok')) status = s; };
+    for (const c of pain.conds) if (CBYID[c].check) apply(CBYID[c].check(st));
+    if (age.check) apply(age.check(st));
+    const why = hitT.length ? `Lengthens ${[...new Set(hitT)].map(mname).join(', ')}` : `Works on ${[...new Set(hitR)].map(mname).join(', ')}, which often contribute`;
+    list.push({st, score: score - (status === 'caution' ? .4 : 0), status, reasons, why, hold: age.hold || st.hold, direct: hitT.length > 0});
+  }
+  list.sort((a, b) => b.score - a.score);
+  return {region: r, gate, notes, ok: list.filter(x => x.status !== 'avoid').slice(0, 6), avoid: list.filter(x => x.status === 'avoid')};
+}
+const stretchStatus = id => { const ev = evaluatePain(); if (!ev) return null; if (ev.gate) return {status:'gated', reasons: ev.gate.reasons}; const all = [...ev.ok, ...ev.avoid]; const f = all.find(x => x.st.id === id); return f ? {status: f.status, reasons: f.reasons} : null; };
+
+/* ================= joints and pose state ================= */
+const ROM = {
+  pitch:[-90,90,'Whole-body tilt'], yaw:[-180,180,'Turn'], spineFlex:[-25,80,'Spine flexion'], spineSide:[-35,35,'Spine side bend (+ right)'],
+  neckFlex:[-40,50,'Neck flexion'], neckSide:[-40,40,'Neck side bend (+ right)'],
+  hipFlex:[-25,130,'Hip flexion'], hipAbd:[-20,50,'Hip abduction'], hipRot:[-40,60,'Hip rotation (+ external)'], knee:[0,155,'Knee flexion'], ankle:[-60,30,'Ankle dorsiflexion'],
+  shFlex:[-50,180,'Shoulder flexion'], shAbd:[0,170,'Shoulder abduction'], shHoriz:[-45,50,'Across the body (+)'], elbow:[0,150,'Elbow flexion'], wrist:[-70,70,'Wrist extension'],
+};
+const BODY = ['pitch','yaw','spineFlex','spineSide','neckFlex','neckSide'], LEG = ['hipFlex','hipAbd','hipRot','knee','ankle'], ARM = ['shFlex','shAbd','shHoriz','elbow','wrist'];
+const limb = () => Object.fromEntries([...LEG, ...ARM].map(k => [k, 0]));
+const neutral = () => ({...Object.fromEntries(BODY.map(k => [k, 0])), L:limb(), R:limb()});
+const cloneState = s => ({...s, L:{...s.L}, R:{...s.R}});
+let state = neutral();
+
+/* ================= renderer ================= */
+const canvas = $('#c'), stage = $('#stage');
+const renderer = new THREE.WebGLRenderer({canvas, antialias:true, alpha:true});
+renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+renderer.outputEncoding = THREE.sRGBEncoding;
+renderer.shadowMap.enabled = true; renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+const scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(30, 1, 0.05, 60);
+camera.position.set(2.4, 1.4, 3.6);
+const controls = new THREE.OrbitControls(camera, canvas);
+controls.target.set(0, 0.9, 0); controls.enableDamping = true; controls.enablePan = false;
+controls.minDistance = .5; controls.maxDistance = 7; controls.maxPolarAngle = 1.58;
+scene.add(new THREE.HemisphereLight(0xf2f5ff, 0x3a3430, 0.8));
+const key = new THREE.DirectionalLight(0xffffff, 1.45); key.position.set(2.2, 4, 2.6); key.castShadow = true;
+key.shadow.mapSize.set(2048, 2048); Object.assign(key.shadow.camera, {left:-1.6, right:1.6, top:2.2, bottom:-1.2, near:.5, far:10}); key.shadow.bias = -0.0006;
+scene.add(key);
+const rim = new THREE.DirectionalLight(0xbcd0ff, 0.6); rim.position.set(-3, 2, -2.5); scene.add(rim);
+const floorGroup = new THREE.Group(); scene.add(floorGroup);
+(() => {
+  const cv = document.createElement('canvas'); cv.width = cv.height = 256;
+  const g = cv.getContext('2d'); const gr = g.createRadialGradient(128,128,10,128,128,128);
+  gr.addColorStop(0,'rgba(120,135,140,.30)'); gr.addColorStop(.7,'rgba(120,135,140,.12)'); gr.addColorStop(1,'rgba(120,135,140,0)');
+  g.fillStyle = gr; g.fillRect(0,0,256,256); g.strokeStyle = 'rgba(120,135,140,.35)';
+  for (let r = 30; r < 128; r += 30) { g.beginPath(); g.arc(128,128,r,0,Math.PI*2); g.stroke(); }
+  const t = new THREE.CanvasTexture(cv); t.encoding = THREE.sRGBEncoding;
+  const disc = new THREE.Mesh(new THREE.CircleGeometry(2.2, 64), new THREE.MeshBasicMaterial({map:t, transparent:true, depthWrite:false}));
+  disc.rotation.x = -Math.PI/2; floorGroup.add(disc);
+  const sh = new THREE.Mesh(new THREE.CircleGeometry(2.2, 64), new THREE.ShadowMaterial({opacity:.22}));
+  sh.rotation.x = -Math.PI/2; sh.position.y = .001; sh.receiveShadow = true; floorGroup.add(sh);
+})();
+function resize() { const r = stage.getBoundingClientRect(); renderer.setSize(r.width, r.height, false); camera.aspect = r.width / Math.max(1, r.height); camera.updateProjectionMatrix(); }
+new ResizeObserver(resize).observe(stage); resize();
+
+/* ================= load the atlas ================= */
+// atlas.txt is the packed model, gzipped then base64-encoded so it can ship as a plain data file
+async function loadAtlas() {
+  const res = await fetch('atlas.txt'); if (!res.ok) throw new Error('HTTP ' + res.status);
+  const total = +res.headers.get('content-length') || 4595020;
+  let text = '';
+  if (res.body && res.body.getReader) {
+    const reader = res.body.getReader(), dec = new TextDecoder(); let got = 0;
+    for (;;) { const {done, value} = await reader.read(); if (done) break; text += dec.decode(value, {stream:true}); got += value.length; $('#load-bar').style.width = Math.min(95, got/total*95) + '%'; }
+  } else text = await res.text();
+  const bin = atob(text.trim()), gz = new Uint8Array(bin.length); for (let i = 0; i < bin.length; i++) gz[i] = bin.charCodeAt(i);
+  const stream = new Blob([gz]).stream().pipeThrough(new DecompressionStream('gzip'));
+  const out = await new Response(stream).arrayBuffer(); $('#load-bar').style.width = '100%'; return out;
+}
+let buf;
+try { buf = await loadAtlas(); }
+catch (e) { $('#load-msg').textContent = 'The anatomy model could not load. Reload the page to try again.'; return; }
+const jlen = new DataView(buf).getUint32(0, true);
+const A = JSON.parse(new TextDecoder().decode(new Uint8Array(buf, 4, jlen)));
+const base = 4 + jlen;
+const JP = Object.fromEntries(Object.entries(A.joints).map(([k, v]) => [k, V(...v)]));
+
+/* rig */
+const root = new THREE.Group(); root.rotation.order = 'YXZ'; root.position.copy(JP.pelvis); scene.add(root);
+const B = {}; const PARENT = {pelvis:null, chest:'pelvis', neck:'chest', hipL:'pelvis', kneeL:'hipL', ankleL:'kneeL', hipR:'pelvis', kneeR:'hipR', ankleR:'kneeR',
+  shoulderL:'chest', elbowL:'shoulderL', wristL:'elbowL', shoulderR:'chest', elbowR:'shoulderR', wristR:'elbowR'};
+for (const name of A.bones) {
+  const b = new THREE.Bone(); b.name = name; B[name] = b;
+  b.rotation.order = /shoulder/.test(name) ? 'YXZ' : 'XZY';
+}
+for (const name of A.bones) {
+  const p = PARENT[name], b = B[name];
+  if (!p) { root.add(b); b.position.set(0, 0, 0); }
+  else { B[p].add(b); b.position.copy(JP[name]).sub(JP[p]); }
+}
+scene.updateMatrixWorld(true);
+const skeleton = new THREE.Skeleton(A.bones.map(n => B[n]));
+const LEN = {thigh: JP.kneeL.distanceTo(JP.hipL), shin: JP.ankleL.distanceTo(JP.kneeL), upper: JP.elbowL.distanceTo(JP.shoulderL), fore: JP.wristL.distanceTo(JP.elbowL)};
+const restAng = (a, b) => Math.atan2(b.z - a.z, -(b.y - a.y));
+const REST = {thigh: restAng(JP.hipL, JP.kneeL), shin: restAng(JP.kneeL, JP.ankleL), upper: restAng(JP.shoulderL, JP.elbowL), fore: restAng(JP.elbowL, JP.wristL)};
+
+/* meshes */
+const [bmin, bmax] = A.bbox;
+const muscleMat = new THREE.MeshStandardMaterial({vertexColors:true, roughness:.58, metalness:0, transparent:true});
+const boneMat = new THREE.MeshStandardMaterial({vertexColors:true, roughness:.75});
+const pickMat = new THREE.MeshBasicMaterial({vertexColors:true, toneMapped:false});
+const chunkMeshes = [];
+const BONE_RGB = [232, 224, 204];
+A.chunks.forEach((c, ci) => {
+  const q = new Int16Array(buf, base + c.pos, c.vCount*3), pos = new Float32Array(c.vCount*3);
+  for (let i = 0; i < pos.length; i++) { const k = i % 3; pos[i] = (q[i] + 32767) / 65534 * (bmax[k] - bmin[k]) + bmin[k]; }
+  const s2 = new Uint8Array(buf, base + c.skin, c.vCount*2), w1 = new Uint8Array(buf, base + c.w, c.vCount);
+  const si = new Uint8Array(c.vCount*4), sw = new Uint8Array(c.vCount*4);
+  for (let i = 0; i < c.vCount; i++) { si[i*4] = s2[i*2]; si[i*4+1] = s2[i*2+1]; sw[i*4] = w1[i]; sw[i*4+1] = 255 - w1[i]; }
+  const g = new THREE.BufferGeometry();
+  g.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+  g.setAttribute('skinIndex', new THREE.BufferAttribute(si, 4));
+  g.setAttribute('skinWeight', new THREE.BufferAttribute(sw, 4, true));
+  g.setIndex(new THREE.BufferAttribute(new Uint16Array(buf, base + c.idx, c.iCount), 1));
+  g.computeVertexNormals();
+  const col = new THREE.BufferAttribute(new Uint8Array(c.vCount*3), 3, true); col.setUsage(THREE.DynamicDrawUsage);
+  const pick = new THREE.BufferAttribute(new Uint8Array(c.vCount*3), 3, true);
+  g.setAttribute('color', col);
+  const m = new THREE.SkinnedMesh(g, c.kind === 'm' ? muscleMat : boneMat);
+  m.castShadow = true; m.frustumCulled = false; m.userData = {kind: c.kind, col, pick};
+  scene.add(m); chunkMeshes.push(m);
+});
+scene.updateMatrixWorld(true);
+for (const m of chunkMeshes) m.bind(skeleton);
+
+/* parts */
+const parts = A.parts.map(p => ({...p, strain:0, len:1, rest:1, region:null}));
+const PART = parts;
+for (const p of parts) {
+  const m = chunkMeshes[p.chunk], id = p.id + 1, arr = m.userData.pick.array, col = m.userData.col.array;
+  for (let v = p.v[0]; v < p.v[0] + p.v[1]; v++) { arr[v*3] = id & 255; arr[v*3+1] = (id >> 8) & 255; arr[v*3+2] = (id >> 16) & 255; }
+  if (p.kind === 'm') {
+    p.region = (p.cur && REGION_OF[p.cur]) || (NAME_REGION.find(([re]) => re.test(p.name)) || [])[1] || null;
+    p.pv = p.probes.map(q => V(q[0], q[1], q[2]));
+  } else p.region = (BONE_REGION.find(([re]) => re.test(p.name)) || [])[1] || null;
+}
+const CUR_PARTS = {}; for (const p of parts) if (p.cur) { const k = p.cur + (p.side === 'r' ? 'R' : 'L'); (CUR_PARTS[k] ||= []).push(p); }
+/* tendon attachments and wrap points, rigid to a bone, so joint-crossing muscles lengthen correctly */
+const JK = (k, s) => JP[['pelvis','chest','neck'].includes(k) ? k : k + s];
+const AT = (bone, k, s, dx = 0, dy = 0, dz = 0) => [['pelvis','chest','neck'].includes(bone) ? bone : bone + s, JK(k, s).clone().add(V(dx*(s === 'L' ? 1 : -1), dy, dz))];
+const MK = (bone, k, s) => [['pelvis','chest','neck'].includes(bone) ? bone : bone + s, V(...(A.marks[k + s] || A.marks[k]))];
+const QUAD_I = s => [AT('hip','knee',s,0,.07,.05), AT('knee','knee',s,0,0,.06), AT('knee','knee',s,0,-.07,.04)];
+const ANCH = {
+  gastrocnemius: s => ({o:[AT('hip','knee',s,0,.03,-.035)], i:[MK('ankle','heelBack',s)]}),
+  soleus: s => ({i:[MK('ankle','heelBack',s)]}),
+  tibialisAnterior: s => ({i:[AT('knee','ankle',s,-.005,.03,.035), AT('ankle','ankle',s,-.02,-.04,.07)]}),
+  fibularis: s => ({i:[AT('knee','ankle',s,.035,0,-.02), AT('ankle','ankle',s,.03,-.05,.04)]}),
+  bicepsFemoris: s => ({o:[MK('pelvis','isch',s)], i:[AT('knee','knee',s,.035,-.04,-.03)]}),
+  semitendinosus: s => ({o:[MK('pelvis','isch',s)], i:[AT('knee','knee',s,-.03,-.06,-.01)]}),
+  rectusFemoris: s => ({o:[AT('pelvis','hip',s,0,.06,.06)], i:QUAD_I(s)}),
+  vastusLateralis: s => ({i:QUAD_I(s)}), vastusMedialis: s => ({i:QUAD_I(s)}), vastusIntermedius: s => ({i:QUAD_I(s)}),
+  tricepsBrachii: s => ({o:[AT('chest','shoulder',s,-.01,-.03,-.035)], i:[AT('shoulder','elbow',s,0,.03,-.03), AT('elbow','elbow',s,0,0,-.035)]}),
+  bicepsBrachii: s => ({o:[AT('chest','shoulder',s,0,.02,.03)], i:[AT('shoulder','elbow',s,0,.03,.03), AT('elbow','elbow',s,0,-.04,.02)]}),
+  brachialis: s => ({i:[AT('shoulder','elbow',s,0,.02,.025), AT('elbow','elbow',s,0,-.03,.015)]}),
+  forearmFlexors: s => ({o:[AT('shoulder','elbow',s,-.035,.005,0)], i:[AT('elbow','wrist',s,0,.015,.015), AT('wrist','wrist',s,0,-.06,.02)]}),
+  forearmExtensors: s => ({o:[AT('shoulder','elbow',s,.035,.005,0)], i:[AT('elbow','wrist',s,0,.015,-.015), AT('wrist','wrist',s,0,-.06,-.015)]}),
+  trapezius: (s, name) => /Descending/.test(name) ? {o:[AT('neck','neck',s,.02,.16,-.08)]} : null,
+  levatorScapulae: s => ({o:[AT('neck','neck',s,.03,.12,-.01)]}),
+  sternocleidomastoid: s => ({i:[AT('neck','neck',s,.05,.17,-.01)]}),
+};
+for (const p of parts) if (p.kind === 'm') {
+  p.pathQ = p.probes; p.pathV = p.pv;
+  const f = p.cur && ANCH[p.cur]; if (!f || !p.side) continue;
+  const an = f(p.side === 'r' ? 'R' : 'L', p.name); if (!an) continue;
+  const o = an.o || [], i = an.i || [];
+  const first = p.pv[0], last = p.pv[p.pv.length - 1];
+  const refO = o.length ? o[o.length - 1][1] : null, refI = i.length ? i[0][1] : null;
+  const cost = (a, b) => (refO ? refO.distanceTo(a) : 0) + (refI ? refI.distanceTo(b) : 0);
+  let q = p.probes, v = p.pv; if (cost(last, first) < cost(first, last)) { q = [...q].reverse(); v = [...v].reverse(); }
+  const toQ = ([bn, pt]) => { const bi = A.bones.indexOf(bn); return [pt.x, pt.y, pt.z, bi, bi, 1]; };
+  p.pathQ = [...o.map(toQ), ...q, ...i.map(toQ)]; p.pathV = [...o.map(x => x[1]), ...v, ...i.map(x => x[1])];
+}
+const sideOf = p => p.side === 'r' ? 'R' : p.side === 'l' ? 'L' : 'B';
+
+/* skinned probe positions */
+const boneMats = A.bones.map(() => new THREE.Matrix4());
+const tA = V(0,0,0), tB = V(0,0,0);
+function skinPoint(q, src, out) {
+  tA.copy(src).applyMatrix4(boneMats[q[3]]);
+  if (q[5] < 1) { tB.copy(src).applyMatrix4(boneMats[q[4]]); out.copy(tA).multiplyScalar(q[5]).addScaledVector(tB, 1 - q[5]); } else out.copy(tA);
+  return out;
+}
+const pA = V(0,0,0), pB = V(0,0,0);
+function measure() {
+  A.bones.forEach((n, i) => boneMats[i].multiplyMatrices(B[n].matrixWorld, skeleton.boneInverses[i]));
+  for (const p of parts) if (p.kind === 'm') {
+    let len = 0;
+    for (let i = 0; i < p.pathV.length; i++) { skinPoint(p.pathQ[i], p.pathV[i], pB); if (i) len += pB.distanceTo(pA); pA.copy(pB); }
+    p.len = len; p.strain = len / p.rest - 1;
+  }
+}
+// for a group, report its most lengthened part (or the least shortened when all shorten)
+const curStrain = (id, side) => { const ps = CUR_PARTS[id + side]; if (!ps) return 0; let mx = -Infinity, mn = Infinity; for (const p of ps) { if (p.strain > mx) mx = p.strain; if (p.strain < mn) mn = p.strain; } return mx > .005 ? mx : mn; };
+
+/* markers */
+const MARK = {};
+for (const [n, v] of Object.entries(A.marks)) { let bn = A.markBone[n]; if (!B[bn]) bn = bn.replace(/[LR]$/, ''); MARK[n] = {obj: B[bn], v: V(...v).sub(B[bn].getWorldPosition(V(0,0,0)))}; }
+const DEFAULT_GROUND = Object.keys(MARK).filter(n => !/elbow|pubis|sternum|forehead/.test(n));
+const tmpV = V(0,0,0);
+function minY(spec) { let m = Infinity; for (const n of (spec || DEFAULT_GROUND)) { const k = MARK[n]; if (!k) continue; tmpV.copy(k.v); k.obj.localToWorld(tmpV); if (tmpV.y < m) m = tmpV.y; } return m; }
+
+/* apply pose */
+function applyState() {
+  root.rotation.set(state.pitch*DEG, state.yaw*DEG, 0);
+  B.chest.rotation.set(state.spineFlex*DEG, 0, state.spineSide*DEG);
+  B.neck.rotation.set(state.neckFlex*DEG, 0, state.neckSide*DEG);
+  for (const s of ['L','R']) {
+    const sx = s === 'L' ? 1 : -1, l = state[s];
+    B['hip'+s].rotation.set(-l.hipFlex*DEG, sx*l.hipRot*DEG, sx*l.hipAbd*DEG);
+    B['knee'+s].rotation.set(l.knee*DEG, 0, 0);
+    B['ankle'+s].rotation.set(-l.ankle*DEG, 0, 0);
+    B['shoulder'+s].rotation.set(-l.shFlex*DEG, -sx*l.shHoriz*DEG, sx*l.shAbd*DEG);
+    B['elbow'+s].rotation.set(-l.elbow*DEG, 0, 0);
+    B['wrist'+s].rotation.set(l.wrist*DEG, 0, 0);
+  }
+  root.updateMatrixWorld(true);
+}
+function clampState(s) {
+  for (const k of BODY) s[k] = clamp(+s[k] || 0, ROM[k][0], ROM[k][1]);
+  for (const side of ['L','R']) for (const k of [...LEG, ...ARM]) s[side][k] = clamp(+s[side][k] || 0, ROM[k][0], ROM[k][1]);
+  return s;
+}
+applyState(); measure(); for (const p of parts) if (p.kind === 'm') { p.rest = p.len || 1; p.strain = 0; }
+
+/* ================= pose control ================= */
+let groundSpec = null, tween = null, dragging = null, active = null;
+let workSide = 'L', selected = null, hovered = null, mode = 'targets', stateDirty = true;
+function poseFor(st, side) {
+  const W = side, O = side === 'L' ? 'R' : 'L', s = neutral(), b = st.body || {};
+  for (const k of BODY) if (k in b) s[k] = b[k];
+  if (b.sideAway) s.spineSide = b.sideAway * (W === 'L' ? 1 : -1);
+  if (b.neckAway) s.neckSide = b.neckAway * (W === 'L' ? 1 : -1);
+  if (st.both) { Object.assign(s.L, st.both); Object.assign(s.R, st.both); }
+  Object.assign(s[W], st.W || {}); Object.assign(s[O], st.O || {});
+  return {state: clampState(s), ground: st.ground ? st.ground.map(n => n.replace('W', W).replace('O', O)) : null};
+}
+function animateTo(target, ground, dur = 1100) {
+  if (tween) tween.done();
+  return new Promise(res => { tween = {from: cloneState(state), to: target, t0: performance.now(), dur: reduced ? 1 : dur, gFrom: groundSpec, gTo: ground, done: res}; });
+}
+function demonstrate(id, side) {
+  const st = SBYID[id]; if (!st) return Promise.reject(new Error('Unknown stretch ' + id));
+  side = side === 'R' ? 'R' : 'L';
+  active = {id, side: st.sided ? side : null};
+  const p = poseFor(st, side);
+  renderLibrary(); renderInspector(); if (mode !== 'targets') setMode('targets'); paintDirty = true;
+  return animateTo(p.state, p.ground);
+}
+function resetPose() { active = null; renderLibrary(); renderInspector(); paintDirty = true; return animateTo(neutral(), null); }
+
+/* ================= colouring ================= */
+const C = { base:new THREE.Color('#b0453c'), dim:new THREE.Color('#8c5650'), primary:new THREE.Color('#f29a12'), secondary:new THREE.Color('#e9c46f'),
+  pain:new THREE.Color('#d8326a'), cool:new THREE.Color('#5068b4'), hot:new THREE.Color('#ffc93c'), white:new THREE.Color('#ffffff'), bone:new THREE.Color().setRGB(BONE_RGB[0]/255, BONE_RGB[1]/255, BONE_RGB[2]/255) };
+// vertex colours are read as linear, so convert our sRGB swatches once
+const lin = c => c.clone().convertSRGBToLinear();
+const LC = Object.fromEntries(Object.entries(C).map(([k, v]) => [k, lin(v)]));
+let paintDirty = true;
+for (const p of parts) if (p.kind === 'b') writeColor(p, LC.bone);
+for (const m of chunkMeshes) if (m.userData.kind === 'b') m.userData.col.needsUpdate = true;
+function roleOf(p) {
+  if (!active || !p.cur) return null;
+  const st = SBYID[active.id];
+  if (active.side && sideOf(p) !== active.side) return null;
+  if (st.primary.includes(p.cur)) return 'primary';
+  if (st.secondary.includes(p.cur)) return 'secondary';
+  return null;
+}
+function inPain(p) {
+  if (!pain.region || p.kind !== 'm') return false;
+  if (p.region !== pain.region) return false;
+  return pain.side === 'B' || sideOf(p) === pain.side || sideOf(p) === 'B';
+}
+const tc = new THREE.Color();
+function paint() {
+  const dirty = new Set();
+  for (const p of parts) {
+    if (p.kind !== 'm') { if (p === selected || p === hovered || p.wasHi) { const c = p === selected ? tc.copy(LC.bone).lerp(LC.white, .1).lerp(LC.primary, .35) : p === hovered ? tc.copy(LC.bone).lerp(LC.primary, .18) : tc.copy(LC.bone); writeColor(p, c); dirty.add(p.chunk); p.wasHi = p === selected || p === hovered; } continue; }
+    let c;
+    if (mode === 'length') { const s = clamp(p.strain/.18, -1, 1); c = tc.copy(LC.base).lerp(s > 0 ? LC.hot : LC.cool, Math.abs(s)); }
+    else {
+      const role = roleOf(p);
+      if (role === 'primary') c = tc.copy(LC.primary);
+      else if (role === 'secondary') c = tc.copy(LC.secondary);
+      else if (inPain(p)) c = tc.copy(LC.pain);
+      else c = tc.copy(active ? LC.dim : LC.base);
+    }
+    if (mode === 'length' && inPain(p)) c.lerp(LC.pain, .45);
+    if (p === selected) c.lerp(LC.white, .45); else if (p === hovered) c.lerp(LC.white, .22);
+    writeColor(p, c); dirty.add(p.chunk);
+  }
+  for (const ci of dirty) chunkMeshes[ci].userData.col.needsUpdate = true;
+}
+function writeColor(p, c) {
+  const arr = chunkMeshes[p.chunk].userData.col.array, r = Math.round(c.r*255), g = Math.round(c.g*255), b = Math.round(c.b*255);
+  for (let v = p.v[0], e = p.v[0] + p.v[1]; v < e; v++) { arr[v*3] = r; arr[v*3+1] = g; arr[v*3+2] = b; }
+}
+
+/* ================= picking ================= */
+const pickTarget = new THREE.WebGLRenderTarget(1, 1); const pickBuf = new Uint8Array(4);
+const handles = [];
+function gpuPick(cx, cy) {
+  const r = canvas.getBoundingClientRect(), dpr = renderer.getPixelRatio();
+  const W = Math.floor(r.width*dpr), H = Math.floor(r.height*dpr), x = Math.floor((cx - r.left)*dpr), y = Math.floor((cy - r.top)*dpr);
+  if (x < 0 || y < 0 || x >= W || y >= H) return null;
+  const hidden = [floorGroup, pin, ...handles].filter(o => o.visible); hidden.forEach(o => o.visible = false);
+  for (const m of chunkMeshes) { m.geometry.setAttribute('color', m.userData.pick); m.material = pickMat; }
+  const castOld = renderer.shadowMap.enabled; renderer.shadowMap.enabled = false;
+  camera.setViewOffset(W, H, x, y, 1, 1);
+  renderer.setRenderTarget(pickTarget); renderer.setClearColor(0, 0); renderer.clear(); renderer.render(scene, camera);
+  renderer.readRenderTargetPixels(pickTarget, 0, 0, 1, 1, pickBuf);
+  renderer.setRenderTarget(null); camera.clearViewOffset(); renderer.shadowMap.enabled = castOld;
+  for (const m of chunkMeshes) { m.geometry.setAttribute('color', m.userData.col); m.material = m.userData.kind === 'm' ? muscleMat : boneMat; }
+  hidden.forEach(o => o.visible = true);
+  const id = pickBuf[0] + (pickBuf[1] << 8) + (pickBuf[2] << 16) - 1;
+  return id >= 0 && parts[id] ? parts[id] : null;
+}
+
+/* handles */
+const handleGeo = new THREE.SphereGeometry(.026, 20, 14);
+for (const s of ['L','R']) {
+  const f = new THREE.Mesh(handleGeo, new THREE.MeshBasicMaterial({color:'#f29a12', depthTest:false, transparent:true, opacity:.95})); f.renderOrder = 10; f.userData.handle = {limb:'leg', side:s}; B['ankle'+s].add(f); handles.push(f);
+  const h = new THREE.Mesh(handleGeo, new THREE.MeshBasicMaterial({color:'#f29a12', depthTest:false, transparent:true, opacity:.95})); h.renderOrder = 10; h.userData.handle = {limb:'arm', side:s}; B['wrist'+s].add(h); handles.push(h);
+}
+/* pain pin */
+const pin = (() => {
+  const cv = document.createElement('canvas'); cv.width = cv.height = 128; const g = cv.getContext('2d');
+  const gr = g.createRadialGradient(64,64,4,64,64,62); gr.addColorStop(0,'rgba(255,80,130,1)'); gr.addColorStop(.25,'rgba(230,40,100,.9)'); gr.addColorStop(.6,'rgba(230,40,100,.25)'); gr.addColorStop(1,'rgba(230,40,100,0)');
+  g.fillStyle = gr; g.fillRect(0,0,128,128); g.fillStyle = '#fff'; g.beginPath(); g.arc(64,64,9,0,Math.PI*2); g.fill();
+  const t = new THREE.CanvasTexture(cv); t.encoding = THREE.sRGBEncoding;
+  const s = new THREE.Sprite(new THREE.SpriteMaterial({map:t, depthTest:false, transparent:true})); s.scale.set(.09, .09, 1); s.renderOrder = 11; return s;
+})();
+pin.visible = false;
+function placePin(part, clientX, clientY) {
+  if (!part) { pin.visible = false; return; }
+  let best = null, bd = Infinity, bq = null;
+  const r = canvas.getBoundingClientRect(), sp = V(0,0,0);
+  const pts = part.kind === 'm' ? part.probes.map((q, i) => [q, part.pv[i]]) : [[[0,0,0,part.bone,part.bone,1], null]];
+  if (part.kind !== 'm') { const b = B[A.bones[part.bone]]; b.add(pin); pin.position.set(0, 0, 0); pin.visible = true; return; }
+  for (const [q, src] of pts) { skinPoint(q, src, sp); const s = sp.clone().project(camera); const dx = (s.x*.5+.5)*r.width + r.left - clientX, dy = (-s.y*.5+.5)*r.height + r.top - clientY; const d = dx*dx + dy*dy; if (d < bd) { bd = d; best = sp.clone(); bq = q; } }
+  const bone = B[A.bones[bq[3]]]; bone.add(pin); pin.position.copy(bone.worldToLocal(best)); pin.visible = true;
+}
+
+/* pointer */
+const ray = new THREE.Raycaster(), ndc = new THREE.Vector2(), plane = new THREE.Plane(), hit = V(0,0,0);
+function setRay(e) { const r = canvas.getBoundingClientRect(); ndc.set((e.clientX - r.left)/r.width*2 - 1, -((e.clientY - r.top)/r.height)*2 + 1); ray.setFromCamera(ndc, camera); }
+let down = null, locating = false, hoverTimer = 0;
+canvas.addEventListener('pointerdown', e => {
+  setRay(e);
+  const h = !locating && ray.intersectObjects(handles, false)[0];
+  if (h) {
+    controls.enabled = false; e.stopImmediatePropagation(); e.preventDefault();
+    const info = h.object.userData.handle, parent = info.limb === 'leg' ? B.pelvis : B.chest;
+    const n = V(1,0,0).transformDirection(parent.matrixWorld), p = V(0,0,0); h.object.getWorldPosition(p);
+    plane.setFromNormalAndCoplanarPoint(n, p);
+    if (tween) { tween.done(); tween = null; }
+    dragging = {...info, parent}; canvas.setPointerCapture(e.pointerId); return;
+  }
+  down = {x: e.clientX, y: e.clientY};
+}, {capture: true});
+canvas.addEventListener('pointermove', e => {
+  if (dragging) { setRay(e); if (ray.ray.intersectPlane(plane, hit)) solveIK(dragging, dragging.parent.worldToLocal(hit.clone())); return; }
+  const now = performance.now(); if (now - hoverTimer < 70 || e.buttons) return; hoverTimer = now; hoverAt(e);
+});
+canvas.addEventListener('pointerup', e => {
+  if (dragging) { dragging = null; controls.enabled = true; return; }
+  if (down && Math.hypot(e.clientX - down.x, e.clientY - down.y) < 5) {
+    const p = gpuPick(e.clientX, e.clientY);
+    if (locating) { if (p && p.region) { setPainRegion(p.region, sideOf(p), p, e.clientX, e.clientY); } else flashHint('Tap a muscle or bone on the body.'); }
+    else select(p);
+  }
+  down = null;
+});
+canvas.addEventListener('pointerleave', () => { if (!dragging) { if (hovered) { hovered = null; paintDirty = true; } $('#tip').hidden = true; } });
+function hoverAt(e) {
+  setRay(e); const tip = $('#tip');
+  const h = !locating && ray.intersectObjects(handles, false)[0];
+  let p = null;
+  if (h) { canvas.style.cursor = 'grab'; tip.hidden = false; tip.textContent = `Drag ${h.object.userData.handle.side === 'L' ? 'left' : 'right'} ${h.object.userData.handle.limb === 'leg' ? 'foot' : 'hand'}`; }
+  else {
+    p = gpuPick(e.clientX, e.clientY);
+    if (p) { canvas.style.cursor = locating ? 'crosshair' : 'pointer'; tip.hidden = false;
+      const side = p.side === 'l' ? ' (left)' : p.side === 'r' ? ' (right)' : '';
+      tip.textContent = locating ? `${p.region ? RBYID[p.region].name : p.name}${side}` : `${p.cur ? mname(p.cur) + ' · ' : ''}${p.name}${side}${p.kind === 'm' ? ' ' + fmtPct(p.strain) : ''}`; }
+    else { canvas.style.cursor = locating ? 'crosshair' : ''; tip.hidden = true; }
+  }
+  if (p !== hovered) { hovered = p; paintDirty = true; }
+  const r = stage.getBoundingClientRect(); tip.style.left = (e.clientX - r.left) + 'px'; tip.style.top = (e.clientY - r.top) + 'px';
+}
+function solveIK(d, p) {
+  const l = state[d.side];
+  if (d.limb === 'leg') {
+    const hip = B['hip'+d.side].position, c = Math.cos(l.hipAbd*DEG);
+    const L1 = LEN.thigh*c, L2 = LEN.shin*c, dy = p.y - hip.y, dz = p.z - hip.z;
+    const dist = clamp(Math.hypot(dy, dz), .08, L1 + L2 - 1e-4), phi = Math.atan2(dz, -dy);
+    const inner = Math.acos(clamp((L1*L1 + L2*L2 - dist*dist)/(2*L1*L2), -1, 1));
+    const a = Math.acos(clamp((L1*L1 + dist*dist - L2*L2)/(2*L1*dist), -1, 1));
+    l.hipFlex = clamp((phi + a - REST.thigh)/DEG, ...ROM.hipFlex);
+    l.knee = clamp((REST.shin - REST.thigh + Math.PI - inner)/DEG, ...ROM.knee);
+  } else {
+    const sh = B['shoulder'+d.side].position, c = Math.cos(Math.min(l.shAbd, 80)*DEG);
+    const L1 = LEN.upper*c, L2 = LEN.fore*c, dy = p.y - sh.y, dz = p.z - sh.z;
+    const dist = clamp(Math.hypot(dy, dz), .06, L1 + L2 - 1e-4);
+    let phi = Math.atan2(dz, -dy); if (phi < -100*DEG) phi += 2*Math.PI;
+    const inner = Math.acos(clamp((L1*L1 + L2*L2 - dist*dist)/(2*L1*L2), -1, 1));
+    const a = Math.acos(clamp((L1*L1 + dist*dist - L2*L2)/(2*L1*dist), -1, 1));
+    l.shFlex = clamp((phi - a - REST.upper)/DEG, ...ROM.shFlex);
+    l.elbow = clamp((Math.PI - inner - (REST.fore - REST.upper))/DEG, ...ROM.elbow);
+  }
+  stateDirty = true;
+}
+let hintT = 0;
+function flashHint(t) { const h = $('#hint'); h.textContent = t; clearTimeout(hintT); hintT = setTimeout(setHint, 2600); }
+function setHint() { $('#hint').textContent = locating ? 'Tap where it hurts. Drag to orbit.' : 'Drag to orbit · drag amber handles to pose · click a muscle to inspect'; }
+
+/* ================= view, mode, layers ================= */
+let camGoal = null, musclesVisible = true;
+const VIEWS = {front: V(0,.15,3.6), side: V(3.6,.15,0), back: V(0,.15,-3.6)};
+document.querySelectorAll('#views button').forEach(b => b.onclick = () => { camGoal = VIEWS[b.dataset.v]; document.querySelectorAll('#views button').forEach(x => x.setAttribute('aria-pressed', x === b)); });
+controls.addEventListener('start', () => { camGoal = null; document.querySelectorAll('#views button').forEach(x => x.setAttribute('aria-pressed', 'false')); });
+function setMode(m) { mode = m; document.querySelectorAll('#modes button').forEach(x => x.setAttribute('aria-pressed', x.dataset.m === m)); renderLegend(); paintDirty = true; }
+document.querySelectorAll('#modes button').forEach(b => b.onclick = () => setMode(b.dataset.m));
+$('#lay-sk').onclick = e => { const on = e.currentTarget.getAttribute('aria-pressed') !== 'true'; e.currentTarget.setAttribute('aria-pressed', on); chunkMeshes.forEach(m => { if (m.userData.kind === 'b') m.visible = on; }); };
+$('#lay-mu').onclick = e => { musclesVisible = e.currentTarget.getAttribute('aria-pressed') !== 'true'; e.currentTarget.setAttribute('aria-pressed', musclesVisible); chunkMeshes.forEach(m => { if (m.userData.kind === 'm') m.visible = musclesVisible; }); };
+$('#opac').oninput = e => { const o = e.target.value/100; muscleMat.opacity = o; muscleMat.depthWrite = o > .95; };
+muscleMat.opacity = 1;
+
+/* ================= UI ================= */
+function renderLibrary() {
+  $('#lib').innerHTML = STRETCHES.map(s => {
+    const on = active && active.id === s.id;
+    return `<button class="stretch${on ? ' on' : ''}" data-id="${s.id}"><b>${esc(s.name)}</b><span class="area">${esc(s.area)}</span><span class="tag">${s.sided ? (on && active.side ? (active.side === 'L' ? 'Left' : 'Right') : 'One side') : 'Both'}</span></button>`;
+  }).join('');
+  $('#lib').querySelectorAll('.stretch').forEach(b => b.onclick = () => demonstrate(b.dataset.id, workSide));
+}
+for (const s of ['L','R']) $('#side-'+s).onclick = () => {
+  workSide = s; $('#side-L').setAttribute('aria-pressed', s === 'L'); $('#side-R').setAttribute('aria-pressed', s === 'R');
+  if (active && SBYID[active.id].sided) demonstrate(active.id, s);
+};
+$('#reset').onclick = () => resetPose();
+const TABS = {lib:'#panel-lib', pain:'#panel-pain', joint:'#panel-joint', mus:'#panel-mus'};
+function showTab(t) { for (const u of Object.keys(TABS)) { $(TABS[u]).hidden = u !== t; $('#tab-'+u).setAttribute('aria-pressed', u === t); } if (t === 'mus') renderMuscleTable(); if (t !== 'pain') setLocating(false); }
+for (const t of Object.keys(TABS)) $('#tab-'+t).onclick = () => showTab(t);
+
+/* sliders */
+const sliderEls = [];
+(() => {
+  const groups = [['Body', null, BODY], ['Left leg','L',LEG], ['Right leg','R',LEG], ['Left arm','L',ARM], ['Right arm','R',ARM]];
+  let html = '';
+  for (const [title, side, keys] of groups) {
+    html += `<div class="label group-h">${title}</div>`;
+    for (const k of keys) { const id = `s-${side || 'B'}-${k}`, [lo, hi, label] = ROM[k];
+      html += `<div class="slider"><label for="${id}">${label}</label><output id="${id}-o"></output><input type="range" id="${id}" min="${lo}" max="${hi}" step="1" data-side="${side || ''}" data-k="${k}"></div>`; }
+  }
+  $('#sliders').innerHTML = html;
+  $('#sliders').querySelectorAll('input').forEach(inp => { sliderEls.push(inp); inp.addEventListener('input', () => {
+    if (tween) { tween.done(); tween = null; }
+    const {side, k} = inp.dataset; if (side) state[side][k] = +inp.value; else state[k] = +inp.value; stateDirty = true; }); });
+})();
+function syncSliders() { for (const inp of sliderEls) { const {side, k} = inp.dataset; const v = Math.round(side ? state[side][k] : state[k]); if (document.activeElement !== inp) inp.value = v; document.getElementById(inp.id + '-o').textContent = `${v}°`; } }
+
+/* muscle table */
+const fmtPct = s => `${s >= 0 ? '+' : '−'}${Math.abs(s*100).toFixed(1)}%`;
+function barHTML(id, side) {
+  const s = curStrain(id, side), w = clamp(Math.abs(s)/.25, 0, 1)*50;
+  return `<button class="bar" data-cur="${id}" data-side="${side}" aria-label="${esc(mname(id))} ${side === 'L' ? 'left' : 'right'}"><i><s class="${s < 0 ? 'neg' : ''}" style="${s < 0 ? `right:50%;left:auto;width:${w}%` : `width:${w}%`}"></s></i><span>${fmtPct(s)}</span></button>`;
+}
+function renderMuscleTable() {
+  if ($('#panel-mus').hidden) return;
+  const rows = MUSCLES.map(d => ({d, l: curStrain(d.id, 'L'), r: curStrain(d.id, 'R')})).sort((a, b) => Math.max(b.l, b.r) - Math.max(a.l, a.r));
+  $('#mrows').innerHTML = rows.map(r => `<tr><td class="nm" data-cur="${r.d.id}" data-side="${r.l >= r.r ? 'L' : 'R'}">${esc(r.d.name)}</td><td>${barHTML(r.d.id, 'L')}</td><td>${barHTML(r.d.id, 'R')}</td></tr>`).join('');
+  $('#mrows').querySelectorAll('[data-cur]').forEach(el => el.onclick = () => selectCur(el.dataset.cur, el.dataset.side));
+}
+function selectCur(id, side) { const ps = CUR_PARTS[id + side]; if (ps) select(ps.reduce((a, b) => b.v[1] > a.v[1] ? b : a)); }
+function select(p) { selected = p || null; paintDirty = true; renderInspector(); }
+
+/* inspector */
+function stretchCard() {
+  const st = SBYID[active.id];
+  const sideTxt = active.side ? (active.side === 'L' ? 'Left side' : 'Right side') : 'Both sides';
+  const chip = (id, cls) => `<button class="chip ${cls}" data-cur="${id}" data-side="${active.side || 'L'}">${esc(mname(id))}</button>`;
+  const ss = stretchStatus(st.id);
+  const warn = ss && ss.status !== 'ok' ? `<div class="gate" style="background:${ss.status === 'caution' ? 'var(--warn-soft)' : 'var(--pain-soft)'}"><b>${ss.status === 'caution' ? 'Use caution for this person' : ss.status === 'gated' ? 'Get checked before stretching' : 'Not suggested for this person'}</b><ul>${ss.reasons.map(r => `<li>${esc(r)}</li>`).join('')}</ul></div>` : '';
+  return `<div class="card"><div class="label">Demonstrating · ${sideTxt}</div><h2>${esc(st.name)}</h2><div class="sub">${esc(st.area)} · hold ${esc(st.hold)}</div>
+    ${warn}<div class="chips">${st.primary.map(id => chip(id, 'p')).join('')}${st.secondary.map(id => chip(id, 's')).join('')}</div>
+    <ol class="cues">${st.cues.map(c => `<li>${esc(c)}</li>`).join('')}</ol>
+    <div class="note" style="margin:0">${esc(st.watch)}${st.modelNote ? ' ' + esc(st.modelNote) : ''}</div></div>`;
+}
+function painCard() {
+  const ev = evaluatePain(); if (!ev) return '';
+  const sideTxt = pain.side === 'L' ? 'left' : pain.side === 'R' ? 'right' : 'both sides';
+  let h = `<div class="card"><div class="label">Pain · ${esc(ev.region.name)} · ${sideTxt} · not a diagnosis</div>`;
+  if (ev.gate) {
+    const head = {emergency:'Call emergency services now. Do not stretch.', urgent:'See a doctor or physiotherapist soon, ideally within a day or two, before stretching this area.', assess:'Get this checked by a physiotherapist or doctor before stretching it.'}[ev.gate.level];
+    h += `<h2>${ev.gate.level === 'emergency' ? 'This needs urgent care' : 'Get it checked first'}</h2><div class="gate"><b>${head}</b><ul>${ev.gate.reasons.map(r => `<li>${esc(r)}</li>`).join('')}</ul></div>
+      <div class="note" style="margin:0">Stretch suggestions are hidden until this is cleared.</div></div>`;
+    return h;
+  }
+  h += `<h2>Stretches that may help</h2>`;
+  if (!pain.type) h += `<div class="note" style="margin:0">Add what it feels like and the person's age in the Pain tab to tailor these.</div>`;
+  if (ev.notes.length) h += `<ul class="cues" style="font-size:12.5px;color:var(--muted)">${ev.notes.map(n => `<li>${esc(n)}</li>`).join('')}</ul>`;
+  if (!ev.ok.length) h += `<div class="note" style="margin:0">None of the library stretches suit this combination. A physiotherapist can suggest alternatives.</div>`;
+  for (const x of ev.ok) h += suggHTML(x);
+  if (ev.avoid.length) h += `<details><summary>Not suggested for this person (${ev.avoid.length})</summary><div style="display:grid;gap:6px;margin-top:6px">${ev.avoid.map(suggHTML).join('')}</div></details>`;
+  h += `<div class="note" style="margin:0">Stretch to mild tension, never into pain. Stop if the pain sharpens, spreads, or tingling starts.</div></div>`;
+  return h;
+}
+function suggHTML(x) {
+  const lbl = {ok:'Suggested', caution:'Use caution', avoid:'Avoid for now'}[x.status];
+  const side = x.st.sided ? (pain.side === 'R' ? 'R' : 'L') : 'L';
+  return `<div class="sugg"><div class="top"><b>${esc(x.st.name)}</b><span class="status ${x.status}">${lbl}</span></div><div class="why">${esc(x.why)}. Hold ${esc(x.hold)}.</div>
+    ${x.reasons.length ? `<ul>${x.reasons.map(r => `<li>${esc(r)}</li>`).join('')}</ul>` : ''}
+    ${x.status !== 'avoid' ? `<div><button class="btn sm" data-demo="${x.st.id}" data-side="${side}">Show it</button></div>` : ''}</div>`;
+}
+function muscleCard() {
+  const p = selected;
+  if (p.kind === 'b') return `<div class="card"><div class="label">Bone${p.side ? ' · ' + (p.side === 'l' ? 'Left' : 'Right') : ''}</div><h2>${esc(p.name)}</h2>${p.region ? `<div class="sub">${esc(RBYID[p.region].name)}</div>` : ''}</div>`;
+  const d = p.cur && MBYID[p.cur], role = roleOf(p), side = p.side === 'l' ? 'Left' : p.side === 'r' ? 'Right' : 'Midline';
+  let h = `<div class="card"><div class="label">${d ? esc(d.group) + ' · ' : ''}${side}${role ? ` · ${role === 'primary' ? 'Primary target' : 'Secondary'}` : ''}</div><h2>${esc(d ? d.name : p.name)}</h2>`;
+  if (d && d.name !== p.name) h += `<div class="sub">This part: ${esc(p.name)}</div>`;
+  if (d) h += `<dl class="kv"><dt>Origin</dt><dd>${esc(d.origin)}</dd><dt>Insertion</dt><dd>${esc(d.insertion)}</dd><dt>Contracts to</dt><dd>${esc(d.action)}</dd><dt>Lengthened by</dt><dd>${esc(d.lengthened)}</dd><dt>Crosses</dt><dd>${esc(d.joints)}</dd>
+      <dt>Right now</dt><dd><span class="live" id="live-len">${fmtPct(p.strain)}</span> length vs standing</dd></dl>`;
+  else h += `<dl class="kv"><dt>Area</dt><dd>${p.region ? esc(RBYID[p.region].name) : 'Not mapped'}</dd><dt>Right now</dt><dd><span class="live" id="live-len">${fmtPct(p.strain)}</span> length vs standing</dd></dl><div class="note" style="margin:0">Detailed attachments for this muscle are not in the curated atlas yet.</div>`;
+  if (p.region) h += `<div><button class="btn sm" data-painhere="1">It hurts here</button></div>`;
+  return h + '</div>';
+}
+function renderInspector() {
+  const blocks = [];
+  if (pain.region) blocks.push(painCard());
+  if (active) blocks.push(stretchCard());
+  if (selected) blocks.push(muscleCard());
+  if (!blocks.length) blocks.push(`<div class="card"><div class="label">Getting started</div><h2>Pick a stretch, or find the pain</h2>
+    <div class="sub" style="margin:0">Choose a stretch from the library to see the body move into it, with primary targets in amber. Or open the Pain tab and tap where it hurts to get stretches screened for the person's age, conditions and warning signs.</div></div>`);
+  $('#inspector').innerHTML = blocks.join('<div class="divider"></div>');
+  $('#inspector').querySelectorAll('.chip[data-cur]').forEach(c => c.onclick = () => selectCur(c.dataset.cur, c.dataset.side));
+  $('#inspector').querySelectorAll('[data-demo]').forEach(b => b.onclick = () => demonstrate(b.dataset.demo, b.dataset.side));
+  const ph = $('#inspector [data-painhere]'); if (ph) ph.onclick = () => { showTab('pain'); setPainRegion(selected.region, sideOf(selected), selected); };
+}
+function renderLegend() {
+  $('#legend').innerHTML = mode === 'targets'
+    ? `<div class="row"><span class="dot" style="background:#f29a12"></span>Primary target</div><div class="row"><span class="dot" style="background:#e9c46f"></span>Secondary</div>${pain.region ? '<div class="row"><span class="dot" style="background:#d8326a"></span>Pain area</div>' : ''}`
+    : `<div class="row"><span class="label">Shorter</span><span class="grad"></span><span class="label">Longer</span></div><div class="label" style="text-transform:none;letter-spacing:0">Scale ±18% vs standing</div>`;
+}
+
+/* pain tab */
+function pickGroup(el, items, get, set) {
+  el.innerHTML = items.map(([v, l]) => `<button type="button" data-v="${v}" aria-pressed="${get() === v}">${esc(l)}</button>`).join('');
+  el.querySelectorAll('button').forEach(b => b.onclick = () => { set(get() === b.dataset.v && el.dataset.toggle ? null : b.dataset.v); pickGroup(el, items, get, set); });
+}
+function renderPainForm() {
+  pickGroup($('#regions'), REGIONS.map(r => [r.id, r.name]), () => pain.region, v => setPainRegion(v, pain.side, null));
+  $('#intake').hidden = !pain.region;
+  if (!pain.region) return;
+  pickGroup($('#p-side'), [['L','Left'],['R','Right'],['B','Both or centre']], () => pain.side, v => { pain.side = v; painChanged(); });
+  $('#p-type').dataset.toggle = '1';
+  pickGroup($('#p-type'), PAIN_TYPES, () => pain.type, v => { pain.type = v; painChanged(); });
+  pickGroup($('#p-age'), AGES, () => pain.age, v => { pain.age = v; painChanged(); });
+  $('#p-cond').innerHTML = CONDITIONS.map(c => `<label><input type="checkbox" id="c-${c.id}" data-c="${c.id}" ${pain.conds.has(c.id) ? 'checked' : ''}>${esc(c.label)}</label>`).join('');
+  $('#p-cond').querySelectorAll('input').forEach(i => i.onchange = () => { i.checked ? pain.conds.add(i.dataset.c) : pain.conds.delete(i.dataset.c); painChanged(); });
+  const r = RBYID[pain.region];
+  $('#p-flags').innerHTML = r.flags.map(([t], i) => `<label><input type="checkbox" id="f-${r.id}-${i}" data-f="${i}" ${pain.flags.has(i) ? 'checked' : ''}>${esc(t)}</label>`).join('');
+  $('#p-flags').querySelectorAll('input').forEach(i => i.onchange = () => { i.checked ? pain.flags.add(+i.dataset.f) : pain.flags.delete(+i.dataset.f); painChanged(); });
+}
+$('#p-int').oninput = e => { pain.intensity = +e.target.value; $('#p-int-o').textContent = `${pain.intensity} / 10`; painChanged(); };
+function painChanged() { paintDirty = true; renderInspector(); renderLegend(); }
+function setPainRegion(region, side, part, cx, cy) {
+  if (region !== pain.region) pain.flags = new Set();
+  pain.region = region; pain.side = side || 'B';
+  if (region) {
+    let pp = part;
+    if (!pp) { const r = RBYID[region]; pp = parts.find(p => p.kind === 'm' && p.region === region && (pain.side === 'B' || sideOf(p) === pain.side)); }
+    if (pp && pp.kind === 'm' && cx == null) { const r = canvas.getBoundingClientRect(); const mid = pp.probes[Math.floor(pp.probes.length/2)]; const sp = V(0,0,0); skinPoint(mid, pp.pv[Math.floor(pp.probes.length/2)], sp); const s = sp.project(camera); cx = (s.x*.5+.5)*r.width + r.left; cy = (-s.y*.5+.5)*r.height + r.top; }
+    placePin(pp, cx, cy);
+  } else placePin(null);
+  setLocating(false); renderPainForm(); painChanged();
+}
+function setLocating(on) { locating = on; $('#locate').setAttribute('aria-pressed', on); stage.classList.toggle('locating', on); setHint(); }
+$('#locate').onclick = () => setLocating(!locating);
+$('#pain-clear').onclick = () => { pain = {region:null, side:'B', type:null, intensity:3, age:pain.age, conds:new Set(), flags:new Set()}; $('#p-int').value = 3; $('#p-int-o').textContent = '3 / 10'; setPainRegion(null); };
+
+/* ================= loop ================= */
+let lastUi = 0, lastPaint = 0;
+const ease = k => k < .5 ? 4*k*k*k : 1 - Math.pow(-2*k + 2, 3)/2;
+const pelvisW = V(0,0,0), tgt = V(0,0,0);
+function frame(t) {
+  let finished = null, gY = null, moved = stateDirty || !!tween || !!dragging;
+  if (tween) {
+    const k = clamp((t - tween.t0)/tween.dur, 0, 1), e = ease(k), f = tween.from, to = tween.to;
+    for (const key of BODY) state[key] = f[key] + (to[key] - f[key])*e;
+    for (const s of ['L','R']) for (const key of [...LEG, ...ARM]) state[s][key] = f[s][key] + (to[s][key] - f[s][key])*e;
+    applyState();
+    const a = minY(tween.gFrom), b = minY(tween.gTo); gY = a + (b - a)*e;
+    if (k >= 1) { groundSpec = tween.gTo; finished = tween.done; tween = null; }
+    stateDirty = true;
+  } else applyState();
+  if (!dragging) {
+    const m = gY ?? minY(groundSpec), want = root.position.y - m;
+    const ny = gY !== null ? want : root.position.y + (want - root.position.y)*.3;
+    if (Math.abs(ny - root.position.y) > 1e-5) moved = true;
+    root.position.y = ny; root.updateMatrixWorld(true);
+  }
+  if (moved) measure();
+  if (paintDirty || (mode === 'length' && moved && t - lastPaint > 90)) { paint(); paintDirty = false; lastPaint = t; }
+  B.pelvis.getWorldPosition(pelvisW);
+  tgt.set(pelvisW.x, Math.max(.3, pelvisW.y), pelvisW.z);
+  controls.target.lerp(tgt, .08);
+  if (camGoal) { const goal = controls.target.clone().add(camGoal); camera.position.lerp(goal, reduced ? 1 : .12); if (camera.position.distanceTo(goal) < .01) camGoal = null; }
+  controls.update();
+  renderer.render(scene, camera);
+  if (stateDirty) { syncSliders(); stateDirty = false; }
+  if (t - lastUi > 250) { lastUi = t; renderMuscleTable(); const el = document.getElementById('live-len'); if (el && selected) el.textContent = fmtPct(selected.strain); }
+  if (finished) finished();
+  requestAnimationFrame(frame);
+}
+renderLibrary(); renderInspector(); renderLegend(); renderPainForm();
+camGoal = V(1.9, .2, 3.2);
+$('#loader').hidden = true;
+requestAnimationFrame(frame);
+
+/* ================= instructor ================= */
+const msgs = $('#msgs'), q = $('#q'), sendBtn = $('#send'), stopBtn = $('#stop');
+const STARTERS = ['Show me a stretch for tight hamstrings', 'My client has lower back pain and is 70. What is safe?', 'What happens to my lats when I raise my arm overhead?', 'Why does bending the knee change a calf stretch?'];
+$('#starters').innerHTML = STARTERS.map(s => `<button type="button">${esc(s)}</button>`).join('');
+$('#starters').querySelectorAll('button').forEach(b => b.onclick = () => { q.value = b.textContent; ask(); });
+q.addEventListener('keydown', e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); ask(); } });
+$('#composer').addEventListener('submit', e => { e.preventDefault(); ask(); });
+function bubble(cls, text) { const d = document.createElement('div'); d.className = 'msg ' + cls; d.textContent = text; msgs.appendChild(d); msgs.scrollTop = msgs.scrollHeight; return d; }
+function addAct(b, label) { let a = b.querySelector('.acts'); if (!a) { a = document.createElement('div'); a.className = 'acts'; b.appendChild(a); } const s = document.createElement('span'); s.className = 'act'; s.textContent = label; a.appendChild(s); msgs.scrollTop = msgs.scrollHeight; }
+function setBubbleText(b, text) { const acts = b.querySelector('.acts'); b.textContent = text; if (acts) b.appendChild(acts); msgs.scrollTop = msgs.scrollHeight; }
+
+let aiMode = 'pending', sampleFn = null;
+const samplePromise = (window.claude && window.claude.use ? window.claude.use('sample') : Promise.resolve(null)).catch(() => null)
+  .then(async fn => { if (fn) { const lim = await fn.limits().catch(() => null); if (lim && lim.tools) { sampleFn = fn; aiMode = 'claude'; } else aiMode = 'library'; } else aiMode = 'library';
+    $('#ai-status').textContent = aiMode === 'claude' ? 'Claude · uses your usage' : 'Library mode'; return sampleFn; });
+bubble('a', 'Ask me for a stretch, about what a movement does to the muscles, or about a pain. I move the model to show you.');
+
+function measured(n = 5) {
+  const arr = MUSCLES.flatMap(m => ['L','R'].map(s => ({muscle: m.name, side: s === 'L' ? 'left' : 'right', change_pct: +(curStrain(m.id, s)*100).toFixed(1)}))).sort((a, b) => b.change_pct - a.change_pct);
+  return {most_lengthened: arr.slice(0, n).filter(x => x.change_pct > .5), most_shortened: arr.slice(-3).reverse().filter(x => x.change_pct < -.5)};
+}
+function painSummary() {
+  const ev = evaluatePain(); if (!ev) return null;
+  return {area: ev.region.name, side: pain.side, feels_like: (PAIN_TYPES.find(p => p[0] === pain.type) || [, 'not given'])[1], intensity_0_10: pain.intensity,
+    age_band: AGES.find(a => a[0] === pain.age)[1], conditions: [...pain.conds].map(c => CBYID[c].label), warning_signs_ticked: [...pain.flags].map(i => ev.region.flags[i][0]),
+    gate: ev.gate ? {level: ev.gate.level, reasons: ev.gate.reasons} : null, notes: ev.notes,
+    suggested: ev.gate ? [] : ev.ok.map(x => ({stretch_id: x.st.id, name: x.st.name, status: x.status, reasons: x.reasons, hold: x.hold})),
+    avoid: ev.gate ? [] : ev.avoid.map(x => ({stretch_id: x.st.id, name: x.st.name, reasons: x.reasons}))};
+}
+const sideArg = v => /right|^r$/i.test(String(v || '')) ? 'R' : 'L';
+const TOOLS = bubbleRef => [
+  {name:'demonstrate_stretch', description:'Move the 3D body into a library stretch and highlight its targets. Refuses stretches the pain screen marks as avoid or gated. Returns targets, cues and measured length changes.',
+   inputSchema:{type:'object', properties:{stretch_id:{type:'string', enum:STRETCHES.map(s => s.id)}, side:{type:'string', enum:['left','right']}}, required:['stretch_id']},
+   async execute(input) {
+     const st = SBYID[String(input.stretch_id)]; if (!st) throw new Error('Not in the library. Valid ids: ' + STRETCHES.map(s => s.id).join(', '));
+     const ss = stretchStatus(st.id); if (ss && (ss.status === 'avoid' || ss.status === 'gated')) throw new Error(`Blocked by the pain screen (${ss.status}): ${ss.reasons.join(' ')}`);
+     const side = sideArg(input.side); addAct(bubbleRef(), `Demonstrated · ${st.name}${st.sided ? (side === 'L' ? ' · left' : ' · right') : ''}`);
+     await demonstrate(st.id, side); const sd = st.sided ? side : 'L';
+     return {name: st.name, side: st.sided ? (side === 'L' ? 'left' : 'right') : 'both', cues: st.cues, hold: st.hold, watch_out: st.watch, caution: ss && ss.status === 'caution' ? ss.reasons : [],
+       target_changes: [...st.primary, ...st.secondary].map(id => ({muscle: mname(id), role: st.primary.includes(id) ? 'primary' : 'secondary', change_pct: +(curStrain(id, sd)*100).toFixed(1)})), measured: measured()};
+   }},
+  {name:'set_joint_angles', description:'Pose the body with joint angles in degrees (clamped to healthy ranges) to show a movement that is not a library stretch. Returns applied angles and measured length changes.',
+   inputSchema:{type:'object', properties:{from_neutral:{type:'boolean'}, body:{type:'object', properties:Object.fromEntries(BODY.filter(k => k !== 'yaw').map(k => [k, {type:'number'}]))},
+     left:{type:'object', properties:Object.fromEntries([...LEG, ...ARM].map(k => [k, {type:'number'}]))}, right:{type:'object', properties:Object.fromEntries([...LEG, ...ARM].map(k => [k, {type:'number'}]))}}},
+   async execute(input) {
+     const s = input.from_neutral === false ? cloneState(state) : neutral();
+     const b = input.body || {}; for (const k of BODY) if (b[k] != null) s[k] = Number(b[k]);
+     for (const [arg, side] of [['left','L'], ['right','R']]) { const o = input[arg] || {}; for (const k of [...LEG, ...ARM]) if (o[k] != null) s[side][k] = Number(o[k]); }
+     clampState(s); active = null; renderLibrary(); renderInspector(); setMode('length'); addAct(bubbleRef(), 'Posed the model');
+     await animateTo(s, null); return {applied:{body:Object.fromEntries(BODY.map(k => [k, s[k]])), left:s.L, right:s.R}, measured: measured()};
+   }},
+  {name:'select_muscle', description:'Highlight and open a curated muscle in the inspector. Returns its anatomy and current length change.',
+   inputSchema:{type:'object', properties:{muscle_id:{type:'string', enum:MUSCLES.map(m => m.id)}, side:{type:'string', enum:['left','right']}}, required:['muscle_id']},
+   execute(input) { const d = MBYID[String(input.muscle_id)]; if (!d) throw new Error('Unknown muscle id'); const side = sideArg(input.side); selectCur(d.id, side); addAct(bubbleRef(), `Selected · ${d.name}`);
+     return {...d, current_change_pct: +(curStrain(d.id, side)*100).toFixed(1)}; }},
+  {name:'set_pain_area', description:'Mark a pain area on the model and open the screening card. Returns the screening result: any gate (assessment needed) and suggested or avoided stretches for the current age, conditions and warning signs.',
+   inputSchema:{type:'object', properties:{region_id:{type:'string', enum:REGIONS.map(r => r.id)}, side:{type:'string', enum:['left','right','both']}}, required:['region_id']},
+   execute(input) { const r = RBYID[String(input.region_id)]; if (!r) throw new Error('Unknown region'); setPainRegion(r.id, input.side === 'left' ? 'L' : input.side === 'right' ? 'R' : 'B', null); showTab('pain'); addAct(bubbleRef(), `Marked pain · ${r.name}`); return painSummary(); }},
+  {name:'reset_pose', description:'Return the body to standing neutral.', execute() { addAct(bubbleRef(), 'Reset to standing'); return resetPose().then(() => 'ok'); }},
+];
+const RULES = `You are the movement instructor inside Stretch Atlas, a 3D anatomy model (Z-Anatomy meshes) that a gym trainer uses to teach stretching. The trainer types; you answer and drive the model with the page tools.
+Rules:
+- To show anything, call a tool. Use demonstrate_stretch for library stretches. For other movements use set_joint_angles within the ranges below, then explain from the measured result.
+- Take anatomy facts only from the data below and from tool results. If a topic is not covered, say the atlas does not cover it yet.
+- The model measures muscle LENGTH change from standing, not activation. Say "lengthened" or "shortened"; cite measured percentages rounded, as model estimates.
+- Pain: you cannot diagnose. When the trainer describes pain, call set_pain_area for the matching area, then follow its screening exactly. If it returns a gate, do not suggest or demonstrate stretches; explain the gate and advise the right level of care (emergency means call emergency services now). Never demonstrate a stretch the screen marks avoid. If the trainer mentions age, pregnancy, surgery, a replacement joint, osteoporosis, disc problems, hypermobility, arthritis, blood pressure or falls, tell them to tick it in the Pain tab so the screen accounts for it, and be conservative meanwhile.
+- Pain that is sharp, burning, numb, tingling, severe, or started with a fall, accident or pop needs assessment before stretching.
+- Plain text for a trainer, under 140 words, no headings or tables. Short "- " lists are fine.
+Angle keys (degrees). body: pitch (+ forward, -90 lies on the back, 90 face down), spineFlex, spineSide (+ right), neckFlex, neckSide (+ right). left/right: hipFlex, hipAbd, hipRot (+ external), knee, ankle (+ dorsiflexion), shFlex, shAbd, shHoriz (+ across the body), elbow, wrist (+ extension).
+Ranges: ${JSON.stringify(Object.fromEntries(Object.entries(ROM).map(([k, v]) => [k, [v[0], v[1]]])))}
+Stretch library: ${JSON.stringify(STRETCHES.map(s => ({id:s.id, name:s.name, area:s.area, one_sided:s.sided, primary:s.primary, secondary:s.secondary, tags:s.tags})))}
+Pain areas: ${JSON.stringify(REGIONS.map(r => ({id:r.id, name:r.name, muscles:r.muscles})))}
+Muscles: ${JSON.stringify(MUSCLES.map(m => ({id:m.id, name:m.name, origin:m.origin, insertion:m.insertion, contracts_to:m.action, lengthened_by:m.lengthened})))}`;
+
+const turns = []; let ctl = null;
+stopBtn.onclick = () => ctl && ctl.abort();
+function modelState() {
+  const parts2 = [active ? `showing ${SBYID[active.id].name}${active.side ? ` (${active.side === 'L' ? 'left' : 'right'})` : ''}` : 'no library stretch active'];
+  if (selected) parts2.push(`selected ${selected.cur ? mname(selected.cur) : selected.name}`);
+  const ps = painSummary(); if (ps) parts2.push('pain screen: ' + JSON.stringify(ps));
+  return `[Model state: ${parts2.join('; ')}]`;
+}
+async function ask() {
+  const text = q.value.trim(); if (!text || ctl) return;
+  q.value = ''; bubble('u', text); $('#starters').hidden = true;
+  const b = bubble('a', 'Thinking…');
+  await samplePromise;
+  if (aiMode !== 'claude') return localAnswer(text, b);
+  ctl = new AbortController(); sendBtn.hidden = true; stopBtn.hidden = false;
+  turns.push({role:'user', content:`${text}\n\n${modelState()}`});
+  const recent = turns.slice(-8); while (recent.length && recent[0].role !== 'user') recent.shift();
+  try {
+    const {text: out, truncated} = await sampleFn([{role:'user', content:RULES}, ...recent], {signal: ctl.signal, modelTier:'quick', tools: TOOLS(() => b), onText: ({text}) => setBubbleText(b, text)});
+    turns.push({role:'assistant', content: out});
+    if (truncated) bubble('err', 'The answer was cut short. Ask for less at a time.');
+  } catch (e) {
+    turns.pop(); const code = e && e.code;
+    if (['not_granted','sampling_disabled','not_declared','capability_disabled','capability_removed','tools_unavailable'].includes(code)) {
+      aiMode = 'library'; sampleFn = null; $('#ai-status').textContent = 'Library mode';
+      bubble('err', 'Claude is not available in this view, so I matched your question against the library instead.'); localAnswer(text, b);
+    } else if (code === 'cancelled') setBubbleText(b, (e.text || '') + (e.text ? '\n\n' : '') + '(stopped)');
+    else if (code === 'rate_limited') { setBubbleText(b, e.text || ''); bubble('err', 'You have reached a usage limit. Try again in a little while.'); }
+    else if (code === 'refused') { setBubbleText(b, ''); bubble('err', 'Claude declined that. Try rephrasing it as a stretching or anatomy question.'); }
+    else { setBubbleText(b, e.text || ''); bubble('err', 'The answer was interrupted. Send it again to retry.'); }
+    if (!b.textContent.trim() && !b.querySelector('.acts')) b.remove();
+  } finally { ctl = null; sendBtn.hidden = false; stopBtn.hidden = true; }
+}
+const KEYWORDS = [
+  ['overhead-triceps',['tricep']], ['wall-biceps',['bicep']], ['wrist-flexor',['wrist','forearm']], ['neck-side',['neck','upper trap']],
+  ['cross-body-shoulder',['shoulder','rotator']], ['wall-pec',['chest','pec']],
+  ['supine-hamstring',['hamstring','back of thigh','back of my thigh']], ['standing-quad',['quad','front of thigh']],
+  ['kneeling-hip-flexor',['hip flexor','psoas','front of hip']], ['figure-four',['glute','piriformis','buttock']],
+  ['wall-calf',['calf','calves','achilles']], ['kneeling-shin',['shin']], ['butterfly',['groin','adductor','inner thigh']],
+  ['crossover-hip',['outer hip','it band']], ['knee-to-chest',['lower back','low back']], ['sphinx',['abdom','stomach']], ['overhead-lat',['lat','side reach','overhead']],
+];
+const PAIN_WORDS = /pain|hurt|ache|sore|injur|strain|pulled/i;
+function localAnswer(text, b) {
+  const t = text.toLowerCase(), side = /\bright\b/.test(t) ? 'R' : 'L';
+  const hit = KEYWORDS.find(([, ws]) => ws.some(w => t.includes(w)));
+  if (hit && PAIN_WORDS.test(t)) {
+    const reg = REGION_OF[SBYID[hit[0]].primary[0]] || 'lowerBack';
+    setPainRegion(/lower back|low back/.test(t) ? 'lowerBack' : reg, /\bright\b/.test(t) ? 'R' : /\bleft\b/.test(t) ? 'L' : 'B', null); showTab('pain');
+    setBubbleText(b, 'I marked the area and opened the pain screen. Tick what it feels like, the age band, any conditions and warning signs, and the suggestions will update. Anything sharp, numb, tingling, severe or caused by an accident should be checked by a clinician before stretching.');
+    addAct(b, `Marked pain · ${RBYID[pain.region].name}`); return;
+  }
+  if (hit) {
+    const st = SBYID[hit[0]], ss = stretchStatus(st.id);
+    if (ss && (ss.status === 'avoid' || ss.status === 'gated')) { setBubbleText(b, `The pain screen rules out ${st.name.toLowerCase()} for this person: ${ss.reasons.join(' ')}`); return; }
+    demonstrate(st.id, side).then(() => {
+      setBubbleText(b, `${st.name}${st.sided ? ` (${side === 'L' ? 'left' : 'right'} side)` : ''}. Primary target: ${st.primary.map(mname).join(', ')}.\n\n${st.cues.map(c => '- ' + c).join('\n')}\n\nHold ${st.hold}. ${st.watch}`);
+      addAct(b, `Demonstrated · ${st.name}`);
+    }); return;
+  }
+  setBubbleText(b, `In library mode I can demonstrate ${STRETCHES.length} stretches. Name a body area or a muscle, or open the Pain tab to screen a specific pain.`);
+}
+if (window.__TEST__) window.__TEST__({demonstrate, parts, curStrain, minY, MARK, root, state: () => state, evaluatePain, setPain: p => Object.assign(pain, p), STRETCHES, gpuPick});
+})();
+</script>
+
+</body>
+</html>

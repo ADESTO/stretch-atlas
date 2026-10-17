@@ -1,0 +1,14 @@
+{
+  "name": "stretch-atlas-build",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "convert": "FBX2glTF --binary --input \"$ZA/MuscularSystem100.fbx\" --output muscles && FBX2glTF --binary --input \"$ZA/SkeletalSystem100.fbx\" --output skeleton",
+    "build": "node build.mjs && gzip -9 -k -c atlas.bin | base64 -w0 > ../atlas.txt"
+  },
+  "dependencies": {
+    "@gltf-transform/core": "3.10.1",
+    "fbx2gltf": "0.9.7-p1",
+    "meshoptimizer": "0.20.0"
+  }
+}
