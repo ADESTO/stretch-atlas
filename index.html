@@ -163,7 +163,25 @@ details summary{cursor:pointer;font-size:12.5px;color:var(--muted)}
 .composer{display:flex;gap:6px;padding:8px 12px 12px}
 .composer textarea{flex:1;resize:none;border:0;border-radius:10px;padding:9px 11px;background:var(--panel);min-height:40px;max-height:110px;font-size:13.5px}
 
-.tabs .seg button{padding:6px 2px;font-size:12px}
+.tabs .seg button{padding:6px 1px;font-size:11.5px}
+.ptrack{height:6px;border-radius:3px;background:var(--panel-2);overflow:hidden;margin-top:6px}
+.ptrack i{display:block;height:100%;width:0;background:var(--accent);transition:width .15s}
+.clipbox{position:relative;border-radius:10px;overflow:hidden;background:#05080a;display:grid;place-items:center;margin-top:10px}
+.clipbox video,.clipbox canvas{grid-area:1/1;max-width:100%;max-height:340px;display:block}
+.clipbox canvas{pointer-events:none}
+.clipbox .count{grid-area:1/1;font-family:var(--display);font-size:64px;color:#fff;text-shadow:0 2px 12px rgba(0,0,0,.6)}
+.src-tag.measured{background:var(--cool-soft);color:var(--cool)}
+.flag{display:flex;gap:8px;align-items:flex-start;font-size:12.5px}
+.flag b{font-weight:600}
+.reps{width:100%;border-collapse:collapse;font-size:12px;font-variant-numeric:tabular-nums}
+.reps th{text-align:left;font-weight:500;color:var(--muted);padding:4px 3px;font-family:var(--mono);font-size:10.5px;text-transform:uppercase;letter-spacing:.04em}
+.reps td{padding:4px 3px;border-top:1px solid var(--panel-2)}
+.cchart text{font-family:var(--mono);font-size:8.5px;fill:var(--muted)}
+.cchart .ttl{font-family:var(--body);font-size:10px;fill:var(--ink);font-weight:500}
+.cchart .ref{fill:none;stroke:var(--cool);stroke-width:1.3;stroke-dasharray:3 3}
+.cchart .cli{fill:none;stroke:var(--accent);stroke-width:1.8}
+.cchart .band{fill:var(--accent-soft);opacity:.8}
+.cchart .frame{fill:none;stroke:var(--panel-2)}
 .type{font-family:var(--mono);font-size:10px;letter-spacing:.04em;text-transform:uppercase;padding:1px 6px;border-radius:10px;background:var(--panel-2);color:var(--muted);white-space:nowrap}
 .type.strength{background:var(--cool-soft);color:var(--cool)}
 .type.control{background:var(--ok-soft);color:var(--ok)}
@@ -246,6 +264,7 @@ details summary{cursor:pointer;font-size:12.5px;color:var(--muted)}
     <div class="tabs"><div class="seg">
       <button id="tab-lib" aria-pressed="true">Exercises</button>
       <button id="tab-gait" aria-pressed="false">Gait</button>
+      <button id="tab-client" aria-pressed="false">Client</button>
       <button id="tab-pain" aria-pressed="false">Pain</button>
       <button id="tab-joint" aria-pressed="false">Joints</button>
       <button id="tab-mus" aria-pressed="false">Muscles</button>
@@ -270,6 +289,19 @@ details summary{cursor:pointer;font-size:12.5px;color:var(--muted)}
       <div class="fieldset"><div class="label">Mechanical effects</div><div class="effects" id="g-effects"></div></div>
       <div class="fieldset"><div class="label">Linked pain pathways</div><div class="effects" id="g-links"></div></div>
       <p class="note">Nothing here is measured from a real person. Joint angles start from approximate adult walking curves and change with the pattern and sliders. Computed values are model estimates. The model has no forces, so loads come from research and show direction only. Its rigid foot stays more flexed upward in swing than in real walking so the toes clear the floor.</p>
+    </div>
+
+    <div class="scroll" id="panel-client" hidden>
+      <p class="note" style="margin-top:0">Film the client walking or exercising and compare it with the reference. The clip is analysed on this device and is never uploaded or saved.</p>
+      <div class="checks" style="margin-top:8px"><label><input type="checkbox" id="c-consent"> The client has agreed to be filmed for this analysis.</label></div>
+      <div class="fieldset"><div class="label">What are you filming?</div><div class="pick" id="c-task"></div><ul class="cues" id="c-tips" style="font-size:12.5px;color:var(--muted);margin-top:4px"></ul></div>
+      <div class="fieldset"><div class="gp" style="padding:0"><label for="c-height">Client height, for centimetre estimates</label><output id="c-height-o">170 cm</output><input type="range" id="c-height" min="120" max="210" value="170"></div></div>
+      <div class="btnrow" style="margin-top:10px"><button class="btn primary" id="c-upload" type="button">Upload a clip</button><input type="file" id="c-file" accept="video/*" hidden><button class="btn" id="c-cam" type="button">Use camera</button><button class="btn" id="c-clear" type="button" hidden>Clear clip</button></div>
+      <p class="note" id="c-status" style="margin:8px 0 0" aria-live="polite"></p>
+      <div class="ptrack" id="c-prog-wrap" hidden><i id="c-prog"></i></div>
+      <div class="clipbox" id="c-box" hidden><video id="c-video" playsinline muted></video><canvas id="c-overlay"></canvas><div class="count" id="c-count" hidden></div></div>
+      <div class="transport" id="c-transport" hidden style="margin-top:8px"><button class="btn sm" id="c-play" type="button">Play</button><input type="range" id="c-scrub" min="0" max="1000" value="0" style="flex:1;min-width:120px;accent-color:var(--accent)" aria-label="Clip position"><label class="note" style="margin:0;display:flex;gap:6px;align-items:center"><input type="checkbox" id="c-follow" checked> 3D body follows</label></div>
+      <div id="c-results"></div>
     </div>
 
     <div class="scroll" id="panel-pain" hidden>
@@ -1026,7 +1058,7 @@ function animateTo(target, ground, dur = 1100) {
 function demonstrate(id, side) {
   const st = SBYID[id]; if (!st) return Promise.reject(new Error('Unknown stretch ' + id));
   side = side === 'R' ? 'R' : 'L';
-  stopGait(); loop = null;
+  stopGait(); loop = null; client.replay = false;
   active = {id, side: st.sided ? side : null};
   const p = poseFor(st, side);
   renderLibrary(); renderInspector(); if (mode !== 'targets') setMode('targets'); paintDirty = true;
@@ -1034,7 +1066,7 @@ function demonstrate(id, side) {
   if (st.B) { const q = poseFor(specB(st), side); done.then(() => { if (active && active.id === id && !tween && !gait.on) { loop = {a: p, b: q, t0: performance.now(), period: st.period || 3200, paused: false}; renderInspector(); } }); }
   return done;
 }
-function resetPose() { stopGait(); loop = null; active = null; renderLibrary(); renderInspector(); paintDirty = true; return animateTo(neutral(), null); }
+function resetPose() { stopGait(); loop = null; client.replay = false; active = null; renderLibrary(); renderInspector(); paintDirty = true; return animateTo(neutral(), null); }
 
 /* ================= colouring ================= */
 const C = { base:new THREE.Color('#b0453c'), dim:new THREE.Color('#8c5650'), primary:new THREE.Color('#f29a12'), secondary:new THREE.Color('#e9c46f'),
@@ -1142,7 +1174,7 @@ canvas.addEventListener('pointerdown', e => {
     const n = V(1,0,0).transformDirection(parent.matrixWorld), p = V(0,0,0); h.object.getWorldPosition(p);
     plane.setFromNormalAndCoplanarPoint(n, p);
     if (tween) { tween.done(); tween = null; }
-    stopGait(); loop = null;
+    stopGait(); loop = null; client.replay = false;
     dragging = {...info, parent}; canvas.setPointerCapture(e.pointerId); return;
   }
   down = {x: e.clientX, y: e.clientY};
@@ -1229,7 +1261,7 @@ for (const s of ['L','R']) $('#side-'+s).onclick = () => {
 };
 $('#reset').onclick = () => resetPose();
 pickGroup($('#lib-filter'), [['all','All'],['stretch','Stretches'],['strength','Strength'],['control','Control']], () => libFilter, v => { libFilter = v; renderLibrary(); });
-const TABS = {lib:'#panel-lib', gait:'#panel-gait', pain:'#panel-pain', joint:'#panel-joint', mus:'#panel-mus'};
+const TABS = {lib:'#panel-lib', gait:'#panel-gait', client:'#panel-client', pain:'#panel-pain', joint:'#panel-joint', mus:'#panel-mus'};
 function showTab(t) { for (const u of Object.keys(TABS)) { $(TABS[u]).hidden = u !== t; $('#tab-'+u).setAttribute('aria-pressed', u === t); } if (t === 'mus') renderMuscleTable(); if (t !== 'pain') setLocating(false); if (t === 'gait' && !gait.on) startGait(true, true); if (t === 'joint') syncSliders(); }
 for (const t of Object.keys(TABS)) $('#tab-'+t).onclick = () => showTab(t);
 
@@ -1246,7 +1278,7 @@ const sliderEls = [];
   $('#sliders').innerHTML = html;
   $('#sliders').querySelectorAll('input').forEach(inp => { sliderEls.push(inp); inp.addEventListener('input', () => {
     if (tween) { tween.done(); tween = null; }
-    stopGait(); loop = null;
+    stopGait(); loop = null; client.replay = false;
     const {side, k} = inp.dataset; if (side) state[side][k] = +inp.value; else state[k] = +inp.value; stateDirty = true; }); });
 })();
 function syncSliders() { if ($('#panel-joint').hidden) return; for (const inp of sliderEls) { const {side, k} = inp.dataset; const v = Math.round(side ? state[side][k] : state[k]); if (document.activeElement !== inp) inp.value = v; document.getElementById(inp.id + '-o').textContent = `${v}°`; } }
@@ -1460,15 +1492,17 @@ function legCurves(p) {
   if (curveCache.size > 40) curveCache.clear();
   curveCache.set(key, c); return c;
 }
+const interp = (arr, ph) => { const x = (((ph % 1) + 1) % 1) * (arr.length - 1), i = Math.floor(x), f = x - i; return arr[i] + (arr[Math.min(arr.length - 1, i + 1)] - arr[i]) * f; };
 function gaitPose(p, t) {
-  const s = neutral(), c = legCurves(p);
+  const s = neutral(), c = p.meas ? null : legCurves(p);
   const sL = bump(t, .08, .5), sR = bump((t + .5) % 1, .08, .5);
   for (const [side, ph] of [['L', t], ['R', (t + .5) % 1]]) {
     const l = s[side], st = bump(ph, .02, .55);
     // gait-lab hip angles include about 10° of anterior pelvic tilt; the model's standing posture has none, so the thigh angle is 10° less
-    l.hipFlex = pcurve(c.hip, ph) - 10; l.knee = Math.max(0, pcurve(c.knee, ph));
+    if (p.meas) { l.hipFlex = interp(p.meas.thigh, ph); l.knee = Math.max(0, interp(p.meas.knee, ph)); }
+    else { l.hipFlex = pcurve(c.hip, ph) - 10; l.knee = Math.max(0, pcurve(c.knee, ph)); }
     // stance: keep the foot flat until the push-off curve asks for less dorsiflexion (heel rise), then follow it
-    let a = pcurve(c.ankle, ph);
+    let a = p.meas ? interp(p.meas.ankle, ph) : pcurve(c.ankle, ph);
     if (ph > .06 && ph < .6) {
       const flat = l.knee - l.hipFlex, w = clamp((ph - .06) / .06, 0, 1);
       const target = Math.min(flat, a + Math.max(0, .31 - ph) * 200);
@@ -1516,7 +1550,7 @@ function captureGhost(st) {
 
 function startGait(play = true, fromTab = false) {
   if (tween) { tween.done(); tween = null; }
-  loop = null; active = null; groundSpec = null;
+  loop = null; active = null; groundSpec = null; client.replay = false;
   const was = gait.on; gait.on = true; gait.playing = play;
   ghost.visible = ghostPts.visible = !!gait.compare;
   if (!was) { camGoal = V(3.3, .25, 1.1); document.querySelectorAll('#views button').forEach(x => x.setAttribute('aria-pressed', 'false')); }
@@ -1545,7 +1579,7 @@ function updateTransport() {
 function buildGaitUI() {
   updateTransport();
   pickGroup($('#g-pattern'), Object.entries(PATTERNS).map(([k, v]) => [k, v.name]), () => gait.custom ? null : gait.pattern, v => { gait.pattern = v; setGaitParams(PATTERN_P(v), false); if (!gait.on) startGait(true); buildGaitUI(); });
-  $('#g-pattern-note').textContent = PATTERNS[gait.pattern].note + (gait.custom ? ' You have adjusted it with the sliders below.' : '');
+  $('#g-pattern-note').textContent = PATTERNS[gait.pattern].note + (gait.custom ? ' You have adjusted it with the sliders below.' : '') + (gait.p.meas ? ' The hip, knee and ankle sliders do not change measured curves.' : '');
   pickGroup($('#g-compare'), [['none','None'], ...Object.entries(PATTERNS).map(([k, v]) => [k, v.name])], () => gait.compare || 'none', v => { gait.compare = v === 'none' ? null : v; ghost.visible = ghostPts.visible = gait.on && !!gait.compare; renderChart(); scheduleSummary(); renderLegend(); });
   renderChart(); renderGaitParams();
 }
@@ -1702,11 +1736,463 @@ function gaitUi(t) {
   const ln = $('#g-lengthening'); if (ln && t - (gaitUi.lt || 0) > 250) { gaitUi.lt = t; ln.innerHTML = topLengthening(); }
 }
 
+/* ================= client capture and analysis ================= */
+const LM = {nose:0, lSh:11, rSh:12, lEl:13, rEl:14, lWr:15, rWr:16, lHip:23, rHip:24, lKn:25, rKn:26, lAn:27, rAn:28, lHe:29, rHe:30, lFt:31, rFt:32};
+const BONES2D = [['lSh','rSh'],['lSh','lEl'],['lEl','lWr'],['rSh','rEl'],['rEl','rWr'],['lSh','lHip'],['rSh','rHip'],['lHip','rHip'],['lHip','lKn'],['lKn','lAn'],['lAn','lHe'],['lHe','lFt'],['lAn','lFt'],['rHip','rKn'],['rKn','rAn'],['rAn','rHe'],['rHe','rFt'],['rAn','rFt']];
+const CTASKS = {
+ walkSide:{name:'Walking, side view', tips:['Film from the side at hip height, 3 to 4 m away','Keep the whole body in frame, feet included','Record 6 to 10 s of steady walking; a treadmill works well','Fitted clothing and good light help tracking']},
+ walkFront:{name:'Walking, front or back', tips:['Film from directly in front or behind, at hip height','Keep the whole body in frame','Record 6 to 10 s of walking toward or away from the camera, or on a treadmill','Shorts or leggings help the camera find the knees']},
+ squat:{name:'Squat', ex:'squat', tips:['Film from the side for depth and trunk lean, or from the front to check the knees','Keep the whole body in frame','Record 3 to 8 slow repetitions']},
+ slsquat:{name:'Single-leg mini squat', ex:'single-leg-mini-squat', tips:['Film from directly in front, at knee to hip height','Keep the whole body in frame','Record 3 to 8 repetitions on one leg']},
+ calf:{name:'Calf raise', ex:'calf-raise', tips:['Film from the side, camera low, at knee height','Keep the feet and lower legs clearly visible','Record 5 to 15 repetitions']},
+};
+let client = {task:'walkSide', height:170, frames:null, states:null, url:null, result:null, landmarker:null, busy:false, replay:false, stream:null, lastIdx:-1, W:0, H:0};
+const status = (txt, prog) => { $('#c-status').textContent = txt || ''; $('#c-prog-wrap').hidden = prog == null; if (prog != null) $('#c-prog').style.width = Math.round(prog*100) + '%'; };
+function renderClientForm() {
+  pickGroup($('#c-task'), Object.entries(CTASKS).map(([k, v]) => [k, v.name]), () => client.task, v => { client.task = v; renderClientForm(); if (client.frames) runAnalysis(); });
+  $('#c-tips').innerHTML = CTASKS[client.task].tips.map(t => `<li>${esc(t)}</li>`).join('');
+}
+$('#c-height').oninput = e => { client.height = +e.target.value; $('#c-height-o').textContent = `${client.height} cm`; if (client.frames) runAnalysis(); };
+const needConsent = () => { if ($('#c-consent').checked) return false; status('Tick the consent box first. Only film clients who have agreed.'); return true; };
+$('#c-upload').onclick = () => { if (needConsent() || client.busy) return; $('#c-file').click(); };
+$('#c-file').onchange = e => { const f = e.target.files && e.target.files[0]; e.target.value = ''; if (f) analyseFile(f); };
+$('#c-cam').onclick = () => { if (needConsent() || client.busy) return; if (client.stream) recordCamera(); else openCamera(); };
+$('#c-clear').onclick = () => clearClip();
+
+async function getLandmarker() {
+  if (client.landmarker) return client.landmarker;
+  status('Loading the body-tracking model (about 22 MB, first time only)…', .02);
+  const mod = await import('./mediapipe/vision_bundle.mjs');
+  status('Loading the body-tracking model…', .3);
+  const res = await fetch('mediapipe/pose_model.txt'); if (!res.ok) throw new Error('model ' + res.status);
+  const bin = atob((await res.text()).trim()), buf = new Uint8Array(bin.length); for (let i = 0; i < bin.length; i++) buf[i] = bin.charCodeAt(i);
+  status('Starting the body tracker…', .7);
+  client.landmarker = await mod.PoseLandmarker.createFromOptions({wasmLoaderPath: 'mediapipe/vision_wasm_internal.js', wasmBinaryPath: 'mediapipe/vision_wasm_internal.wasm'},
+    {baseOptions: {modelAssetBuffer: buf, delegate: 'CPU'}, runningMode: 'VIDEO', numPoses: 1, minPoseDetectionConfidence: .5, minPosePresenceConfidence: .5, minTrackingConfidence: .5});
+  return client.landmarker;
+}
+const toFrame = (r, t, W, H) => { const lm = r && r.landmarks && r.landmarks[0]; return {t, lm: lm ? lm.map(p => ({x: p.x * W, y: p.y * H, v: p.visibility ?? 1})) : null}; };
+function showClip(url) {
+  if (client.url && client.url !== url) URL.revokeObjectURL(client.url);
+  client.url = url; const v = $('#c-video'); v.srcObject = null; v.src = url; v.muted = true; v.loop = false;
+  $('#c-box').hidden = false; $('#c-clear').hidden = false;
+}
+async function analyseFile(file) {
+  client.busy = true; client.result = null; $('#c-results').innerHTML = ''; $('#c-transport').hidden = true; closeCamera();
+  try {
+    showClip(URL.createObjectURL(file));
+    const v = $('#c-video');
+    await new Promise((res, rej) => { v.onloadeddata = res; v.onerror = () => rej(new Error('This video format could not be opened. Try an MP4 or WebM clip.')); });
+    const lmk = await getLandmarker();
+    const W = v.videoWidth, H = v.videoHeight, dur = Math.min(v.duration || 0, 20);
+    client.W = W; client.H = H; sizeOverlay();
+    const frames = []; let lastTs = 0;
+    const detect = t => { const ts = Math.max(lastTs + 1, Math.round(t * 1000) + 1); lastTs = ts; const f = toFrame(lmk.detectForVideo(v, ts), t, W, H); frames.push(f); return f; };
+    if ('requestVideoFrameCallback' in HTMLVideoElement.prototype) {
+      // pass 1: play the clip once and keep small copies of the frames; pass 2: track them.
+      // Decoding stays sequential (no per-frame seeking) and the 3D view pauses so the device can keep up.
+      client.capturing = true;
+      try {
+        v.pause(); v.currentTime = 0; await new Promise(r => { v.onseeked = r; setTimeout(r, 1500); });
+        v.playbackRate = 1;
+        const shots = [], bw = Math.min(W, 640);
+        await new Promise((done, fail) => {
+          let live = true;
+          const finish = () => { if (live) { live = false; v.pause(); done(); } };
+          const cb = (now, md) => {
+            if (!live) return;
+            const t = md.mediaTime;
+            if (t > dur) return finish();
+            if (!shots.length || t - shots[shots.length - 1].t >= 1 / 31) shots.push({t, bmp: createImageBitmap(v, {resizeWidth: bw, resizeHeight: Math.round(H * bw / W)})});
+            status(`Reading the clip… ${Math.round(t / dur * 100)}%`, t / dur * .25);
+            v.requestVideoFrameCallback(cb);
+          };
+          v.requestVideoFrameCallback(cb); v.onended = finish; v.play().catch(e => { live = false; fail(e); });
+        });
+        v.onended = null;
+        v.pause();
+        for (let i = 0; i < shots.length; i++) {
+          let bmp = null; try { bmp = await shots[i].bmp; } catch (e) { continue; }
+          const ts = Math.max(lastTs + 1, Math.round(shots[i].t * 1000) + 1); lastTs = ts;
+          const f = toFrame(lmk.detectForVideo(bmp, ts), shots[i].t, W, H); bmp.close(); frames.push(f);
+          if (i % 4 === 0) { drawOverlay(f); status(`Tracking the body… ${Math.round(i / shots.length * 100)}%`, .25 + .75 * i / shots.length); await new Promise(r => setTimeout(r, 0)); }
+        }
+      } finally { client.capturing = false; }
+    } else {
+      const N = Math.max(1, Math.floor(dur * 15));
+      for (let i = 0; i < N; i++) { const t = i / 15; await new Promise(r => { v.onseeked = r; v.currentTime = t + .001; }); drawOverlay(detect(t)); if (i % 3 === 0) { status(`Tracking the body… ${Math.round(i / N * 100)}%`, i / N); await new Promise(r => setTimeout(r, 0)); } }
+    }
+    client.frames = uniform(frames, 30);
+    if ((v.duration || 0) > 20) status('Only the first 20 s were analysed.');
+    runAnalysis();
+  } catch (e) { status('The clip could not be analysed: ' + (e.message || e) + '. The camera or video tools may be blocked in this viewer; the GitHub Pages version works in any browser.'); }
+  finally { client.busy = false; }
+}
+
+/* live camera: preview with tracking, then a counted-down 10 s recording */
+async function openCamera() {
+  if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) { status("The camera isn't available here. Record the clip on your phone and use Upload a clip."); return; }
+  try { client.stream = await navigator.mediaDevices.getUserMedia({video: {facingMode: 'environment', width: {ideal: 1280}, height: {ideal: 720}}, audio: false}); }
+  catch (e) { client.stream = null; status("The camera isn't available in this view (inside Claude it is blocked). Record on your phone and use Upload a clip, or open the GitHub Pages version."); return; }
+  const v = $('#c-video'); v.src = ''; v.srcObject = client.stream; v.muted = true; await v.play();
+  $('#c-box').hidden = false; $('#c-cam').textContent = 'Record 10 s'; $('#c-clear').hidden = false;
+  client.W = v.videoWidth; client.H = v.videoHeight; sizeOverlay();
+  status('Frame the whole body, then press Record 10 s. Loading the tracker…');
+  try { await getLandmarker(); } catch (e) { status('The body tracker could not start here.'); return; }
+  status('Frame the whole body, then press Record 10 s.');
+  const preview = () => { if (!client.stream || client.recording) return; if (v.readyState >= 2) { const f = toFrame(client.landmarker.detectForVideo(v, performance.now()), 0, client.W, client.H); drawOverlay(f); } requestAnimationFrame(preview); };
+  requestAnimationFrame(preview);
+}
+async function recordCamera() {
+  const v = $('#c-video'), cnt = $('#c-count');
+  for (const n of [3, 2, 1]) { cnt.hidden = false; cnt.textContent = n; await new Promise(r => setTimeout(r, 900)); }
+  cnt.hidden = true; client.recording = true; client.busy = true;
+  const chunks = []; let rec = null;
+  try { rec = new MediaRecorder(client.stream); rec.ondataavailable = e => e.data.size && chunks.push(e.data); rec.start(); } catch (e) { rec = null; }
+  const frames = [], t0 = performance.now();
+  await new Promise(done => { const step = () => { const t = (performance.now() - t0) / 1000; if (t > 10) return done(); if (v.readyState >= 2) { const f = toFrame(client.landmarker.detectForVideo(v, performance.now()), t, client.W, client.H); frames.push(f); drawOverlay(f); } status(`Recording… ${Math.ceil(10 - t)} s`, t / 10); requestAnimationFrame(step); }; requestAnimationFrame(step); });
+  if (rec) await new Promise(r => { rec.onstop = r; rec.stop(); });
+  closeCamera(); client.recording = false; client.busy = false;
+  if (chunks.length) showClip(URL.createObjectURL(new Blob(chunks, {type: chunks[0].type || 'video/webm'})));
+  client.frames = uniform(frames, 30); runAnalysis();
+}
+function closeCamera() { if (client.stream) { client.stream.getTracks().forEach(t => t.stop()); client.stream = null; } $('#c-cam').textContent = 'Use camera'; }
+function clearClip() {
+  closeCamera(); client.replay = false;
+  if (client.url) URL.revokeObjectURL(client.url);
+  Object.assign(client, {frames: null, states: null, url: null, result: null, lastIdx: -1});
+  const v = $('#c-video'); v.removeAttribute('src'); v.srcObject = null; v.load();
+  $('#c-box').hidden = true; $('#c-transport').hidden = true; $('#c-clear').hidden = true; $('#c-results').innerHTML = ''; status('Clip and results cleared.');
+  if (PATTERNS.client) { delete PATTERNS.client; if (gait.pattern === 'client') { gait.pattern = 'reference'; setGaitParams(PATTERN_P('reference'), false); } if (gait.compare === 'client') gait.compare = null; buildGaitUI(); }
+}
+
+/* resample tracked frames onto an even 30 fps timeline (live and played-back capture skips frames unevenly) */
+function uniform(frames, fps) {
+  const ok = frames.filter(f => f.lm).sort((a, b) => a.t - b.t); if (ok.length < 2) return frames;
+  const out = [], t0 = ok[0].t, t1 = ok[ok.length - 1].t; let j = 0;
+  for (let t = t0; t <= t1 + 1e-6; t += 1 / fps) {
+    while (j < ok.length - 2 && ok[j + 1].t < t) j++;
+    const a = ok[j], b = ok[j + 1], f = clamp((t - a.t) / ((b.t - a.t) || 1), 0, 1);
+    out.push({t: t - t0, src: t, lm: (b.t - a.t) > .5 ? null : a.lm.map((q, k) => ({x: q.x + (b.lm[k].x - q.x) * f, y: q.y + (b.lm[k].y - q.y) * f, v: Math.min(q.v, b.lm[k].v)}))});
+  }
+  return out;
+}
+/* ---- maths on 2D landmarks ---- */
+const median = a => { const b = a.filter(Number.isFinite).sort((x, y) => x - y); return b.length ? b[Math.floor(b.length / 2)] : NaN; };
+const pctl = (a, q) => { const b = a.filter(Number.isFinite).sort((x, y) => x - y); return b.length ? b[Math.min(b.length - 1, Math.floor(q * b.length))] : NaN; };
+const meanOf = a => { const b = a.filter(Number.isFinite); return b.length ? b.reduce((x, y) => x + y, 0) / b.length : NaN; };
+const sdOf = a => { const m = meanOf(a), b = a.filter(Number.isFinite); return b.length > 1 ? Math.sqrt(b.reduce((x, y) => x + (y - m) ** 2, 0) / (b.length - 1)) : 0; };
+function fillGaps(a) { const out = a.slice(); let last = NaN; for (let i = 0; i < out.length; i++) { if (Number.isFinite(out[i])) last = out[i]; else out[i] = last; } last = NaN; for (let i = out.length - 1; i >= 0; i--) { if (Number.isFinite(out[i])) last = out[i]; else out[i] = last; } return out; }
+function smooth(a, w = 2) { const f = fillGaps(a); return f.map((_, i) => { let s = 0, n = 0; for (let j = Math.max(0, i - w); j <= Math.min(f.length - 1, i + w); j++) if (Number.isFinite(f[j])) { s += f[j]; n++; } return n ? s / n : NaN; }); }
+function peaks(a, minProm, minGap) {
+  const out = [];
+  for (let i = 1; i < a.length - 1; i++) {
+    if (!(a[i] >= a[i - 1] && a[i] > a[i + 1])) continue;
+    let l = a[i], r = a[i]; for (let j = i; j >= Math.max(0, i - minGap * 2); j--) l = Math.min(l, a[j]); for (let j = i; j <= Math.min(a.length - 1, i + minGap * 2); j++) r = Math.min(r, a[j]);
+    if (a[i] - Math.max(l, r) < minProm) continue;
+    if (out.length && i - out[out.length - 1] < minGap) { if (a[i] > a[out[out.length - 1]]) out[out.length - 1] = i; continue; }
+    out.push(i);
+  }
+  return out;
+}
+const g = (f, k) => f.lm && f.lm[LM[k]];
+const dist = (a, b) => Math.hypot(a.x - b.x, a.y - b.y);
+const visOf = (f, ks) => f.lm ? Math.min(...ks.map(k => g(f, k).v)) : 0;
+function viewOf(frames) {
+  const r = frames.filter(f => f.lm).map(f => (Math.abs(g(f, 'lSh').x - g(f, 'rSh').x) + Math.abs(g(f, 'lHip').x - g(f, 'rHip').x)) / (dist(g(f, 'lSh'), g(f, 'lHip')) + dist(g(f, 'rSh'), g(f, 'rHip')) + 1e-6));
+  return median(r) < .32 ? 'side' : 'front';
+}
+function sideInfo(frames) {
+  const vis = s => median(frames.map(f => visOf(f, [s + 'Hip', s + 'Kn', s + 'An'])));
+  const near = vis('l') >= vis('r') ? 'l' : 'r';
+  const dir = Math.sign(median(frames.map(f => f.lm ? g(f, near + 'Ft').x - g(f, near + 'He').x : NaN))) || 1;
+  return {near, far: near === 'l' ? 'r' : 'l', dir};
+}
+function sagittal(f, S, dir) {
+  if (!f.lm) return null;
+  const P = k => g(f, S + k), ang = (a, b) => Math.atan2(dir * (b.x - a.x), b.y - a.y) / DEG;
+  const sh = P('Sh'), hip = P('Hip'), kn = P('Kn'), an = P('An'), he = P('He'), ft = P('Ft'), el = P('El'), wr = P('Wr');
+  const T = Math.atan2(dir * (sh.x - hip.x), -(sh.y - hip.y)) / DEG, Th = ang(hip, kn), Sh = ang(kn, an), Fp = Math.atan2(-(ft.y - he.y), dir * (ft.x - he.x)) / DEG;
+  const Ar = ang(sh, el), Fa = ang(el, wr);
+  return {T, Th, Sh, Fp, hip: Th + T, knee: Th - Sh, ankle: Fp - Sh, sh: Ar + T, elbow: Fa - Ar, vis: Math.min(hip.v, kn.v, an.v)};
+}
+function frontal(f) {
+  if (!f.lm) return null;
+  const lH = g(f, 'lHip'), rH = g(f, 'rHip'), lS = g(f, 'lSh'), rS = g(f, 'rSh');
+  const obl = Math.atan2(rH.y - lH.y, Math.abs(lH.x - rH.x) + 1e-6) / DEG;   // + = right side lower
+  const rx = (rH.x - lH.x), rlen = Math.abs(rx) + 1e-6, rdir = Math.sign(rx) || 1;   // image direction of the person's right
+  const hm = {x: (lH.x + rH.x) / 2, y: (lH.y + rH.y) / 2}, sm = {x: (lS.x + rS.x) / 2, y: (lS.y + rS.y) / 2};
+  const lean = Math.atan2(rdir * (sm.x - hm.x), -(sm.y - hm.y)) / DEG;        // + = toward the person's right
+  const leg = s => {
+    const hip = g(f, s + 'Hip'), kn = g(f, s + 'Kn'), an = g(f, s + 'An');
+    const a = {x: hip.x - kn.x, y: hip.y - kn.y}, b = {x: an.x - kn.x, y: an.y - kn.y};
+    const inner = Math.acos(clamp((a.x * b.x + a.y * b.y) / (Math.hypot(a.x, a.y) * Math.hypot(b.x, b.y) + 1e-6), -1, 1)) / DEG;
+    const lineX = hip.x + (an.x - hip.x) * (kn.y - hip.y) / ((an.y - hip.y) || 1e-6);
+    const medial = Math.abs(kn.x - hm.x) < Math.abs(lineX - hm.x);
+    const lat = (s === 'l' ? -rdir : rdir);
+    return {fppa: (medial ? 1 : -1) * (180 - inner), len: dist(hip, an), thighAbd: Math.atan2(lat * (kn.x - hip.x), kn.y - hip.y) / DEG, ankY: an.y, vis: Math.min(hip.v, kn.v, an.v)};
+  };
+  return {obl, lean, l: leg('l'), r: leg('r'), width: rlen};
+}
+const kneeFromLen = (d, d0) => 2 * Math.acos(clamp(d / d0, 0, 1)) / DEG;
+const resample = (arr, n = 101) => Array.from({length: n}, (_, i) => { const x = i / (n - 1) * (arr.length - 1), j = Math.floor(x), f = x - j; return arr[j] + ((arr[Math.min(arr.length - 1, j + 1)] ?? arr[j]) - arr[j]) * f; });
+
+/* ---- analysis per task ---- */
+function runAnalysis() {
+  const frames = client.frames || [];
+  const ok = frames.filter(f => f.lm).length;
+  if (ok < 15) { status(`The body was found in only ${ok} frames. Check that the whole body is in frame and well lit, then try again.`); return; }
+  const fps = frames.length > 1 ? (frames.length - 1) / ((frames[frames.length - 1].t - frames[0].t) || 1) : 30;
+  const legCm = client.height * .48, view = viewOf(frames);
+  let res;
+  try {
+    res = {walkSide: anWalkSide, walkFront: anWalkFront, squat: anSquat, slsquat: anSLSquat, calf: anCalf}[client.task](frames, fps, legCm, view);
+  } catch (e) { status('Analysis failed: ' + (e.message || e)); return; }
+  res.view = view; res.found = ok / frames.length;
+  client.result = res; client.states = res.states; client.lastIdx = -1;
+  const wantView = {walkSide: 'side', walkFront: 'front', calf: 'side', slsquat: 'front'}[client.task];
+  status(res.error ? res.error : `Body found in ${Math.round(res.found * 100)}% of frames.` + (wantView && wantView !== view ? ` This looks like a ${view} view; the ${CTASKS[client.task].name.toLowerCase()} analysis expects a ${wantView} view, so results may be off.` : ''));
+  renderClientResults();
+  if (client.states) { $('#c-transport').hidden = false; client.replay = $('#c-follow').checked && !gait.on; if (client.replay) { stopGait(); active = null; renderLibrary(); renderInspector(); camGoal = (view === 'side' ? VIEWS.side : VIEWS.front).clone(); } }
+  drawOverlay();
+}
+function sideStates(frames, S, F, dir, opts = {}) {
+  const N = frames.map(f => sagittal(f, S, dir)), Fr = frames.map(f => sagittal(f, F, dir));
+  const keys = ['T', 'hip', 'knee', 'ankle', 'sh', 'elbow'];
+  const sm = arr => Object.fromEntries(keys.map(k => [k, smooth(arr.map(a => a ? a[k] : NaN), 1)]));
+  const n = sm(N), fr = sm(Fr), farOK = median(Fr.map(a => a ? a.vis : 0)) > .5;
+  return frames.map((_, i) => {
+    const s = neutral(); s.pitch = n.T[i] || 0;
+    const set = (side, src) => { const l = s[side === 'l' ? 'L' : 'R']; l.hipFlex = src.hip[i]; l.knee = src.knee[i]; l.ankle = src.ankle[i] - (opts.ankleOffset || 0); l.shFlex = src.sh[i]; l.elbow = src.elbow[i]; l.shAbd = 8; };
+    set(S, n); set(F, farOK && !opts.mirror ? fr : n);
+    for (const k of Object.keys(s.L)) { if (!Number.isFinite(s.L[k])) s.L[k] = 0; if (!Number.isFinite(s.R[k])) s.R[k] = 0; }
+    return clampState(s);
+  });
+}
+function frontStates(frames) {
+  const F = frames.map(frontal), base = median(F.map(x => x && x.obl)), baseLean = median(F.map(x => x && x.lean));
+  const d0l = pctl(F.map(x => x && x.l.len), .95), d0r = pctl(F.map(x => x && x.r.len), .95);
+  const obl = smooth(F.map(x => x ? x.obl - base : NaN)), lean = smooth(F.map(x => x ? x.lean - baseLean : NaN));
+  const kl = smooth(F.map(x => x ? kneeFromLen(x.l.len, d0l) : NaN)), kr = smooth(F.map(x => x ? kneeFromLen(x.r.len, d0r) : NaN));
+  const al = smooth(F.map(x => x ? x.l.thighAbd : NaN)), ar = smooth(F.map(x => x ? x.r.thighAbd : NaN));
+  return frames.map((_, i) => {
+    const s = neutral(); s.pelvisDrop = obl[i] || 0; s.spineSide = lean[i] || 0;
+    for (const [side, k, a] of [['L', kl, al], ['R', kr, ar]]) { const l = s[side]; l.knee = k[i] || 0; l.hipFlex = (k[i] || 0) * .55; l.ankle = (k[i] || 0) * .45; l.hipAbd = a[i] || 0; l.shAbd = 10; }
+    return clampState(s);
+  });
+}
+function anWalkSide(frames, fps, legCm, view) {
+  const {near, far, dir} = sideInfo(frames);
+  const A = frames.map(f => sagittal(f, near, dir));
+  const legLen = median(frames.map(f => f.lm ? dist(g(f, near + 'Hip'), g(f, near + 'An')) : NaN));
+  const hf = smooth(frames.map(f => f.lm ? dir * (g(f, near + 'He').x - (g(f, 'lHip').x + g(f, 'rHip').x) / 2) / legLen : NaN), 1);
+  const strikes = peaks(hf, .15, Math.round(.55 * fps));
+  const th = smooth(A.map(a => a ? a.Th : NaN), 1), kn = smooth(A.map(a => a ? a.knee : NaN), 1), ak = smooth(A.map(a => a ? a.ankle : NaN), 1), tr = smooth(A.map(a => a ? a.T : NaN), 1);
+  const cycles = [];
+  for (let i = 1; i < strikes.length; i++) { const a = strikes[i - 1], b = strikes[i], dur = (b - a) / fps; if (dur > .7 && dur < 2) cycles.push([a, b]); }
+  const states = sideStates(frames, near, far, dir);
+  if (!cycles.length) return {kind: 'walkSide', states, near, error: `Found ${strikes.length} heel strike${strikes.length === 1 ? '' : 's'} of the ${near === 'l' ? 'left' : 'right'} leg but no complete stride. Record a longer clip with at least two full steps of that leg.`};
+  const cyc = key => cycles.map(([a, b]) => resample(key.slice(a, b + 1)));
+  const C = {thigh: cyc(th), knee: cyc(kn), ankle: cyc(ak)};
+  const avg = arrs => arrs[0].map((_, i) => meanOf(arrs.map(a => a[i]))), sd = arrs => arrs[0].map((_, i) => sdOf(arrs.map(a => a[i])));
+  const mean = {thigh: avg(C.thigh), knee: avg(C.knee), ankle: avg(C.ankle)}, spread = {thigh: sd(C.thigh), knee: sd(C.knee), ankle: sd(C.ankle)};
+  // the video ankle angle has an unknown offset from the landmark geometry: align its midstance value with the reference
+  const refS = series(PATTERN_P('reference')), off = meanOf(mean.ankle.slice(15, 30)) - meanOf(refS.ankle.slice(15, 30));
+  mean.ankle = mean.ankle.map(v => v - off);
+  const stride = meanOf(cycles.map(([a, b]) => (b - a) / fps)), cv = sdOf(cycles.map(([a, b]) => (b - a) / fps)) / stride * 100;
+  const seg = (arr, a, b, f) => f(...arr.slice(a, b + 1));
+  const fit = {loadKnee: seg(mean.knee, 0, 25, Math.max), swingKnee: seg(mean.knee, 55, 90, Math.max), hipSwing: seg(mean.thigh, 60, 100, Math.max) + 10, hipExt: seg(mean.thigh, 30, 65, Math.min) + 10, pushOff: seg(mean.ankle, 50, 75, Math.min), trunkFwd: meanOf(tr)};
+  for (const g2 of GP) if (fit[g2[0]] != null) fit[g2[0]] = clamp(+fit[g2[0]].toFixed(1), g2[2], g2[3]);
+  return {kind: 'walkSide', near, cycles: cycles.length, strikes: strikes.length, cadence: 120 / stride, stride, cv, mean, spread, fit, states: sideStates(frames, near, far, dir, {ankleOffset: off})};
+}
+function anWalkFront(frames, fps) {
+  const F = frames.map(frontal), base = median(F.map(x => x && x.obl)), baseLean = median(F.map(x => x && x.lean));
+  const obl = smooth(F.map(x => x ? x.obl - base : NaN)), lean = smooth(F.map(x => x ? x.lean - baseLean : NaN));
+  const dropR = pctl(obl, .95), dropL = -pctl(obl, .05);       // right side down = standing on the left
+  const stanceL = F.map(x => x && x.l.ankY > x.r.ankY), stanceR = F.map(x => x && x.r.ankY > x.l.ankY);
+  const fpL = pctl(F.map((x, i) => x && stanceL[i] && x.l.vis > .4 ? x.l.fppa : NaN), .9), fpR = pctl(F.map((x, i) => x && stanceR[i] && x.r.vis > .4 ? x.r.fppa : NaN), .9);
+  const leanL = -pctl(lean.map((v, i) => stanceL[i] ? v : NaN), .1), leanR = pctl(lean.map((v, i) => stanceR[i] ? v : NaN), .9);
+  // video lean is shoulders over hips; the model leans the chest from the lower back, and pelvic drop shifts that pivot sideways.
+  // Convert each frame to the model's chest lean before taking the peaks.
+  const r1 = JP.chest.y - JP.pelvis.y, r2 = JP.shoulderL.y - JP.chest.y, hgt = JP.shoulderL.y - JP.hipL.y;
+  const Lm = lean.map((v, i) => (v * hgt - r1 * obl[i]) / r2);
+  const mL = -pctl(Lm.map((v, i) => stanceL[i] ? v : NaN), .1), mR = pctl(Lm.map((v, i) => stanceR[i] ? v : NaN), .9);
+  const drop = ((dropL || 0) + (dropR || 0)) / 2;
+  const fit = {pelvicDrop: clamp(+drop.toFixed(1), 0, 14), trunkLean: clamp(+Math.max(0, ((mL || 0) + (mR || 0)) / 2).toFixed(1), 0, 12)};
+  return {kind: 'walkFront', dropL, dropR, fpL, fpR, leanL, leanR, fit, states: frontStates(frames)};
+}
+function repsFrom(sig, fps, minProm, minDepth) {
+  // thresholds scale with this clip's own range, so small wobbles in a shallow movement are not counted as reps
+  const lo = pctl(sig, .05), range = pctl(sig, .95) - lo;
+  const prom = Math.max(minProm, .45 * range), depth = Math.max(minDepth, lo + .5 * range);
+  const pk = peaks(sig, prom, Math.round(.8 * fps)).filter(i => sig[i] >= depth);
+  // each rep runs from leaving the start position (8% of the range) to getting back to it
+  const near = lo + .08 * range;
+  return pk.map((i, n) => { let a = i, b = i; const minA = n ? pk[n - 1] : 0, maxB = n < pk.length - 1 ? pk[n + 1] : sig.length - 1;
+    while (a > minA && sig[a - 1] > near) a--; while (b < maxB && sig[b + 1] > near) b++; return {start: a, bottom: i, end: b}; });
+}
+function anSquat(frames, fps, legCm, view) {
+  if (view === 'side') {
+    const {near, far, dir} = sideInfo(frames), A = frames.map(f => sagittal(f, near, dir));
+    const kn = smooth(A.map(a => a ? a.knee : NaN)), hp = smooth(A.map(a => a ? a.hip : NaN)), tr = smooth(A.map(a => a ? a.T : NaN));
+    const legLen = median(frames.map(f => f.lm ? dist(g(f, near + 'Hip'), g(f, near + 'An')) : NaN));
+    const heelY = smooth(frames.map(f => f.lm ? g(f, near + 'He').y : NaN)), hb = pctl(heelY, .8);   // image y grows downward: a lifted heel has a smaller y
+    const hrel = heelY.map(y => (hb - y) / legLen * legCm), hBase = 0;
+    const reps = repsFrom(kn, fps, 20, 35).map(r => ({...r, depth: kn[r.bottom], hip: hp[r.bottom], trunk: tr[r.bottom], down: (r.bottom - r.start) / fps, up: (r.end - r.bottom) / fps, heel: Math.max(...hrel.slice(r.start, r.end + 1)) - hBase}));
+    return {kind: 'squat', view, reps, states: sideStates(frames, near, far, dir, {mirror: true})};
+  }
+  const F = frames.map(frontal), d0l = pctl(F.map(x => x && x.l.len), .95), d0r = pctl(F.map(x => x && x.r.len), .95);
+  const kn = smooth(F.map(x => x ? (kneeFromLen(x.l.len, d0l) + kneeFromLen(x.r.len, d0r)) / 2 : NaN));
+  const fl = smooth(F.map(x => x && x.l.fppa)), fr = smooth(F.map(x => x && x.r.fppa));
+  const reps = repsFrom(kn, fps, 15, 25).map(r => ({...r, depth: kn[r.bottom], down: (r.bottom - r.start) / fps, up: (r.end - r.bottom) / fps, fppaL: Math.max(...fl.slice(r.start, r.end + 1)), fppaR: Math.max(...fr.slice(r.start, r.end + 1))}));
+  return {kind: 'squat', view, reps, states: frontStates(frames)};
+}
+function anSLSquat(frames, fps) {
+  const F = frames.map(frontal), stance = median(F.map(x => x ? x.l.ankY - x.r.ankY : NaN)) > 0 ? 'l' : 'r';
+  const d0 = pctl(F.map(x => x && x[stance].len), .95), base = median(F.map(x => x && x.obl)), baseLean = median(F.map(x => x && x.lean));
+  const kn = smooth(F.map(x => x ? kneeFromLen(x[stance].len, d0) : NaN));
+  const fp = smooth(F.map(x => x && x[stance].fppa));
+  const freeDown = smooth(F.map(x => x ? (stance === 'l' ? 1 : -1) * (x.obl - base) : NaN));   // + = free side drops
+  const leanTo = smooth(F.map(x => x ? (stance === 'l' ? -1 : 1) * (x.lean - baseLean) : NaN)); // + = trunk leans over the stance leg
+  const reps = repsFrom(kn, fps, 8, 12).map(r => ({...r, depth: kn[r.bottom], fppa: Math.max(...fp.slice(r.start, r.end + 1)), drop: Math.max(...freeDown.slice(r.start, r.end + 1)), lean: Math.max(...leanTo.slice(r.start, r.end + 1)), down: (r.bottom - r.start) / fps, up: (r.end - r.bottom) / fps}));
+  return {kind: 'slsquat', stance, reps, states: frontStates(frames)};
+}
+function anCalf(frames, fps, legCm) {
+  const {near, far, dir} = sideInfo(frames), A = frames.map(f => sagittal(f, near, dir));
+  const legLen = median(frames.map(f => f.lm ? dist(g(f, near + 'Hip'), g(f, near + 'An')) : NaN));
+  const heelY = smooth(frames.map(f => f.lm ? g(f, near + 'He').y : NaN)), base = pctl(heelY, .85);
+  const h = heelY.map(y => (base - y) / legLen * legCm), kn = smooth(A.map(a => a ? a.knee : NaN)), mx = Math.max(...h.filter(Number.isFinite));
+  const reps = repsFrom(h, fps, Math.max(1, mx * .35), Math.max(1, mx * .35)).map(r => ({...r, rise: h[r.bottom], up: (r.bottom - r.start) / fps, down: (r.end - r.bottom) / fps, knee: kn[r.bottom]}));
+  return {kind: 'calf', reps, states: sideStates(frames, near, far, dir, {mirror: true})};
+}
+
+/* ---- results ---- */
+const mTag = '<span class="src-tag measured">Measured from video · 2D estimate</span>';
+const rule = '<span class="src-tag none">Teaching threshold, not a validated cut-off</span>';
+const f1 = v => Number.isFinite(v) ? v.toFixed(1) : '–', f0 = v => Number.isFinite(v) ? Math.round(v) : '–';
+function metric(title, val, note) { return `<div class="effect"><div class="tagrow">${mTag}</div><div><b>${title}:</b> ${val}</div>${note ? `<div class="src">${note}</div>` : ''}</div>`; }
+function flagCard(txt) { return `<div class="effect"><div class="tagrow">${rule}</div><div class="flag">${txt}</div></div>`; }
+function clientChart(r) {
+  const ref = series(PATTERN_P('reference')), rows = [['Hip flexion (thigh)', 'thigh', 'hip', -30, 45], ['Knee flexion', 'knee', 'knee', -5, 80], ['Ankle dorsiflexion', 'ankle', 'ankle', -35, 30]];
+  const X0 = 30, X1 = 274, RH = 50, R0 = 14, GAP = 16, X = i => (X0 + (X1 - X0) * i / 100).toFixed(1), Y = (v, lo, hi, y0) => (y0 + RH - (clamp(v, lo, hi) - lo) / (hi - lo) * RH).toFixed(1);
+  let h = '';
+  rows.forEach(([title, k, rk, lo, hi], i) => {
+    const y0 = R0 + i * (RH + GAP), m = r.mean[k], sd = r.spread[k];
+    const band = m.map((v, j) => `${X(j)},${Y(v + sd[j], lo, hi, y0)}`).join(' ') + ' ' + m.map((v, j) => `${X(100 - j)},${Y(m[100 - j] - sd[100 - j], lo, hi, y0)}`).join(' ');
+    h += `<text class="ttl" x="${X0}" y="${y0 - 3}">${title}</text><rect class="frame" x="${X0}" y="${y0}" width="${X1 - X0}" height="${RH}"/><text x="${X0 - 4}" y="${y0 + 7}" text-anchor="end">${hi}°</text><text x="${X0 - 4}" y="${y0 + RH}" text-anchor="end">${lo}°</text>
+      <polygon class="band" points="${band}"/><path class="ref" d="${ref[rk].map((v, j) => (j ? 'L' : 'M') + X(j) + ',' + Y(v, lo, hi, y0)).join('')}"/><path class="cli" d="${m.map((v, j) => (j ? 'L' : 'M') + X(j) + ',' + Y(v, lo, hi, y0)).join('')}"/>`;
+  });
+  const yb = R0 + rows.length * (RH + GAP) - GAP;
+  for (const pct of [0, 20, 40, 60, 80, 100]) h += `<text x="${X(pct)}" y="${yb + 11}" text-anchor="middle">${pct}%</text>`;
+  h += `<line class="cli" x1="${X0}" x2="${X0 + 14}" y1="${yb + 21}" y2="${yb + 21}"/><text x="${X0 + 18}" y="${yb + 24}">Client (mean ± spread)</text><line class="ref" x1="${X1 - 76}" x2="${X1 - 62}" y1="${yb + 21}" y2="${yb + 21}"/><text x="${X1 - 58}" y="${yb + 24}">Reference</text>`;
+  return `<svg class="gchart cchart" viewBox="0 0 280 ${yb + 30}" role="img" aria-label="Client joint angles over the walking cycle compared with the reference">${h}</svg>`;
+}
+function renderClientResults() {
+  const r = client.result, el = $('#c-results'); if (!r) { el.innerHTML = ''; return; }
+  let h = `<div class="divider" style="margin:12px 0"></div><div class="label">Results · ${esc(CTASKS[client.task].name)}</div>`;
+  const acts = [];
+  if (r.error) { el.innerHTML = h + `<p class="note">${esc(r.error)}</p>`; return; }
+  if (r.kind === 'walkSide') {
+    const side = r.near === 'l' ? 'left' : 'right';
+    h += `<div class="effects" style="margin-top:6px">` + metric('Cadence', `${f0(r.cadence)} steps per minute`, `${r.cycles} full stride${r.cycles === 1 ? '' : 's'} of the ${side} leg, the one nearest the camera.`)
+      + metric('Stride-to-stride variation', `${f1(r.cv)}%`, 'Lower is steadier. Treadmill walking usually varies less than walking across a room.')
+      + metric('Knee bend as the leg takes weight', `${f1(r.fit.loadKnee)}° (reference ${GAIT_DEFAULT.loadKnee}°)`)
+      + metric('Peak knee bend in swing', `${f1(r.fit.swingKnee)}° (reference ${GAIT_DEFAULT.swingKnee}°)`)
+      + metric('Hip extension at push-off', `${f1(-r.fit.hipExt)}° extension (reference ${-GAIT_DEFAULT.hipExt}°)`, 'Measured as the thigh angle plus 10° to match gait-lab hip angles.')
+      + metric('Ankle at push-off', `${f1(-r.fit.pushOff)}° pointing down (reference ${-GAIT_DEFAULT.pushOff}°)`, 'Video ankle angles are the least accurate; the midstance value is aligned to the reference.')
+      + metric('Forward trunk lean', `${f1(r.fit.trunkFwd)}°`) + `</div>` + clientChart(r);
+    const W8 = {loadKnee: 1, hipExt: 1, hipSwing: .7, pushOff: .35, swingKnee: .3};
+    const distTo = k => Math.sqrt(Object.entries(W8).reduce((a, [key, w]) => a + w * ((r.fit[key] - PATTERN_P(k)[key]) / 5) ** 2, 0));
+    const ranked = ['reference', 'foot', 'knee', 'hip'].map(k => [k, distTo(k)]).sort((a, b) => a[1] - b[1]);
+    const close = ranked[0][0] !== 'reference' && ranked[0][1] < .8 * distTo('reference') ? ranked[0][0] : null;
+    h += `<p class="note">${close ? `Closest teaching pattern: <b>${PATTERNS[close].name}</b>. These patterns are teaching examples, not diagnoses.` : 'No single teaching pattern stands out from the reference.'}</p>`;
+    acts.push(['c-to-gait', 'Walk this in the gait lab']);
+  } else if (r.kind === 'walkFront') {
+    h += `<div class="effects" style="margin-top:6px">` + metric('Pelvic drop when standing on the left leg', `${f1(r.dropR)}°`, 'The right side of the pelvis dropping. Typical walking shows a few degrees.')
+      + metric('Pelvic drop when standing on the right leg', `${f1(r.dropL)}°`)
+      + metric('Knee angle in the frontal plane, left stance', `${f1(Math.abs(r.fpL))}° ${r.fpL > 0 ? 'inward' : 'outward'}`, 'Frontal plane projection angle: how far the knee sits inside the line from hip to ankle.')
+      + metric('Knee angle in the frontal plane, right stance', `${f1(Math.abs(r.fpR))}° ${r.fpR > 0 ? 'inward' : 'outward'}`)
+      + metric('Trunk lean over the standing leg', `left ${f1(r.leanL)}°, right ${f1(r.leanR)}°`) + `</div>`;
+    if (Math.max(r.dropL, r.dropR) >= 7) h += flagCard(`<b>Pelvic drop of 7° or more</b> on at least one side. See the outer hip and kneecap pathways for what is and is not known.`);
+    if (Math.max(r.fpL, r.fpR) >= 10) h += flagCard(`<b>The knee moves inward 10° or more</b> in stance on at least one side.`);
+    if (Math.abs(r.dropL - r.dropR) >= 3) h += flagCard(`<b>Uneven pelvic drop</b> between sides (${f1(Math.abs(r.dropL - r.dropR))}° difference).`);
+    acts.push(['c-to-gait', 'Apply to the gait lab']);
+  } else {
+    const ex = CTASKS[client.task].ex, reps = r.reps || [];
+    if (!reps.length) h += `<p class="note">No repetitions were detected. Make sure the whole movement is in frame and the client moves through a clear range.</p>`;
+    else {
+      const cols = r.kind === 'squat' ? (r.view === 'side' ? [['Knee', x => f0(x.depth) + '°'], ['Hip', x => f0(x.hip) + '°'], ['Trunk', x => f0(x.trunk) + '°'], ['Down', x => f1(x.down) + ' s'], ['Up', x => f1(x.up) + ' s'], ['Heel', x => f1(x.heel) + ' cm']] : [['Knee*', x => f0(x.depth) + '°'], ['L knee in', x => f0(x.fppaL) + '°'], ['R knee in', x => f0(x.fppaR) + '°'], ['Down', x => f1(x.down) + ' s'], ['Up', x => f1(x.up) + ' s']])
+        : r.kind === 'slsquat' ? [['Knee*', x => f0(x.depth) + '°'], ['Knee in', x => f0(x.fppa) + '°'], ['Pelvis drop', x => f1(x.drop) + '°'], ['Trunk lean', x => f1(x.lean) + '°'], ['Down', x => f1(x.down) + ' s']]
+        : [['Heel rise', x => f1(x.rise) + ' cm'], ['Up', x => f1(x.up) + ' s'], ['Down', x => f1(x.down) + ' s'], ['Knee bend', x => f0(x.knee) + '°']];
+      h += `<div class="effects" style="margin-top:6px">${metric('Repetitions', reps.length, r.kind === 'slsquat' ? `Standing on the ${r.stance === 'l' ? 'left' : 'right'} leg.` : r.kind === 'squat' ? `${r.view === 'side' ? 'Side' : 'Front'} view.` : '')}</div>
+        <div style="overflow-x:auto;margin-top:6px"><table class="reps"><thead><tr><th>#</th>${cols.map(c => `<th>${c[0]}</th>`).join('')}</tr></thead><tbody>${reps.map((x, i) => `<tr><td>${i + 1}</td>${cols.map(c => `<td>${c[1](x)}</td>`).join('')}</tr>`).join('')}</tbody></table></div>`;
+      if (cols.some(c => c[0].endsWith('*'))) h += `<p class="note" style="margin:4px 0 0">* Knee bend from the front is estimated from how much the leg shortens, so treat it as approximate.</p>`;
+      const flags = [];
+      const avgOf = k => meanOf(reps.map(x => x[k]));
+      // the tracker's heel point drifts about 2 cm as the shin tilts, so only a clear rise counts
+      if (r.kind === 'squat' && r.view === 'side' && avgOf('heel') > 3) flags.push('<b>Heels lift</b> during the squat. Limited ankle dorsiflexion is one possible reason.');
+      if (r.kind === 'squat' && r.view !== 'side' && Math.max(avgOf('fppaL'), avgOf('fppaR')) >= 10) flags.push('<b>Knees move inward</b> 10° or more at the bottom of the squat.');
+      if (r.kind === 'squat' && reps.length > 2 && sdOf(reps.map(x => x.depth)) > 10) flags.push('<b>Depth varies</b> a lot between reps.');
+      if ((r.kind === 'squat' || r.kind === 'slsquat') && avgOf('down') < 1) flags.push('<b>Fast lowering</b>, under 1 s on average. Slower lowering gives more control.');
+      if (r.kind === 'slsquat' && avgOf('fppa') >= 10) flags.push('<b>The knee moves inward</b> 10° or more over the foot.');
+      if (r.kind === 'slsquat' && avgOf('drop') >= 5) flags.push('<b>The pelvis drops</b> 5° or more on the free side.');
+      if (r.kind === 'slsquat' && avgOf('lean') >= 10) flags.push('<b>The trunk leans</b> over the standing leg by 10° or more, often a way to unload the hip.');
+      if (r.kind === 'calf' && reps.length > 3 && reps[reps.length - 1].rise < .75 * reps[0].rise) flags.push('<b>Height drops off</b>: the last rep reached under 75% of the first. A sign of fatigue.');
+      if (r.kind === 'calf' && avgOf('down') < 1) flags.push('<b>Fast lowering</b>, under 1 s. Lowering slowly loads the calf and Achilles more evenly.');
+      if (r.kind === 'calf' && avgOf('knee') > 15) flags.push('<b>Knees bend</b> at the top, so soleus is doing more of the work than gastrocnemius.');
+      h += flags.length ? flags.map(flagCard).join('') : `<p class="note">No form flags at these thresholds.</p>`;
+    }
+    if (ex) acts.push(['c-show-ex', `Show the ${SBYID[ex].name.toLowerCase()}`]);
+  }
+  h += `<div class="btnrow" style="margin-top:10px">${acts.map(([id, t]) => `<button class="btn sm" id="${id}" type="button">${esc(t)}</button>`).join('')}</div>
+    <p class="note">One camera sees the body in 2D, so rotations and depth are not measured and angles can be off by several degrees. Loose clothing, poor light or a camera at an angle make it worse.</p>`;
+  el.innerHTML = h;
+  const tg = $('#c-to-gait'); if (tg) tg.onclick = applyClientToGait;
+  const se = $('#c-show-ex'); if (se) se.onclick = () => demonstrate(CTASKS[client.task].ex, 'L');
+}
+function applyClientToGait() {
+  const r = client.result; if (!r) return;
+  const prev = PATTERNS.client ? PATTERNS.client.p : {};
+  const p = r.kind === 'walkSide' ? {...prev, ...r.fit, meas: {thigh: r.mean.thigh, knee: r.mean.knee, ankle: r.mean.ankle}} : {...prev, ...r.fit};
+  PATTERNS.client = {name: 'Client', p, note: r.kind === 'walkSide' || prev.meas ? "The client's averaged walking cycle from video, with the other leg half a cycle behind." : "Reference walking with the client's pelvic drop and trunk lean from video."};
+  gait.pattern = 'client'; gait.compare = 'reference';
+  setGaitParams(PATTERN_P('client'), false); showTab('gait'); startGait(true); buildGaitUI();
+}
+
+/* ---- overlay and replay ---- */
+function sizeOverlay() { const c = $('#c-overlay'); c.width = client.W || 640; c.height = client.H || 360; }
+function clientFrameIdx() {
+  const fr = client.frames; if (!fr || !fr.length) return 0;
+  const t = $('#c-video').currentTime || 0; let lo = 0, hi = fr.length - 1;
+  while (lo < hi) { const m = (lo + hi) >> 1; if ((fr[m].src ?? fr[m].t) < t) lo = m + 1; else hi = m; }
+  return lo;
+}
+function drawOverlay(f) {
+  const c = $('#c-overlay'), x = c.getContext('2d'); if (!x) return;
+  if (!f) { const fr = client.frames; f = fr && fr[clientFrameIdx()]; }
+  x.clearRect(0, 0, c.width, c.height); if (!f || !f.lm) return;
+  const near = client.result && client.result.near, lw = Math.max(2, c.width / 260);
+  x.lineCap = 'round';
+  for (const [a, b] of BONES2D) {
+    const p = f.lm[LM[a]], q = f.lm[LM[b]]; if (p.v < .3 || q.v < .3) continue;
+    x.strokeStyle = near && a[0] !== near && b[0] !== near && a[0] === b[0] ? 'rgba(125,147,216,.9)' : 'rgba(242,154,18,.95)'; x.lineWidth = lw;
+    x.beginPath(); x.moveTo(p.x, p.y); x.lineTo(q.x, q.y); x.stroke();
+  }
+  x.fillStyle = '#fff'; for (const k of Object.keys(LM)) { const p = f.lm[LM[k]]; if (p.v < .3) continue; x.beginPath(); x.arc(p.x, p.y, lw * 1.2, 0, 7); x.fill(); }
+}
+$('#c-video').addEventListener('timeupdate', () => { const v = $('#c-video'); if (v.duration && !client.stream) $('#c-scrub').value = Math.round(v.currentTime / v.duration * 1000); if (!client.replay) drawOverlay(); });
+$('#c-video').addEventListener('ended', () => { $('#c-play').textContent = 'Play'; });
+$('#c-play').onclick = () => { const v = $('#c-video'); if (v.paused) { v.playbackRate = .5; v.play(); $('#c-play').textContent = 'Pause'; if ($('#c-follow').checked) { stopGait(); client.replay = true; active = null; renderLibrary(); } } else { v.pause(); $('#c-play').textContent = 'Play'; } };
+$('#c-scrub').addEventListener('input', e => { const v = $('#c-video'); if (v.duration) { v.pause(); $('#c-play').textContent = 'Play'; v.currentTime = e.target.value / 1000 * v.duration; if ($('#c-follow').checked && client.states) { stopGait(); client.replay = true; } drawOverlay(); } });
+$('#c-follow').onchange = e => { client.replay = e.target.checked && !!client.states; if (client.replay) stopGait(); };
+renderClientForm();
+
 /* ================= loop ================= */
 let lastUi = 0, lastPaint = 0;
 const ease = k => k < .5 ? 4*k*k*k : 1 - Math.pow(-2*k + 2, 3)/2;
 const pelvisW = V(0,0,0), tgt = V(0,0,0);
 function frame(t) {
+  if (client.capturing) { requestAnimationFrame(frame); return; }   // free the device while a clip is being read
   let finished = null, gY = null, moved = stateDirty || !!tween || !!dragging;
   const dt = Math.min(.1, (t - (frame.last || t)) / 1000); frame.last = t;
   if (gait.on) {
@@ -1722,6 +2208,9 @@ function frame(t) {
     const a = minY(tween.gFrom), b = minY(tween.gTo); gY = a + (b - a)*e;
     if (k >= 1) { groundSpec = tween.gTo; finished = tween.done; tween = null; }
     stateDirty = true;
+  } else if (client.replay && client.states) {
+    const i = clientFrameIdx(); if (i !== client.lastIdx) { client.lastIdx = i; const st = client.states[i]; for (const k of BODY) state[k] = st[k]; for (const sd of ['L','R']) Object.assign(state[sd], st[sd]); stateDirty = true; moved = true; }
+    applyState(); drawOverlay();
   } else if (loop && !loop.paused) {
     const ph = ((t - loop.t0) % loop.period) / loop.period, e = (1 - Math.cos(ph * 2 * Math.PI)) / 2, a = loop.a.state, b = loop.b.state;
     for (const key of BODY) state[key] = a[key] + (b[key] - a[key])*e;
@@ -1844,6 +2333,7 @@ Rules:
 - Pain: you cannot diagnose. When the trainer describes pain, call set_pain_area for the matching area, then follow its screening exactly. If it returns a gate, do not suggest or demonstrate stretches; explain the gate and advise the right level of care (emergency means call emergency services now). Never demonstrate a stretch the screen marks avoid. If the trainer mentions age, pregnancy, surgery, a replacement joint, osteoporosis, disc problems, hypermobility, arthritis, blood pressure or falls, tell them to tick it in the Pain tab so the screen accounts for it, and be conservative meanwhile.
 - Pain that is sharp, burning, numb, tingling, severe, or started with a fall, accident or pop needs assessment before stretching.
 - Gait and pain: use walk to show patterns and open_pathway for evidence. Always state the evidence strength and causal level from the pathway data, mention at least one alternative explanation, and never say a movement pattern causes pain unless the pathway data says so. Say which values the model computes and which it does not (forces, joint moments, activation).
+- Client video results are 2D estimates from one camera: angles can be off by several degrees and rotations are not measured. Form flags use teaching thresholds, not validated cut-offs. Never diagnose from them; relate them to the pathways and exercises.
 - The library includes strength and control exercises with dosage and precautions; prefer them alongside stretches when a pathway or pain area calls for strengthening.
 - Plain text for a trainer, under 140 words, no headings or tables. Short "- " lists are fine.
 Angle keys (degrees). body: pitch (+ forward, -90 lies on the back, 90 face down), spineFlex, spineSide (+ right), neckFlex, neckSide (+ right). left/right: hipFlex, hipAbd, hipRot (+ external), knee, ankle (+ dorsiflexion), shFlex, shAbd, shHoriz (+ across the body), elbow, wrist (+ extension).
@@ -1860,6 +2350,7 @@ stopBtn.onclick = () => ctl && ctl.abort();
 function modelState() {
   const parts2 = [active ? `showing ${SBYID[active.id].name}${active.side ? ` (${active.side === 'L' ? 'left' : 'right'})` : ''}` : 'no library stretch active'];
   if (selected) parts2.push(`selected ${selected.cur ? mname(selected.cur) : selected.name}`);
+  if (client.result && !client.result.error) { const r = client.result; parts2.push('client video (2D estimate): ' + JSON.stringify(r.kind === 'walkSide' ? {task: 'walking side view', cadence: Math.round(r.cadence), fitted: r.fit} : r.kind === 'walkFront' ? {task: 'walking front view', pelvic_drop_left_stance: +r.dropR.toFixed(1), pelvic_drop_right_stance: +r.dropL.toFixed(1), knee_fppa_left: +r.fpL.toFixed(1), knee_fppa_right: +r.fpR.toFixed(1)} : {task: CTASKS[client.task].name, reps: (r.reps || []).length, per_rep: (r.reps || []).slice(0, 8).map(x => Object.fromEntries(Object.entries(x).filter(([k]) => !['start','bottom','end'].includes(k)).map(([k, v]) => [k, +(+v).toFixed(1)])))})); }
   if (gait.on) parts2.push(`walking lab: ${PATTERNS[gait.pattern].name}${gait.custom ? ' (adjusted ' + JSON.stringify(Object.fromEntries(GP.filter(g => gait.p[g[0]] !== PATTERN_P(gait.pattern)[g[0]]).map(g => [g[0], gait.p[g[0]]]))) + ')' : ''} at ${Math.round(gait.t*100)}% of the cycle`);
   const ps = painSummary(); if (ps) parts2.push('pain screen: ' + JSON.stringify(ps));
   return `[Model state: ${parts2.join('; ')}]`;
@@ -1924,7 +2415,7 @@ function localAnswer(text, b) {
   }
   setBubbleText(b, `In library mode I can demonstrate ${STRETCHES.length} stretches and exercises, or run the walking lab. Name a body area or a muscle, or open the Pain tab to screen a specific pain.`);
 }
-if (window.__TEST__) window.__TEST__({gait, startGait, stopGait, gaitPose, summarize, setGaitParams, PATTERN_P, PATHWAYS, EVIDENCE, captureGhost, ghostPos, demonstrate, parts, curStrain, minY, MARK, root, state: () => state, evaluatePain, setPain: p => Object.assign(pain, p), STRETCHES, gpuPick});
+if (window.__TEST__) window.__TEST__({client, runAnalysis, sagittal, frontal, anWalkSide, anWalkFront, anSquat, anSLSquat, anCalf, LM, gait, startGait, stopGait, gaitPose, summarize, setGaitParams, PATTERN_P, PATHWAYS, EVIDENCE, captureGhost, ghostPos, demonstrate, parts, curStrain, minY, MARK, root, state: () => state, evaluatePain, setPain: p => Object.assign(pain, p), STRETCHES, gpuPick});
 })();
 </script>
 
