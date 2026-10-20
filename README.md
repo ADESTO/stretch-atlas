@@ -1,17 +1,19 @@
 # Stretch Atlas
 
-An interactive 3D anatomy atlas for gym trainers. Pose a real anatomical body, watch which muscles lengthen, demonstrate 22 stretches, and tap where it hurts to get stretch suggestions screened for warning signs, age and health conditions.
+An interactive 3D movement and anatomy lab for trainers. Pose a real anatomical body, play and compare walking patterns, explore evidence-graded links between movement and pain, and demonstrate stretches, strengthening and movement-control exercises screened for warning signs, age and health conditions.
 
 Built with Three.js on meshes from [Z-Anatomy](https://github.com/LluisV/Z-Anatomy).
 
 ## What it does
 
-- **Real anatomy.** 222 muscles and 248 bones from Z-Anatomy, simplified and skinned to a 15-joint rig (spine, neck, hips, knees, ankles, shoulders, elbows, wrists).
+- **Real anatomy.** 278 muscles and fascia structures and 248 bones from Z-Anatomy, simplified and skinned to a 15-joint rig. The pelvis tilts, drops and rotates independently of the legs and trunk.
 - **Live muscle length.** Each muscle's centre line, plus bone-anchored tendon attachments for joint-crossing muscles, is measured every frame as the body moves. Colour by stretch targets or by length change.
-- **Stretch library.** 22 stretches with cues, hold times and common mistakes. One-sided stretches work on either side.
+- **Exercise atlas.** 22 stretches plus 15 strengthening and movement-control exercises, each with target muscles, cues, dosage and precautions. Strength and control exercises loop through their movement. Every curated muscle links to the stretches, strength exercises and drills that use it.
+- **Gait lab.** Play, pause and scrub a walking cycle. Compare reference, foot-led, knee-led and hip-led patterns, with a ghost outline and angle charts for the comparison. Thirteen sliders adjust push-off, knee bend, pelvic drop, trunk lean, stiff calf, stiff hip flexors and more. Colours show muscles typically active in each phase (from published EMG patterns). The effects panel labels every value as computed by the model, from research (direction only), or not modelled.
+- **Gait-to-pain explorer.** Nine pathways across the knee, outer hip, lower back, calf, heel and shin. Each has a mechanism, linked studies (design, sample, finding, limits), an evidence-strength grade, a causal level (from idea only to changing it helped in a trial), alternative explanations, a demo in the gait lab and linked exercises.
 - **Direct posing.** Drag the hands and feet (two-bone IK) or use joint sliders limited to typical healthy ranges of motion.
 - **Pain screen.** Tap the body or choose one of 17 areas. Answer what it feels like, how bad it is, the age band, conditions and area-specific warning signs. Red flags hide all stretches and say what level of care to seek. Conditions such as osteoporosis, pregnancy, joint replacements and disc problems remove or flag specific stretches.
-- **AI instructor.** When the page runs as a Claude artifact, Claude drives the model through four page tools and follows the pain screen. Anywhere else it falls back to a keyword-matching library mode.
+- **AI instructor.** When the page runs as a Claude artifact, Claude drives the model through page tools (demonstrate, pose, select, mark pain, walk, open pathway) and follows the pain screen and evidence grades. Anywhere else it falls back to a keyword-matching library mode.
 
 ## Run it locally
 
@@ -50,7 +52,9 @@ npm run build
 ## Important limits
 
 - This is a teaching tool, not a diagnostic or medical device. The screening rules are simplified from common guidance and should be reviewed by a physiotherapist before clients rely on them.
-- Length changes are model estimates from linear-blend skinning, not measured biomechanics.
+- Length changes are model estimates from linear-blend skinning, not measured biomechanics. The model calculates no forces, joint moments or muscle activation.
+- Gait curves are approximate shapes based on typical adult walking, adapted so the rigid model foot stays in contact and clears the floor. Foot-, knee- and hip-led patterns are teaching archetypes, not validated clinical categories.
+- Evidence summaries were checked against the sources in October 2026 but are short summaries; read the linked papers before relying on them.
 - The spine bends at only two points (lower back and neck), so lower-back length changes read small. The forearm cannot rotate, so palm-down stretches show the palm up.
 - Nothing typed in the pain screen is stored.
 

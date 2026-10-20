@@ -16,7 +16,7 @@
   --bg:#e8ecec; --panel:#f6f8f8; --panel-2:#e0e6e7; --ink:#152024; --muted:#59676c;
   --accent:#c97507; --accent-ink:#ffffff; --accent-soft:#f5dfb8; --pale:#efe2bf;
   --pain:#c42a5e; --pain-soft:#f6d7e1; --ok:#2f7d55; --ok-soft:#d6ebde; --warn-soft:#f6e6c2;
-  --cool:#4f68b0; --stage-a:#dde4e6; --stage-b:#c8d2d5; --overlay:rgba(246,248,248,.9);
+  --cool:#4f68b0; --cool-soft:#dfe5f6; --stage-a:#dde4e6; --stage-b:#c8d2d5; --overlay:rgba(246,248,248,.9);
   --display:'Bricolage Grotesque','Segoe UI',system-ui,sans-serif;
   --body:'IBM Plex Sans',system-ui,-apple-system,sans-serif;
   --mono:'IBM Plex Mono',ui-monospace,Menlo,monospace;
@@ -25,12 +25,12 @@
   --bg:#0f1417; --panel:#161d21; --panel-2:#212a2f; --ink:#e3e9eb; --muted:#91a0a5;
   --accent:#f0a23a; --accent-ink:#1b1206; --accent-soft:#3e2d12; --pale:#3a3424;
   --pain:#ff5d8f; --pain-soft:#42202d; --ok:#6fcf98; --ok-soft:#1d3528; --warn-soft:#3b3220;
-  --cool:#7d93d8; --stage-a:#182025; --stage-b:#0b1013; --overlay:rgba(22,29,33,.9); color-scheme:dark}}
+  --cool:#7d93d8; --cool-soft:#232b45; --stage-a:#182025; --stage-b:#0b1013; --overlay:rgba(22,29,33,.9); color-scheme:dark}}
 :root[data-theme="dark"]{
   --bg:#0f1417; --panel:#161d21; --panel-2:#212a2f; --ink:#e3e9eb; --muted:#91a0a5;
   --accent:#f0a23a; --accent-ink:#1b1206; --accent-soft:#3e2d12; --pale:#3a3424;
   --pain:#ff5d8f; --pain-soft:#42202d; --ok:#6fcf98; --ok-soft:#1d3528; --warn-soft:#3b3220;
-  --cool:#7d93d8; --stage-a:#182025; --stage-b:#0b1013; --overlay:rgba(22,29,33,.9); color-scheme:dark}
+  --cool:#7d93d8; --cool-soft:#232b45; --stage-a:#182025; --stage-b:#0b1013; --overlay:rgba(22,29,33,.9); color-scheme:dark}
 
 *{box-sizing:border-box}
 html,body{height:100%}
@@ -101,8 +101,8 @@ a{color:inherit}
 .ov{position:absolute;display:flex;gap:8px;flex-wrap:wrap;align-items:center;pointer-events:none}
 .ov > *{pointer-events:auto}
 .ov.tl{top:12px;left:12px;right:12px}
-.ov.bl{bottom:12px;left:12px}
-.ov.br{bottom:12px;right:12px;max-width:50%;justify-content:flex-end}
+.ov.bl{bottom:28px;left:12px}
+.ov.br{bottom:28px;right:12px;max-width:50%;justify-content:flex-end}
 .chipbar{background:var(--overlay);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border-radius:10px;padding:3px;display:flex;gap:2px;flex-wrap:wrap}
 .chipbar button{border:0;background:transparent;border-radius:7px;padding:5px 10px;font-size:12.5px;font-weight:500;color:var(--muted)}
 .chipbar button[aria-pressed="true"]{background:var(--ink);color:var(--bg)}
@@ -119,7 +119,7 @@ a{color:inherit}
 .loader{position:absolute;inset:0;display:grid;place-content:center;gap:10px;text-align:center;z-index:4;background:radial-gradient(120% 90% at 50% 35%,var(--stage-a),var(--stage-b))}
 .loader .track{width:220px;height:6px;border-radius:3px;background:var(--panel-2);overflow:hidden}
 .loader .track i{display:block;height:100%;width:0;background:var(--accent);transition:width .2s}
-.credit{position:absolute;bottom:12px;left:50%;transform:translateX(-50%);font-size:10.5px;color:var(--muted);white-space:nowrap}
+.credit{position:absolute;bottom:7px;left:50%;transform:translateX(-50%);font-size:10.5px;color:var(--muted);white-space:nowrap}
 
 .inspector{padding:16px 16px 12px;overflow:auto;max-height:56%;flex:none;display:grid;gap:14px;align-content:start}
 .card{display:grid;gap:8px}
@@ -163,40 +163,113 @@ details summary{cursor:pointer;font-size:12.5px;color:var(--muted)}
 .composer{display:flex;gap:6px;padding:8px 12px 12px}
 .composer textarea{flex:1;resize:none;border:0;border-radius:10px;padding:9px 11px;background:var(--panel);min-height:40px;max-height:110px;font-size:13.5px}
 
+.tabs .seg button{padding:6px 2px;font-size:12px}
+.type{font-family:var(--mono);font-size:10px;letter-spacing:.04em;text-transform:uppercase;padding:1px 6px;border-radius:10px;background:var(--panel-2);color:var(--muted);white-space:nowrap}
+.type.strength{background:var(--cool-soft);color:var(--cool)}
+.type.control{background:var(--ok-soft);color:var(--ok)}
+.stretch .area .type{margin-left:4px}
+.transport{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.transport .seg{flex:1;min-width:150px}
+.gchart{width:100%;height:auto;display:block;cursor:pointer;touch-action:none;margin-top:12px}
+.gchart text{font-family:var(--mono);font-size:8.5px;fill:var(--muted)}
+.gchart .ttl{font-family:var(--body);font-size:10px;fill:var(--ink);font-weight:500}
+.gchart .cur{fill:none;stroke:var(--accent);stroke-width:1.8}
+.gchart .cmp{fill:none;stroke:var(--cool);stroke-width:1.3;stroke-dasharray:3 3}
+.gchart .zero{stroke:var(--panel-2);stroke-width:1}
+.gchart .frame{fill:none;stroke:var(--panel-2)}
+.gchart .stance{fill:var(--accent-soft)}
+.gchart .swing{fill:var(--panel-2)}
+.gchart .head{stroke:var(--ink);stroke-width:1.2}
+.gp{display:grid;grid-template-columns:1fr auto;gap:2px 8px;padding:4px 2px}
+.gp label{font-size:12.5px}
+.gp output{font-family:var(--mono);font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums}
+.gp input{grid-column:1/3;width:100%;accent-color:var(--accent);margin:2px 0}
+.gp.changed label{font-weight:600}
+.effects{display:grid;gap:6px}
+.effect{display:grid;gap:3px;font-size:12.5px;padding:7px 9px;border-radius:8px;background:var(--panel-2)}
+.effect .src{font-size:11px;color:var(--muted)}
+.tagrow{display:flex;gap:5px;flex-wrap:wrap;align-items:center}
+.src-tag{font-family:var(--mono);font-size:10px;padding:1px 6px;border-radius:8px;white-space:nowrap}
+.src-tag.computed{background:var(--ok-soft);color:var(--ok)}
+.src-tag.input{background:var(--cool-soft);color:var(--cool)}
+.src-tag.literature{background:var(--warn-soft)}
+.src-tag.none{background:var(--panel);color:var(--muted)}
+.path{border-radius:10px;background:var(--panel-2);padding:9px 11px}
+.path summary{list-style:none;display:grid;gap:5px;cursor:pointer;color:var(--ink);font-size:13.5px}
+.path summary::-webkit-details-marker{display:none}
+.path summary b{font-weight:600}
+.path[open] summary{margin-bottom:8px}
+.path .body{display:grid;gap:8px;font-size:12.5px}
+.path ul{margin:0;padding-left:18px}
+.lvl{font-family:var(--mono);font-size:10px;padding:1px 7px;border-radius:8px;white-space:nowrap}
+.lvl.strong{background:var(--ok-soft);color:var(--ok)}
+.lvl.moderate{background:var(--cool-soft);color:var(--cool)}
+.lvl.limited{background:var(--warn-soft)}
+.lvl.hypothesis{background:var(--pain-soft);color:var(--pain)}
+.lvl.causal{background:var(--panel);color:var(--muted)}
+.ev{display:grid;gap:2px;padding-top:6px;border-top:1px solid var(--panel)}
+.ev a{font-weight:500}
+.ev .lim{color:var(--muted)}
+.btnrow{display:flex;gap:6px;flex-wrap:wrap}
+/* narrower screens: the model stays pinned in view while the panels scroll beside or below it */
 @media (max-width:1180px){
   html,body{height:auto}
-  .app{height:auto;grid-template-columns:1fr 1fr}
-  .stage{grid-column:1/-1;grid-row:1;height:64vh;min-height:400px}
-  .pane{max-height:760px}
-  .inspector{max-height:none}
+  .app{height:auto;grid-template-columns:minmax(0,1fr) minmax(300px,360px);align-items:start}
+  .stage{grid-column:1;grid-row:1/span 2;position:sticky;top:calc(14px + env(safe-area-inset-top,0px));height:calc(100vh - 28px - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px));min-height:380px}
+  .pane-left{grid-column:2;grid-row:1}
+  .pane-right{grid-column:2;grid-row:2}
+  .pane{max-height:none;overflow:visible}
+  .scroll{overflow:visible}
+  .inspector{max-height:none;overflow:visible}
   .chat{min-height:420px}
+  .ov.br{max-width:60%}
 }
 @media (max-width:720px){
-  .app{grid-template-columns:minmax(0,1fr)}
-  .stage{height:60vh;min-height:360px}
-  .ov.br,.credit{display:none}
+  .app{grid-template-columns:minmax(0,1fr);padding-top:0}
+  .stage{grid-column:1;grid-row:1;top:env(safe-area-inset-top,0px);height:48vh;min-height:300px;z-index:5;border-radius:0 0 14px 14px;box-shadow:0 6px 18px rgba(0,0,0,.18)}
+  .pane-left{grid-column:1;grid-row:2}
+  .pane-right{grid-column:1;grid-row:3}
+  .ov.br,.credit,#layers-bar{display:none}
+  .ov.tl{top:8px;left:8px;right:8px;gap:6px}
+  .chipbar button{padding:4px 8px;font-size:12px}
+  .ov.bl{bottom:8px;left:8px}
+  .legend{padding:6px 8px;font-size:11.5px;gap:3px}
 }
 </style>
 
 <div class="app">
-  <aside class="pane" aria-label="Library, pain and joints">
+  <aside class="pane pane-left" aria-label="Library, pain and joints">
     <div class="brand">
       <h1>Stretch Atlas</h1>
-      <p>Pose a real anatomical body, find what hurts, and see which stretches fit the person.</p>
+      <p>Pose a real anatomical body, explore walking, find what hurts, and see which exercises fit the person.</p>
     </div>
     <div class="tabs"><div class="seg">
-      <button id="tab-lib" aria-pressed="true">Stretches</button>
+      <button id="tab-lib" aria-pressed="true">Exercises</button>
+      <button id="tab-gait" aria-pressed="false">Gait</button>
       <button id="tab-pain" aria-pressed="false">Pain</button>
       <button id="tab-joint" aria-pressed="false">Joints</button>
       <button id="tab-mus" aria-pressed="false">Muscles</button>
     </div></div>
 
     <div class="scroll" id="panel-lib">
+      <div class="pick" id="lib-filter" style="margin:2px 0 10px"></div>
       <div class="row2"><span class="label">Working side</span>
         <div class="seg"><button id="side-L" aria-pressed="true">Left</button><button id="side-R" aria-pressed="false">Right</button></div>
       </div>
       <div id="lib"></div>
       <div style="display:flex;gap:6px;margin-top:10px"><button class="btn" id="reset">Stand neutral</button></div>
+    </div>
+
+    <div class="scroll" id="panel-gait" hidden>
+      <div class="transport"><button class="btn primary" id="g-play" type="button">Play</button><div class="seg" id="g-speed"><button data-v=".25">¼×</button><button data-v=".5">½×</button><button data-v="1">1×</button></div></div>
+      <div class="gp" style="padding-top:10px"><label for="g-scrub" id="g-phase">Left heel strike</label><output id="g-pct">0%</output><input type="range" id="g-scrub" min="0" max="99.9" step="0.1" value="0"></div>
+      <div class="fieldset"><div class="label">Pattern</div><div class="pick" id="g-pattern"></div><p class="note" id="g-pattern-note" style="margin:0"></p></div>
+      <div class="fieldset"><div class="label">Compare with</div><div class="pick" id="g-compare"></div></div>
+      <svg id="g-chart" class="gchart" viewBox="0 0 280 300" role="img" aria-label="Left leg joint angles across one walking cycle"></svg>
+      <div class="fieldset"><div class="label">Adjust the movement</div><div id="g-params"></div><div><button class="btn sm" id="g-reset" type="button">Reset to pattern</button></div></div>
+      <div class="fieldset"><div class="label">Mechanical effects</div><div class="effects" id="g-effects"></div></div>
+      <div class="fieldset"><div class="label">Linked pain pathways</div><div class="effects" id="g-links"></div></div>
+      <p class="note">Nothing here is measured from a real person. Joint angles start from approximate adult walking curves and change with the pattern and sliders. Computed values are model estimates. The model has no forces, so loads come from research and show direction only. Its rigid foot stays more flexed upward in swing than in real walking so the toes clear the floor.</p>
     </div>
 
     <div class="scroll" id="panel-pain" hidden>
@@ -226,11 +299,11 @@ details summary{cursor:pointer;font-size:12.5px;color:var(--muted)}
 
   <main class="stage" id="stage">
     <canvas id="c" aria-label="Interactive 3D anatomy model"></canvas>
-    <div class="loader" id="loader"><div class="label">Loading anatomy</div><div class="track"><i id="load-bar"></i></div><div class="note" id="load-msg" style="margin:0">470 muscles and bones, about 4.6 MB</div></div>
+    <div class="loader" id="loader"><div class="label">Loading anatomy</div><div class="track"><i id="load-bar"></i></div><div class="note" id="load-msg" style="margin:0">Muscles and bones, about 4.6 MB</div></div>
     <div class="ov tl">
       <div class="chipbar" id="views"><span class="lbl">View</span><button data-v="front">Front</button><button data-v="side">Side</button><button data-v="back">Back</button></div>
       <div class="chipbar" id="modes"><span class="lbl">Colour</span><button data-m="targets" aria-pressed="true">Targets</button><button data-m="length" aria-pressed="false">Length change</button></div>
-      <div class="chipbar"><span class="lbl">Layers</span><button id="lay-sk" aria-pressed="true">Skeleton</button><button id="lay-mu" aria-pressed="true">Muscles</button>
+      <div class="chipbar" id="layers-bar"><span class="lbl">Layers</span><button id="lay-sk" aria-pressed="true">Skeleton</button><button id="lay-mu" aria-pressed="true">Muscles</button>
         <span class="opacity"><input type="range" id="opac" min="15" max="100" value="100" aria-label="Muscle opacity"></span></div>
     </div>
     <div class="ov bl"><div class="legend" id="legend"></div></div>
@@ -239,7 +312,7 @@ details summary{cursor:pointer;font-size:12.5px;color:var(--muted)}
     <div class="tip" id="tip" hidden></div>
   </main>
 
-  <aside class="pane" aria-label="Inspector and instructor">
+  <aside class="pane pane-right" aria-label="Inspector and instructor">
     <div class="inspector" id="inspector"></div>
     <section class="chat" aria-label="Instructor">
       <div class="chat-h"><h3>Instructor</h3><span class="label" id="ai-status">Connecting…</span></div>
@@ -337,7 +410,7 @@ const STRETCHES = [
   primary:['piriformis','gluteusMaximus'], secondary:['gluteusMedius'],
   cues:['Sit tall with the other leg out in front','Rest the working ankle across the other knee','Hinge forward from the hips with a long back','Press the working knee gently away'], hold:'30 to 45 s per side', watch:'A chair version works well for anyone who struggles to sit on the floor.'},
  {id:'knee-to-chest', name:'Knees to chest', area:'Lower back and glutes', sided:false, tags:['floor','supine','deepHipFlex','flexSpine'],
-  body:{pitch:-90, spineFlex:15}, both:{hipFlex:115, knee:120, shFlex:70, shAbd:15, elbow:90},
+  body:{pitch:-105, spineFlex:15}, both:{hipFlex:100, knee:120, shFlex:70, shAbd:15, elbow:90},
   primary:['erectorSpinae','gluteusMaximus'], secondary:['multifidus','quadratusLumborum'],
   cues:['Lie on your back','Hug both knees toward the chest','Let the lower back round gently into the floor','Breathe slowly into the belly'], hold:'20 to 30 s, repeat 3 times', watch:'Pulling hard with the arms can strain the knees. Hold behind the thighs instead.'},
  {id:'childs-pose', name:"Child's pose", area:'Lower back and lats', sided:false, tags:['floor','kneel','deepHipFlex','flexSpine','headDown'],
@@ -362,7 +435,7 @@ const STRETCHES = [
   primary:['tibialisAnterior'], secondary:['rectusFemoris','vastusLateralis','vastusMedialis'],
   cues:['Kneel with the tops of the feet flat','Sit back toward the heels','Lean back slightly on the hands to deepen it','Keep the ankles in line, not rolled out'], hold:'20 to 30 s', watch:'Skip it if kneeling hurts the knees.'},
  {id:'butterfly', name:'Butterfly stretch', area:'Inner thigh', sided:false, tags:['floor','hipRotate'],
-  body:{pitch:15, spineFlex:20}, both:{hipFlex:105, hipAbd:45, hipRot:40, knee:125, ankle:15, shFlex:55, shAbd:5, elbow:30},
+  body:{pitch:10, spineFlex:20}, both:{hipFlex:110, hipAbd:50, hipRot:60, knee:155, ankle:15, shFlex:55, shAbd:5, elbow:30},
   primary:['adductors'], secondary:['gracilis'],
   cues:['Sit tall, soles of the feet together','Let the knees fall out to the sides','Hinge forward slightly from the hips','Use gentle elbow pressure on the thighs if comfortable'], hold:'30 to 45 s', watch:'Bouncing the knees or forcing them down strains the groin.'},
  {id:'crossover-hip', name:'Standing cross-over hip stretch', area:'Outer hip', sided:true, tags:['standing','hipAdd'],
@@ -402,6 +475,93 @@ const STRETCHES = [
   primary:['trapezius','levatorScapulae'], secondary:['sternocleidomastoid'],
   cues:['Sit or stand tall','Let the ear drop toward the other shoulder','Keep the working shoulder down','Rest the other hand on the head without pulling'], hold:'20 to 30 s per side', watch:'Stop if this causes dizziness or tingling into the arm.'},
 ];
+const SDOSE = '3 sets of 8 to 15, 2 to 3 times a week. Stop each set with a couple of reps still in reserve.';
+const CDOSE = '2 to 3 sets of 6 to 10 slow reps, most days.';
+STRETCHES.push(
+ {id:'calf-raise', name:'Calf raise', area:'Calf and Achilles', type:'strength', sided:false, tags:['standing'],
+  both:{shAbd:8}, B:{both:{ankle:-30}}, period:3000,
+  primary:['gastrocnemius','soleus'], secondary:['fibularis'],
+  cues:['Stand tall with fingertips on a wall','Rise up onto the balls of the feet','Pause for a second at the top','Lower slowly over 2 to 3 seconds'],
+  hold:SDOSE + ' Progress to one leg, then add weight. A rolled towel under the toes also loads the arch.', watch:'Mild Achilles or calf discomfort that settles by the next morning is common with tendon loading. Sharp or worsening pain is a reason to stop.'},
+ {id:'bent-knee-calf-raise', name:'Bent-knee calf raise', area:'Lower calf (soleus)', type:'strength', sided:false, tags:['standing'],
+  both:{hipFlex:25, knee:45, ankle:20, shAbd:8}, B:{both:{ankle:-15}}, period:3000,
+  primary:['soleus'], secondary:['gastrocnemius'],
+  cues:['Bend the knees slightly and keep them bent','Rise onto the balls of the feet','Keep the knees over the toes','Lower slowly'],
+  hold:SDOSE, watch:'Keeping the knees bent shifts the work from gastrocnemius to soleus.'},
+ {id:'tibialis-raise', name:'Toe raise (tibialis)', area:'Shin', type:'strength', sided:false, tags:['standing'],
+  both:{shAbd:8}, B:{both:{ankle:25}}, period:2400,
+  primary:['tibialisAnterior'], secondary:[],
+  cues:['Lean your back against a wall, heels a foot from it','Lift the toes and forefoot as high as you can','Keep the heels on the floor','Lower slowly'],
+  hold:SDOSE, watch:'Shin soreness should ease within a day. Sharp pain in one spot on the bone needs checking.'},
+ {id:'glute-bridge', name:'Glute bridge', area:'Glutes and back of thigh', type:'strength', sided:false, tags:['floor','supine'],
+  body:{pitch:-90}, both:{hipFlex:60, knee:100, ankle:20, shFlex:10, shAbd:12}, ground:['back','head','heelL','heelR','toeL','toeR','sacrum'],
+  B:{body:{pitch:-112, neckFlex:25}, both:{hipFlex:-2, knee:95, ankle:0}, ground:['back','heelL','heelR','toeL','toeR']}, period:3400,
+  primary:['gluteusMaximus'], secondary:['bicepsFemoris','semitendinosus','erectorSpinae'],
+  cues:['Lie on your back, knees bent, feet flat','Squeeze the glutes and lift the hips','Stop when knees, hips and shoulders line up','Lower slowly, one vertebra at a time'],
+  hold:SDOSE + ' Progress to one leg.', watch:'Cramping in the back of the thigh usually means the feet are too far away.'},
+ {id:'side-lying-abduction', name:'Side-lying hip abduction', area:'Outer hip', type:'strength', sided:true, tags:['floor'],
+  body:{rollToW:90}, W:{hipFlex:-5}, O:{hipFlex:25, knee:40, shFlex:100, elbow:120}, ground:['shoulderSideO','hipSideO','kneeO','heelO','toeO'],
+  B:{W:{hipAbd:35, hipFlex:-5}}, period:3000,
+  primary:['gluteusMedius','gluteusMinimus'], secondary:['tfl'],
+  cues:['Lie on your side, bottom knee bent for balance','Keep the top leg straight and slightly behind you','Lift the leg with the toes pointing forward','Lower without letting it drop across the body'],
+  hold:SDOSE, watch:'With outer hip pain, avoid letting the top leg cross in front, which compresses the tendons. Start with standing or isometric versions if lying on the side is sore.'},
+ {id:'clamshell', name:'Clamshell', area:'Outer and deep hip', type:'strength', sided:true, tags:['floor','hipRotate'],
+  body:{rollToW:90}, both:{hipFlex:45, knee:90}, O:{shFlex:100, elbow:120}, ground:['shoulderSideO','hipSideO','kneeO','heelO','toeO'],
+  B:{W:{hipRot:35, hipAbd:12}}, period:2800,
+  primary:['gluteusMedius','piriformis'], secondary:['gluteusMaximus'],
+  cues:['Lie on your side, hips and knees bent','Keep the feet together','Open the top knee like a clamshell','Keep the pelvis still; do not roll back'],
+  hold:SDOSE, watch:'If the pelvis rolls back, the hip is doing less of the work.'},
+ {id:'squat', name:'Sit-to-stand squat', area:'Thighs and glutes', type:'strength', sided:false, tags:['standing'],
+  both:{shFlex:85, shAbd:5}, B:{body:{pitch:35}, both:{hipFlex:120, knee:105, ankle:20, shFlex:120}}, period:3600,
+  primary:['vastusLateralis','vastusMedialis','vastusIntermedius','gluteusMaximus'], secondary:['rectusFemoris','adductors','soleus'],
+  cues:['Feet hip-width apart, chair behind you','Sit back and down until you touch the chair','Keep the knees in line with the toes','Stand by driving through the whole foot'],
+  hold:SDOSE, watch:'Use a higher chair if the knees hurt. Hold onto something if balance is limited.'},
+ {id:'split-squat', name:'Split squat', area:'Thighs and glutes', type:'strength', sided:true, tags:['standing'],
+  W:{hipFlex:25, knee:10, ankle:-15}, O:{hipFlex:-20, knee:15, ankle:-25}, both:{shAbd:10},
+  B:{W:{hipFlex:80, knee:85, ankle:5}, O:{hipFlex:-15, knee:85, ankle:-45}}, period:3400,
+  primary:['vastusLateralis','vastusMedialis','vastusIntermedius','gluteusMaximus'], secondary:['rectusFemoris','adductors','gluteusMedius'],
+  cues:['Stand in a long stride, back heel up','Lower straight down until the back knee nears the floor','Keep the front knee over the middle of the foot','Push up through the front foot'],
+  hold:SDOSE, watch:'Shorten the depth if the front knee is painful.'},
+ {id:'wall-sit', name:'Wall sit', area:'Front of thigh', type:'strength', sided:false, tags:['standing'],
+  both:{hipFlex:70, knee:70, shAbd:10},
+  primary:['vastusLateralis','vastusMedialis','vastusIntermedius','rectusFemoris'], secondary:['gluteusMaximus'],
+  cues:['Back flat against a wall','Slide down until the knees are bent about 60 to 90 degrees','Keep the knees over the feet','Breathe steadily'],
+  hold:'4 to 5 holds of 30 to 45 s, 2 to 3 times a week.', watch:'Choose a depth that keeps any knee pain mild. Breathe steadily throughout, especially with high blood pressure.'},
+ {id:'hip-hinge', name:'Hip hinge', area:'Back of thigh, glutes and back', type:'strength', sided:false, tags:['standing'],
+  both:{shAbd:4}, B:{body:{pitch:60}, both:{hipFlex:68, knee:15, ankle:7, shFlex:62}}, period:3600,
+  primary:['bicepsFemoris','semitendinosus','gluteusMaximus'], secondary:['erectorSpinae','multifidus'],
+  cues:['Soft knees, hands sliding down the thighs','Push the hips back as the chest tips forward','Keep the back long, not rounded','Stand by driving the hips forward'],
+  hold:SDOSE + ' Add weight once the pattern is smooth.', watch:'Keep the spine long. Rounding the back under load is the common error.'},
+ {id:'bird-dog', name:'Bird dog', area:'Lower back and trunk control', type:'control', sided:true, tags:['floor','kneel'],
+  body:{pitch:62}, both:{hipFlex:62, knee:90, ankle:-40, shFlex:62}, ground:['kneeL','kneeR','toeL','toeR','handL','handR'],
+  B:{W:{shFlex:150}, O:{hipFlex:-25, knee:5, ankle:-30}}, period:4200,
+  primary:['multifidus','erectorSpinae','gluteusMaximus'], secondary:['deltoid','externalOblique','gluteusMedius'],
+  cues:['On hands and knees, hands under shoulders','Reach one arm forward and the opposite leg back','Keep the pelvis level and the back still','Return slowly and switch sides'],
+  hold:CDOSE, watch:'Move only as far as you can keep the back from arching or twisting.'},
+ {id:'dead-bug', name:'Dead bug', area:'Abdominals and trunk control', type:'control', sided:true, tags:['floor','supine'],
+  body:{pitch:-90}, both:{hipFlex:90, knee:90, shFlex:90}, B:{W:{shFlex:165}, O:{hipFlex:25, knee:15}}, period:4000,
+  primary:['rectusAbdominis','externalOblique'], secondary:['iliopsoas'],
+  cues:['Lie on your back, arms up, hips and knees bent to 90 degrees','Lower one arm overhead and the opposite leg toward the floor','Keep the lower back gently pressed down','Return and switch sides'],
+  hold:CDOSE, watch:'Lower less far if the lower back lifts off the floor.'},
+ {id:'single-leg-mini-squat', name:'Single-leg mini squat', area:'Knee and hip control', type:'control', sided:true, tags:['standing','balance'],
+  W:{}, O:{hipFlex:30, knee:75}, both:{shAbd:22}, ground:['heelW','toeW','heelBackW'],
+  B:{body:{pitch:12}, W:{hipFlex:40, knee:45, ankle:17}}, period:3200,
+  primary:['vastusLateralis','vastusMedialis','gluteusMedius','gluteusMaximus'], secondary:['soleus','tibialisAnterior'],
+  cues:['Stand on one leg, lightly touching a wall','Bend the standing knee a little','Keep the knee over the second toe','Keep the pelvis level; do not let it drop'],
+  hold:CDOSE, watch:'Watch in a mirror for the knee drifting inward or the pelvis dropping.'},
+ {id:'single-leg-balance', name:'Single-leg balance', area:'Ankle and hip balance', type:'control', sided:true, tags:['standing','balance'],
+  O:{hipFlex:45, knee:90}, both:{shAbd:25},
+  primary:['gluteusMedius','soleus','tibialisAnterior','fibularis'], secondary:['gluteusMinimus'],
+  cues:['Stand on one leg near a wall or chair','Keep the pelvis level and the body tall','Use small ankle movements to stay balanced','Progress by turning the head or closing the eyes'],
+  hold:'3 to 5 holds of 30 s per side, most days.', watch:'Always have support within reach, especially with a history of falls.'},
+ {id:'hip-hike', name:'Standing hip hike', area:'Outer hip and pelvis control', type:'control', sided:true, tags:['standing','balance'],
+  body:{dropO:7}, O:{hipFlex:20, knee:70}, both:{shAbd:15}, ground:['heelW','toeW','heelBackW'], B:{body:{dropO:-6}}, period:3000,
+  primary:['gluteusMedius','quadratusLumborum'], secondary:['gluteusMinimus','tfl'],
+  cues:['Stand on one leg on a low step, other leg hanging','Let the free side of the pelvis drop a little','Lift it back up using the standing hip','Keep the trunk upright'],
+  hold:CDOSE, watch:'Keep the movement small. Hold a rail for balance.'},
+);
+for (const s of STRETCHES) s.type ||= 'stretch';
+const TYPE_LABEL = {stretch:'Stretch', strength:'Strength', control:'Control'};
 const SBYID = Object.fromEntries(STRETCHES.map(s => [s.id, s]));
 
 /* ================= pain regions and screening ================= */
@@ -439,6 +599,9 @@ const REGIONS = [
   flags:[['The knee is swollen, locks or gives way','urgent'],['It started with a twist or a pop','urgent'],['The knee is hot, red and swollen','urgent']]},
  {id:'calf', name:'Calf and Achilles', muscles:['gastrocnemius','soleus'], related:['bicepsFemoris'],
   flags:[['A sudden snap or kick-like feeling at the back of the heel, and trouble pushing off','urgent'],['One calf is swollen, warm, red or tender, especially after a long trip, surgery or bed rest','emergency']]},
+ {id:'foot', name:'Heel and sole', muscles:[], related:['gastrocnemius','soleus'],
+  note:'Stretching and calf strengthening work on the structures that pull on the heel and arch.',
+  flags:[['Heel pain began after a fall or a jump from height','urgent'],['The foot is numb, cold or changing colour','urgent'],['The foot or a joint is hot, red and swollen','urgent']]},
  {id:'shin', name:'Shin and outer leg', muscles:['tibialisAnterior','fibularis'], related:['gastrocnemius','soleus'],
   flags:[['Pain in one spot on the shin bone that gets worse with running or hopping','assess'],['Severe, tight pain in the shin during exercise with numbness in the foot','urgent']]},
 ];
@@ -454,10 +617,11 @@ const NAME_REGION = [
   [/gluteus maximus|piriformis|gemellus|obturator|quadratus femoris/i, 'buttock'], [/gluteus|iliotibial/i, 'outerHip'],
   [/vastus|rectus femoris/i, 'thighFront'], [/biceps femoris|semitendinosus|semimembranosus/i, 'thighBack'],
   [/adductor|gracilis|pectineus/i, 'innerThigh'], [/tibialis anterior|extensor digitorum longus|extensor hallucis longus|fibularis/i, 'shin'],
+  [/plantar aponeurosis|abductor hallucis|flexor digitorum brevis|quadratus plantae/i, 'foot'],
   [/gastrocnemius|soleus|plantaris|calcaneal|flexor digitorum longus|flexor hallucis longus|tibialis posterior|popliteus|of foot|hallucis/i, 'calf'],
 ];
 const BONE_REGION = [[/vertebra l|sacrum|coccyx/i,'lowerBack'],[/vertebra t|scapula|vertebra c|atlas|axis/i,'neck'],[/rib|sternum|xiphoid|manubrium|cartilage/i,'chest'],[/clavicle|humerus/i,'shoulder'],
-  [/radius|ulna|carpal|metacarpal|of hand|scaphoid|lunate|triquetrum|pisiform|trapezi|capitate|hamate/i,'forearm'],[/hip bone/i,'buttock'],[/femur/i,'thighFront'],[/patella|tibia|fibula/i,'knee'],[/talus|calcaneus|navicular|cuboid|cuneiform|metatarsal|of foot/i,'calf']];
+  [/radius|ulna|carpal|metacarpal|of hand|scaphoid|lunate|triquetrum|pisiform|trapezi|capitate|hamate/i,'forearm'],[/hip bone/i,'buttock'],[/femur/i,'thighFront'],[/patella|tibia|fibula/i,'knee'],[/talus|calcaneus|navicular|cuboid|cuneiform|metatarsal|of foot/i,'foot']];
 
 const PAIN_TYPES = [['tight','Tight or stiff'],['sore','Sore after training'],['sharp','Sharp or stabbing'],['nerve','Burning, numb or tingling'],['injury','Started with a fall, accident or pop']];
 const AGES = [['teen','Under 18'],['adult','18 to 64'],['older','65 and over']];
@@ -520,18 +684,109 @@ function evaluatePain() {
     list.push({st, score: score - (status === 'caution' ? .4 : 0), status, reasons, why, hold: age.hold || st.hold, direct: hitT.length > 0});
   }
   list.sort((a, b) => b.score - a.score);
-  return {region: r, gate, notes, ok: list.filter(x => x.status !== 'avoid').slice(0, 6), avoid: list.filter(x => x.status === 'avoid')};
+  if (pain.type === 'sore') for (const x of list) if (x.st.type === 'strength') x.score -= 1;
+  return {region: r, gate, notes, ok: list.filter(x => x.status !== 'avoid').slice(0, 8), avoid: list.filter(x => x.status === 'avoid')};
 }
 const stretchStatus = id => { const ev = evaluatePain(); if (!ev) return null; if (ev.gate) return {status:'gated', reasons: ev.gate.reasons}; const all = [...ev.ok, ...ev.avoid]; const f = all.find(x => x.st.id === id); return f ? {status: f.status, reasons: f.reasons} : null; };
 
+/* ================= evidence layer ================= */
+const EVIDENCE = {
+ noehren2013:{cite:'Noehren, Hamill & Davis 2013. Med Sci Sports Exerc 45(6):1120–1124', url:'https://pubmed.ncbi.nlm.nih.gov/23274607/', design:'Prospective cohort', n:'400 healthy female runners followed for 2 years; 15 developed patellofemoral pain',
+  finding:'Those who later developed pain already ran with more hip adduction at the start.', limits:'Running, women only, few cases, one study.'},
+ bramah2018:{cite:'Bramah, Preece, Gill & Herrington 2018. Am J Sports Med 46(12):3023–3031', url:'https://salford-repository.worktribe.com/output/1380218', design:'Case-control', n:'72 injured runners (kneecap pain, IT band, inner shin, Achilles) and 36 healthy runners',
+  finding:'Injured runners had more pelvic drop on the swing side, more forward trunk lean at midstance, and a straighter knee at foot contact. Pelvic drop separated the groups best, and the pattern was similar across all four injuries.', limits:'Measured after injury, so the pattern could be a result of pain. Running, not walking.'},
+ neal2019:{cite:'Neal, Lack, Lankhorst et al. 2019. Br J Sports Med (systematic review)', url:'https://qmro.qmul.ac.uk/xmlui/bitstream/handle/123456789/63298/Neal_Risk%20factors%20for%20patellofemoral%20pain_2019_Accepted.pdf?sequence=5', design:'Systematic review of prospective studies', n:'18 studies, 4,818 people, 483 developed pain',
+  finding:'Hip weakness did not predict pain in military recruits or runners. Lower quadriceps strength predicted pain in recruits. Hip and knee movement had been studied prospectively only once.', limits:'Few prospective movement studies.'},
+ cochrane2015:{cite:'van der Heijden, Lankhorst, van Linschoten et al. 2015. Cochrane Database Syst Rev, CD010387', url:'https://doi.org/10.1002/14651858.CD010387.pub2', design:'Systematic review of trials', n:'About 31 trials',
+  finding:'Exercise reduced patellofemoral pain compared with no exercise, and hip-plus-knee exercise reduced it more than knee exercise alone.', limits:'Very low certainty. Exercise helping does not show that hip movement caused the pain.'},
+ lenhart2014:{cite:'Lenhart, Thelen, Wille et al. 2014. Med Sci Sports Exerc 46(3):557–564', url:'https://pubmed.ncbi.nlm.nih.gov/23917470/', design:'Laboratory modelling', n:'30 healthy recreational runners',
+  finding:'Running with a 10% higher step rate (shorter steps with less knee bend on landing) cut peak patellofemoral joint force by 14%.', limits:'Healthy runners and modelled forces, with no pain outcome. Walking forces are lower.'},
+ miyazaki2002:{cite:'Miyazaki, Wada, Kawahara et al. 2002. Ann Rheum Dis 61(7):617–622', url:'https://ard.bmj.com/content/61/7/617', design:'Prospective cohort', n:'106 people with medial knee osteoarthritis; 74 re-examined after 6 years',
+  finding:'A higher knee adduction moment during walking at the start predicted faster narrowing of the inner joint space.', limits:'Predicts structural change, not pain. Hospital sample.'},
+ silva2022:{cite:'Silva, Perriman, Fearon et al. 2022. PLOS ONE 17(9):e0274874', url:'https://doi.org/10.1371/journal.pone.0274874', design:'Systematic review and meta-analysis', n:'Gait-change studies in medial knee osteoarthritis',
+  finding:'Leaning the trunk over the standing leg lowered the early-stance knee adduction moment, and bigger leans lowered it more.', limits:'Mostly single-session lab studies, very low to low certainty. Effects on pain are not established.'},
+ allison2016:{cite:'Allison, Wrigley, Vicenzino et al. 2016. Clin Biomech 32:56–63', url:'https://doi.org/10.1016/j.clinbiomech.2016.01.003', design:'Case-control', n:'People with gluteal tendinopathy and pain-free controls, walking',
+  finding:'The tendinopathy group had a 9–33% higher hip adduction moment in stance, and pelvic drop explained most of it. Some dropped the pelvis and leaned away; others dropped it less and leaned over the hip.', limits:'Measured in people who already had pain, so the pattern may be a result. Small sample.'},
+ mellor2018:{cite:'Mellor, Bennell, Grimaldi et al. 2018. BMJ 361:k1662 (LEAP trial)', url:'https://doi.org/10.1136/bmj.k1662', design:'Randomised controlled trial', n:'204 people with gluteal tendinopathy',
+  finding:'Education on tendon load (including avoiding positions that compress the tendons) plus hip abductor strengthening and control of hip adduction beat a steroid injection and wait-and-see at 8 weeks, and wait-and-see at 52 weeks.', limits:'Tests a package, so it cannot show which part, including movement control, did the work.'},
+ smith2022:{cite:'Smith, Stabbert, Bagwell et al. 2022. J Sport Health Sci 11(4):450–465', url:'https://doaj.org/article/43b23f8e01454753bf1bae765e38746b', design:'Systematic review and meta-analysis', n:'97 studies',
+  finding:'People with persistent low back pain walked more slowly with shorter strides, their trunk and pelvis rotated more in step with each other, and their back muscles were more active. Spine, pelvis and hip range of motion did not differ.', limits:'Almost all cross-sectional, so it cannot say whether the changes came before or after the pain. About a fifth of studies had low risk of bias.'},
+ pocovi2024:{cite:'Pocovi et al. 2024. Lancet (WalkBack trial)', url:'https://doi.org/10.1016/S0140-6736(24)00755-4', design:'Randomised controlled trial', n:'701 adults recently recovered from low back pain',
+  finding:'A progressive walking and education programme lowered the risk of a new activity-limiting episode (hazard ratio 0.72); median time to recurrence was 208 vs 112 days.', limits:'Shows walking helps prevent recurrence, not that a gait pattern causes pain.'},
+ mahieu2006:{cite:'Mahieu, Witvrouw, Stevens et al. 2006. Am J Sports Med', url:'https://doi.org/10.1177/0363546505279918', design:'Prospective cohort', n:'69 male military recruits over 6 weeks of training; 10 developed Achilles overuse injury',
+  finding:'Lower calf (plantar flexor) strength and greater ankle dorsiflexion range were linked to higher risk.', limits:'Small, men only, short follow-up. The cut-offs flagged many people who were never injured.'},
+ riddle2003:{cite:'Riddle, Pulisic, Pidcoe & Johnson 2003. J Bone Joint Surg Am', url:'https://pubmed.ncbi.nlm.nih.gov/12728038/', design:'Case-control', n:'50 people with plantar heel pain and 100 without',
+  finding:'Limited ankle dorsiflexion was the strongest factor, followed by higher body weight and spending most of the workday on the feet.', limits:'Measured after pain began, so stiffness may partly be a result.'},
+ rathleff2015:{cite:'Rathleff, Mølgaard, Fredberg et al. 2015. Scand J Med Sci Sports 25(3):e292–e300', url:'https://doi.org/10.1111/sms.12313', design:'Randomised controlled trial', n:'48 people with plantar fasciitis',
+  finding:'High-load heel raises with a towel under the toes gave better function than plantar fascia stretching at 3 months. The groups were similar by 12 months.', limits:'Small trial; both groups also had insoles.'},
+ newman2013:{cite:'Newman, Witchalls, Waddington & Adams 2013. Open Access J Sports Med 4:229–241', url:'https://doaj.org/article/63035df9eaf04e42ac9b4e87e645fcc3', design:'Systematic review and meta-analysis', n:'10 studies in runners',
+  finding:'More arch flattening (navicular drop), female sex, higher BMI, previous shin pain, less running experience, and in men more hip external rotation range were linked to inner shin pain.', limits:'Mixed study designs; foot posture effects are small.'},
+ devita2000:{cite:'DeVita & Hortobágyi 2000. J Appl Physiol 88:1804–1811', url:'https://pubmed.ncbi.nlm.nih.gov/10797145/', design:'Laboratory comparison', n:'Older and young adults walking',
+  finding:'Older adults used more hip extensor effort and less ankle plantar flexor effort, shifting work from the ankle to the hip.', limits:'Healthy adults; describes ageing, not pain.'},
+};
+const STRENGTH = {strong:'Strong evidence', moderate:'Moderate evidence', limited:'Limited evidence', hypothesis:'Untested idea'};
+const CAUSAL = {hypothesis:'Idea only', mechanism:'Lab mechanism only', association:'Seen together, direction unclear', prospective:'Seen before pain began', trial:'Changing it helped in a trial'};
+const PATHWAYS = [
+ {id:'pfp-hip', region:'knee', title:'Pelvic drop and hip adduction → knee drifts inward → more kneecap joint stress', strength:'limited', causal:'prospective',
+  mech:'When the pelvis drops on the swing side, the standing hip adducts and often turns inward, moving the knee toward the midline. This is thought to change how the kneecap tracks and concentrate stress behind it.',
+  ev:['noehren2013','bramah2018','neal2019','cochrane2015'],
+  alt:['Pain may change how people move, rather than the other way round.','Sudden increases in training load are a common trigger.','Quadriceps strength, not hip strength, predicted pain in military recruits.','Strengthening may help by raising load tolerance or confidence without changing movement.'],
+  model:'Computed: hip adduction relative to the pelvis and gluteus medius length. Not calculated: kneecap joint stress.',
+  demo:{pelvicDrop:10, valgus:6}, view:'back', trigger:p => p.pelvicDrop >= 7 || p.valgus >= 3, ex:['side-lying-abduction','single-leg-mini-squat','split-squat','wall-sit']},
+ {id:'pfp-knee', region:'knee', title:'Knee-led loading → higher kneecap joint force', strength:'limited', causal:'mechanism',
+  mech:'Bending the knee more while it takes weight makes the quadriceps pull harder, pressing the kneecap into the thigh bone with more force. Shorter, quicker steps reduce that bend.',
+  ev:['lenhart2014'], alt:['Stairs, squats and kneeling load the kneecap far more than walking.','Sensitised tissues can hurt at normal loads.'],
+  model:'Computed: knee bend through stance and quadriceps length. Not calculated: joint force.',
+  demo:{loadKnee:30, trunkFwd:6, hipExt:-5, pushOff:-13}, view:'side', trigger:p => p.loadKnee >= 24, ex:['wall-sit','split-squat','squat']},
+ {id:'knee-oa', region:'knee', title:'Inner-knee load (knee adduction moment) → medial knee osteoarthritis progression', strength:'moderate', causal:'prospective',
+  mech:'When walking, body weight passes to the inside of the knee and loads the medial compartment. Leaning the trunk over the standing leg moves weight outward and lowers this load.',
+  ev:['miyazaki2002','silva2022'], alt:['Knee alignment, body weight and joint structure all change the load.','Lower load predicts slower structural change; it is less clear that it reduces pain.'],
+  model:'Shown: lateral trunk lean. Not calculated: the knee adduction moment.',
+  demo:{trunkLean:8}, view:'front', trigger:p => p.trunkLean >= 4, ex:['squat','split-squat','wall-sit']},
+ {id:'hip-gt', region:'outerHip', title:'Pelvic drop and hip adduction → gluteal tendons compressed at the outer hip', strength:'moderate', causal:'trial',
+  mech:'When the hip adducts, the gluteal tendons and IT band press harder against the bony point of the outer hip (greater trochanter). Repeated or sustained compression is thought to irritate the tendons.',
+  ev:['allison2016','mellor2018'], alt:['Sustained positions such as crossing the legs or lying on the sore side add compression.','A change in load (more walking, stairs, hills) often comes before symptoms.','The trial tested a package, so movement control may not be what helped.'],
+  model:'Computed: hip adduction relative to the pelvis and gluteus medius length. Not calculated: tendon compression.',
+  demo:{pelvicDrop:10}, view:'back', trigger:p => p.pelvicDrop >= 7, ex:['hip-hike','side-lying-abduction','single-leg-balance','clamshell']},
+ {id:'lbp-walk', region:'lowerBack', title:'Slower, guarded walking with the trunk and pelvis rotating together', strength:'moderate', causal:'association',
+  mech:'People with persistent low back pain tend to walk more slowly with shorter steps, and the trunk and pelvis rotate together instead of counter-rotating. This may be protective guarding.',
+  ev:['smith2022','pocovi2024'], alt:['These changes are likely, at least partly, a response to pain and fear of movement.','Overall activity and confidence matter more than any single movement detail.'],
+  model:'Shown: reduced pelvic rotation and arm swing. Computed: step length. Not measured: rotation timing between trunk and pelvis.',
+  demo:{pelvicRot:1.5, armSwing:.4, trunkFwd:4}, view:'front', trigger:p => p.pelvicRot <= 2 || p.armSwing <= .5, ex:['bird-dog','glute-bridge','hip-hinge','knee-to-chest']},
+ {id:'lbp-hipext', region:'lowerBack', title:'Limited hip extension → pelvis tips forward and the lower back arches each step', strength:'hypothesis', causal:'hypothesis',
+  mech:'If the front of the hip is stiff, the thigh cannot trail behind the body. The pelvis may tip forward instead, arching the lower back with every step.',
+  ev:[], alt:['This is common clinical reasoning, but the atlas has no study showing it causes back pain.','Many people with limited hip extension have no back pain.'],
+  model:'Computed: the extra pelvic tilt and lower-back extension needed when hip extension is limited.',
+  demo:{hipExtLimit:0}, view:'side', trigger:p => p.hipExtLimit > p.hipExt, ex:['kneeling-hip-flexor','glute-bridge']},
+ {id:'achilles', region:'calf', title:'High push-off demand on a weaker calf → Achilles overload', strength:'limited', causal:'prospective',
+  mech:'Push-off is driven by the calf through the Achilles tendon. A foot-led pattern asks more of it, and a weaker calf has less margin.',
+  ev:['mahieu2006','bramah2018','devita2000'], alt:['Rapid increases in running, hills or speed work are the usual trigger.','Age, previous injury and footwear changes also matter.'],
+  model:'Shown: push-off ankle angle and calf length. Not calculated: tendon force.',
+  demo:{pushOff:-25, hipExt:-13}, view:'side', trigger:p => p.pushOff <= -22, ex:['calf-raise','bent-knee-calf-raise','wall-calf']},
+ {id:'heel', region:'foot', title:'Limited ankle dorsiflexion → early heel rise and more load through the arch', strength:'limited', causal:'association',
+  mech:'A stiff calf limits how far the shin can tip forward over the foot. The heel may lift early or the arch may flatten to make up the range, straining the plantar fascia.',
+  ev:['riddle2003','rathleff2015'], alt:['Body weight and long hours standing were also strong factors.','Stiffness may partly follow pain rather than cause it.'],
+  model:'Computed: when the heel starts to rise. Not shown: arch flattening, since the model foot is rigid.',
+  demo:{ankleLimit:3}, view:'side', trigger:p => p.ankleLimit <= 8, ex:['calf-raise','wall-calf','bent-knee-calf']},
+ {id:'shin', region:'shin', title:'Arch flattening and pelvic drop → inner shin pain', strength:'limited', causal:'association',
+  mech:'More arch flattening (navicular drop) is linked to pain along the inner shin, possibly through repeated bending load and muscle pull on the tibia.',
+  ev:['newman2013','bramah2018'], alt:['Training load, previous shin pain and bone health strongly affect risk.','Foot posture effects are small.'],
+  model:'Shown: pelvic drop. Not shown: arch flattening, since the model foot is rigid.',
+  demo:{pelvicDrop:8}, view:'back', trigger:null, ex:['calf-raise','tibialis-raise','single-leg-balance']},
+];
+const PBYID = Object.fromEntries(PATHWAYS.map(p => [p.id, p]));
+let openPath = null;
+
 /* ================= joints and pose state ================= */
 const ROM = {
-  pitch:[-90,90,'Whole-body tilt'], yaw:[-180,180,'Turn'], spineFlex:[-25,80,'Spine flexion'], spineSide:[-35,35,'Spine side bend (+ right)'],
+  pitch:[-120,120,'Whole-body tilt'], yaw:[-180,180,'Turn'], roll:[-90,90,'Roll onto side (+ onto right side)'],
+  pelvisTilt:[-20,25,'Pelvic tilt (+ anterior)'], pelvisDrop:[-15,15,'Pelvic drop (+ right side down)'], pelvisRot:[-20,20,'Pelvis rotation (+ right side forward)'],
+  spineFlex:[-25,80,'Spine flexion'], spineSide:[-35,35,'Spine side bend (+ right)'], spineRot:[-40,40,'Trunk rotation (+ right shoulder forward)'],
   neckFlex:[-40,50,'Neck flexion'], neckSide:[-40,40,'Neck side bend (+ right)'],
   hipFlex:[-25,130,'Hip flexion'], hipAbd:[-20,50,'Hip abduction'], hipRot:[-40,60,'Hip rotation (+ external)'], knee:[0,155,'Knee flexion'], ankle:[-60,30,'Ankle dorsiflexion'],
   shFlex:[-50,180,'Shoulder flexion'], shAbd:[0,170,'Shoulder abduction'], shHoriz:[-45,50,'Across the body (+)'], elbow:[0,150,'Elbow flexion'], wrist:[-70,70,'Wrist extension'],
 };
-const BODY = ['pitch','yaw','spineFlex','spineSide','neckFlex','neckSide'], LEG = ['hipFlex','hipAbd','hipRot','knee','ankle'], ARM = ['shFlex','shAbd','shHoriz','elbow','wrist'];
+const BODY = ['pitch','yaw','roll','pelvisTilt','pelvisDrop','pelvisRot','spineFlex','spineSide','spineRot','neckFlex','neckSide'], LEG = ['hipFlex','hipAbd','hipRot','knee','ankle'], ARM = ['shFlex','shAbd','shHoriz','elbow','wrist'];
 const limb = () => Object.fromEntries([...LEG, ...ARM].map(k => [k, 0]));
 const neutral = () => ({...Object.fromEntries(BODY.map(k => [k, 0])), L:limb(), R:limb()});
 const cloneState = s => ({...s, L:{...s.L}, R:{...s.R}});
@@ -574,7 +829,7 @@ new ResizeObserver(resize).observe(stage); resize();
 // atlas.txt is the packed model, gzipped then base64-encoded so it can ship as a plain data file
 async function loadAtlas() {
   const res = await fetch('atlas.txt'); if (!res.ok) throw new Error('HTTP ' + res.status);
-  const total = +res.headers.get('content-length') || 4595020;
+  const total = +res.headers.get('content-length') || 4595492;
   let text = '';
   if (res.body && res.body.getReader) {
     const reader = res.body.getReader(), dec = new TextDecoder(); let got = 0;
@@ -712,18 +967,27 @@ const curStrain = (id, side) => { const ps = CUR_PARTS[id + side]; if (!ps) retu
 /* markers */
 const MARK = {};
 for (const [n, v] of Object.entries(A.marks)) { let bn = A.markBone[n]; if (!B[bn]) bn = bn.replace(/[LR]$/, ''); MARK[n] = {obj: B[bn], v: V(...v).sub(B[bn].getWorldPosition(V(0,0,0)))}; }
-const DEFAULT_GROUND = Object.keys(MARK).filter(n => !/elbow|pubis|sternum|forehead/.test(n));
+for (const s of ['L','R']) {
+  const sx = s === 'L' ? 1 : -1;
+  MARK['hand'+s] = {obj: B['wrist'+s], v: JP['finger'+s].clone().lerp(JP['wrist'+s], .45).sub(JP['wrist'+s])};
+  MARK['shoulderSide'+s] = {obj: B.chest, v: JP['shoulder'+s].clone().add(V(sx*.06, 0, 0)).sub(JP.chest)};
+  MARK['hipSide'+s] = {obj: B.pelvis, v: JP['hip'+s].clone().add(V(sx*.1, -.02, 0)).sub(JP.pelvis)};
+}
+const DEFAULT_GROUND = Object.keys(MARK).filter(n => !/elbow|pubis|sternum|forehead|hand|Side/.test(n));
 const tmpV = V(0,0,0);
 function minY(spec) { let m = Infinity; for (const n of (spec || DEFAULT_GROUND)) { const k = MARK[n]; if (!k) continue; tmpV.copy(k.v); k.obj.localToWorld(tmpV); if (tmpV.y < m) m = tmpV.y; } return m; }
 
 /* apply pose */
 function applyState() {
-  root.rotation.set(state.pitch*DEG, state.yaw*DEG, 0);
-  B.chest.rotation.set(state.spineFlex*DEG, 0, state.spineSide*DEG);
+  root.rotation.set(state.pitch*DEG, state.yaw*DEG, state.roll*DEG);
+  // pelvis moves relative to legs and trunk: hips and chest counter-rotate so limbs keep their orientation
+  const tl = state.pelvisTilt*DEG, ob = state.pelvisDrop*DEG, pr = state.pelvisRot*DEG;
+  B.pelvis.rotation.set(tl, pr, ob);
+  B.chest.rotation.set(state.spineFlex*DEG - tl, state.spineRot*DEG - pr, state.spineSide*DEG - ob);
   B.neck.rotation.set(state.neckFlex*DEG, 0, state.neckSide*DEG);
   for (const s of ['L','R']) {
     const sx = s === 'L' ? 1 : -1, l = state[s];
-    B['hip'+s].rotation.set(-l.hipFlex*DEG, sx*l.hipRot*DEG, sx*l.hipAbd*DEG);
+    B['hip'+s].rotation.set(-l.hipFlex*DEG - tl, sx*l.hipRot*DEG - pr, sx*l.hipAbd*DEG - ob);
     B['knee'+s].rotation.set(l.knee*DEG, 0, 0);
     B['ankle'+s].rotation.set(-l.ankle*DEG, 0, 0);
     B['shoulder'+s].rotation.set(-l.shFlex*DEG, -sx*l.shHoriz*DEG, sx*l.shAbd*DEG);
@@ -747,10 +1011,14 @@ function poseFor(st, side) {
   for (const k of BODY) if (k in b) s[k] = b[k];
   if (b.sideAway) s.spineSide = b.sideAway * (W === 'L' ? 1 : -1);
   if (b.neckAway) s.neckSide = b.neckAway * (W === 'L' ? 1 : -1);
+  if (b.rollToW) s.roll = b.rollToW * (W === 'L' ? 1 : -1);
+  if (b.dropO) s.pelvisDrop = b.dropO * (W === 'L' ? 1 : -1);
   if (st.both) { Object.assign(s.L, st.both); Object.assign(s.R, st.both); }
   Object.assign(s[W], st.W || {}); Object.assign(s[O], st.O || {});
   return {state: clampState(s), ground: st.ground ? st.ground.map(n => n.replace('W', W).replace('O', O)) : null};
 }
+const specB = st => { const b = st.B; return {...st, body:{...(st.body || {}), ...(b.body || {})}, both:{...(st.both || {}), ...(b.both || {})}, W:{...(st.W || {}), ...(b.W || {})}, O:{...(st.O || {}), ...(b.O || {})}, ground: b.ground || st.ground}; };
+let loop = null;
 function animateTo(target, ground, dur = 1100) {
   if (tween) tween.done();
   return new Promise(res => { tween = {from: cloneState(state), to: target, t0: performance.now(), dur: reduced ? 1 : dur, gFrom: groundSpec, gTo: ground, done: res}; });
@@ -758,12 +1026,15 @@ function animateTo(target, ground, dur = 1100) {
 function demonstrate(id, side) {
   const st = SBYID[id]; if (!st) return Promise.reject(new Error('Unknown stretch ' + id));
   side = side === 'R' ? 'R' : 'L';
+  stopGait(); loop = null;
   active = {id, side: st.sided ? side : null};
   const p = poseFor(st, side);
   renderLibrary(); renderInspector(); if (mode !== 'targets') setMode('targets'); paintDirty = true;
-  return animateTo(p.state, p.ground);
+  const done = animateTo(p.state, p.ground);
+  if (st.B) { const q = poseFor(specB(st), side); done.then(() => { if (active && active.id === id && !tween && !gait.on) { loop = {a: p, b: q, t0: performance.now(), period: st.period || 3200, paused: false}; renderInspector(); } }); }
+  return done;
 }
-function resetPose() { active = null; renderLibrary(); renderInspector(); paintDirty = true; return animateTo(neutral(), null); }
+function resetPose() { stopGait(); loop = null; active = null; renderLibrary(); renderInspector(); paintDirty = true; return animateTo(neutral(), null); }
 
 /* ================= colouring ================= */
 const C = { base:new THREE.Color('#b0453c'), dim:new THREE.Color('#8c5650'), primary:new THREE.Color('#f29a12'), secondary:new THREE.Color('#e9c46f'),
@@ -775,6 +1046,7 @@ let paintDirty = true;
 for (const p of parts) if (p.kind === 'b') writeColor(p, LC.bone);
 for (const m of chunkMeshes) if (m.userData.kind === 'b') m.userData.col.needsUpdate = true;
 function roleOf(p) {
+  if (gait.on) return p.cur && gaitActive.has(p.cur + sideOf(p)) ? 'primary' : null;
   if (!active || !p.cur) return null;
   const st = SBYID[active.id];
   if (active.side && sideOf(p) !== active.side) return null;
@@ -870,6 +1142,7 @@ canvas.addEventListener('pointerdown', e => {
     const n = V(1,0,0).transformDirection(parent.matrixWorld), p = V(0,0,0); h.object.getWorldPosition(p);
     plane.setFromNormalAndCoplanarPoint(n, p);
     if (tween) { tween.done(); tween = null; }
+    stopGait(); loop = null;
     dragging = {...info, parent}; canvas.setPointerCapture(e.pointerId); return;
   }
   down = {x: e.clientX, y: e.clientY};
@@ -927,7 +1200,7 @@ function solveIK(d, p) {
 }
 let hintT = 0;
 function flashHint(t) { const h = $('#hint'); h.textContent = t; clearTimeout(hintT); hintT = setTimeout(setHint, 2600); }
-function setHint() { $('#hint').textContent = locating ? 'Tap where it hurts. Drag to orbit.' : 'Drag to orbit · drag amber handles to pose · click a muscle to inspect'; }
+function setHint() { $('#hint').textContent = locating ? 'Tap where it hurts. Drag to orbit.' : gait.on ? 'Walking in place, as on a treadmill · drag to orbit' : 'Drag to orbit · drag amber handles to pose · click a muscle to inspect'; }
 
 /* ================= view, mode, layers ================= */
 let camGoal = null, musclesVisible = true;
@@ -942,10 +1215,11 @@ $('#opac').oninput = e => { const o = e.target.value/100; muscleMat.opacity = o;
 muscleMat.opacity = 1;
 
 /* ================= UI ================= */
+let libFilter = 'all';
 function renderLibrary() {
-  $('#lib').innerHTML = STRETCHES.map(s => {
+  $('#lib').innerHTML = STRETCHES.filter(s => libFilter === 'all' || s.type === libFilter).map(s => {
     const on = active && active.id === s.id;
-    return `<button class="stretch${on ? ' on' : ''}" data-id="${s.id}"><b>${esc(s.name)}</b><span class="area">${esc(s.area)}</span><span class="tag">${s.sided ? (on && active.side ? (active.side === 'L' ? 'Left' : 'Right') : 'One side') : 'Both'}</span></button>`;
+    return `<button class="stretch${on ? ' on' : ''}" data-id="${s.id}"><b>${esc(s.name)}</b><span class="area">${esc(s.area)}<span class="type ${s.type}">${TYPE_LABEL[s.type]}</span></span><span class="tag">${s.sided ? (on && active.side ? (active.side === 'L' ? 'Left' : 'Right') : 'One side') : 'Both'}</span></button>`;
   }).join('');
   $('#lib').querySelectorAll('.stretch').forEach(b => b.onclick = () => demonstrate(b.dataset.id, workSide));
 }
@@ -954,14 +1228,15 @@ for (const s of ['L','R']) $('#side-'+s).onclick = () => {
   if (active && SBYID[active.id].sided) demonstrate(active.id, s);
 };
 $('#reset').onclick = () => resetPose();
-const TABS = {lib:'#panel-lib', pain:'#panel-pain', joint:'#panel-joint', mus:'#panel-mus'};
-function showTab(t) { for (const u of Object.keys(TABS)) { $(TABS[u]).hidden = u !== t; $('#tab-'+u).setAttribute('aria-pressed', u === t); } if (t === 'mus') renderMuscleTable(); if (t !== 'pain') setLocating(false); }
+pickGroup($('#lib-filter'), [['all','All'],['stretch','Stretches'],['strength','Strength'],['control','Control']], () => libFilter, v => { libFilter = v; renderLibrary(); });
+const TABS = {lib:'#panel-lib', gait:'#panel-gait', pain:'#panel-pain', joint:'#panel-joint', mus:'#panel-mus'};
+function showTab(t) { for (const u of Object.keys(TABS)) { $(TABS[u]).hidden = u !== t; $('#tab-'+u).setAttribute('aria-pressed', u === t); } if (t === 'mus') renderMuscleTable(); if (t !== 'pain') setLocating(false); if (t === 'gait' && !gait.on) startGait(true, true); if (t === 'joint') syncSliders(); }
 for (const t of Object.keys(TABS)) $('#tab-'+t).onclick = () => showTab(t);
 
 /* sliders */
 const sliderEls = [];
 (() => {
-  const groups = [['Body', null, BODY], ['Left leg','L',LEG], ['Right leg','R',LEG], ['Left arm','L',ARM], ['Right arm','R',ARM]];
+  const groups = [['Whole body', null, ['pitch','yaw','roll']], ['Pelvis and spine', null, BODY.filter(k => !['pitch','yaw','roll'].includes(k))], ['Left leg','L',LEG], ['Right leg','R',LEG], ['Left arm','L',ARM], ['Right arm','R',ARM]];
   let html = '';
   for (const [title, side, keys] of groups) {
     html += `<div class="label group-h">${title}</div>`;
@@ -971,9 +1246,10 @@ const sliderEls = [];
   $('#sliders').innerHTML = html;
   $('#sliders').querySelectorAll('input').forEach(inp => { sliderEls.push(inp); inp.addEventListener('input', () => {
     if (tween) { tween.done(); tween = null; }
+    stopGait(); loop = null;
     const {side, k} = inp.dataset; if (side) state[side][k] = +inp.value; else state[k] = +inp.value; stateDirty = true; }); });
 })();
-function syncSliders() { for (const inp of sliderEls) { const {side, k} = inp.dataset; const v = Math.round(side ? state[side][k] : state[k]); if (document.activeElement !== inp) inp.value = v; document.getElementById(inp.id + '-o').textContent = `${v}°`; } }
+function syncSliders() { if ($('#panel-joint').hidden) return; for (const inp of sliderEls) { const {side, k} = inp.dataset; const v = Math.round(side ? state[side][k] : state[k]); if (document.activeElement !== inp) inp.value = v; document.getElementById(inp.id + '-o').textContent = `${v}°`; } }
 
 /* muscle table */
 const fmtPct = s => `${s >= 0 ? '+' : '−'}${Math.abs(s*100).toFixed(1)}%`;
@@ -997,10 +1273,12 @@ function stretchCard() {
   const chip = (id, cls) => `<button class="chip ${cls}" data-cur="${id}" data-side="${active.side || 'L'}">${esc(mname(id))}</button>`;
   const ss = stretchStatus(st.id);
   const warn = ss && ss.status !== 'ok' ? `<div class="gate" style="background:${ss.status === 'caution' ? 'var(--warn-soft)' : 'var(--pain-soft)'}"><b>${ss.status === 'caution' ? 'Use caution for this person' : ss.status === 'gated' ? 'Get checked before stretching' : 'Not suggested for this person'}</b><ul>${ss.reasons.map(r => `<li>${esc(r)}</li>`).join('')}</ul></div>` : '';
-  return `<div class="card"><div class="label">Demonstrating · ${sideTxt}</div><h2>${esc(st.name)}</h2><div class="sub">${esc(st.area)} · hold ${esc(st.hold)}</div>
-    ${warn}<div class="chips">${st.primary.map(id => chip(id, 'p')).join('')}${st.secondary.map(id => chip(id, 's')).join('')}</div>
+  const isStretch = st.type === 'stretch';
+  return `<div class="card"><div class="label">Demonstrating · ${TYPE_LABEL[st.type]} · ${sideTxt}</div><h2>${esc(st.name)}</h2><div class="sub">${esc(st.area)}</div>
+    ${warn}<div class="label">${isStretch ? 'Lengthened' : 'Main muscles working, then assisting'}</div><div class="chips">${st.primary.map(id => chip(id, 'p')).join('')}${st.secondary.map(id => chip(id, 's')).join('')}</div>
     <ol class="cues">${st.cues.map(c => `<li>${esc(c)}</li>`).join('')}</ol>
-    <div class="note" style="margin:0">${esc(st.watch)}${st.modelNote ? ' ' + esc(st.modelNote) : ''}</div></div>`;
+    <dl class="kv"><dt>${isStretch ? 'Hold' : 'Dose'}</dt><dd>${esc(st.hold)}</dd><dt>${isStretch ? 'Watch for' : 'Precautions'}</dt><dd>${esc(st.watch)}${st.modelNote ? ' ' + esc(st.modelNote) : ''}</dd></dl>
+    ${st.B ? `<div><button class="btn sm" id="ex-pause" type="button">${loop && loop.paused ? 'Resume movement' : 'Pause movement'}</button></div>` : ''}</div>`;
 }
 function painCard() {
   const ev = evaluatePain(); if (!ev) return '';
@@ -1009,22 +1287,37 @@ function painCard() {
   if (ev.gate) {
     const head = {emergency:'Call emergency services now. Do not stretch.', urgent:'See a doctor or physiotherapist soon, ideally within a day or two, before stretching this area.', assess:'Get this checked by a physiotherapist or doctor before stretching it.'}[ev.gate.level];
     h += `<h2>${ev.gate.level === 'emergency' ? 'This needs urgent care' : 'Get it checked first'}</h2><div class="gate"><b>${head}</b><ul>${ev.gate.reasons.map(r => `<li>${esc(r)}</li>`).join('')}</ul></div>
-      <div class="note" style="margin:0">Stretch suggestions are hidden until this is cleared.</div></div>`;
+      <div class="note" style="margin:0">Exercise suggestions are hidden until this is cleared.</div>${pathwaysHTML(ev.region.id)}</div>`;
     return h;
   }
-  h += `<h2>Stretches that may help</h2>`;
+  h += `<h2>Exercises that may help</h2>`;
   if (!pain.type) h += `<div class="note" style="margin:0">Add what it feels like and the person's age in the Pain tab to tailor these.</div>`;
   if (ev.notes.length) h += `<ul class="cues" style="font-size:12.5px;color:var(--muted)">${ev.notes.map(n => `<li>${esc(n)}</li>`).join('')}</ul>`;
-  if (!ev.ok.length) h += `<div class="note" style="margin:0">None of the library stretches suit this combination. A physiotherapist can suggest alternatives.</div>`;
+  if (!ev.ok.length) h += `<div class="note" style="margin:0">None of the library exercises suit this combination. A physiotherapist can suggest alternatives.</div>`;
   for (const x of ev.ok) h += suggHTML(x);
   if (ev.avoid.length) h += `<details><summary>Not suggested for this person (${ev.avoid.length})</summary><div style="display:grid;gap:6px;margin-top:6px">${ev.avoid.map(suggHTML).join('')}</div></details>`;
-  h += `<div class="note" style="margin:0">Stretch to mild tension, never into pain. Stop if the pain sharpens, spreads, or tingling starts.</div></div>`;
+  h += `<div class="note" style="margin:0">Stretch to mild tension and strengthen to moderate effort, never into sharp pain. Stop if the pain sharpens, spreads, or tingling starts.</div>`;
+  return h + pathwaysHTML(ev.region.id) + '</div>';
+}
+function pathwaysHTML(region) {
+  const list = PATHWAYS.filter(p => p.region === region); if (!list.length) return '';
+  let h = `<div class="divider"></div><div class="label">How movement might relate</div><div class="note" style="margin:0">Possible mechanical pathways, with the evidence behind each. They are explanations to explore, not a diagnosis.</div>`;
+  for (const pw of list) h += pathwayHTML(pw);
   return h;
+}
+function pathwayHTML(pw) {
+  const evs = pw.ev.map(k => EVIDENCE[k]);
+  return `<details class="path" data-path="${pw.id}" ${openPath === pw.id ? 'open' : ''}><summary><b>${esc(pw.title)}</b><span class="tagrow"><span class="lvl ${pw.strength}">${STRENGTH[pw.strength]}</span><span class="lvl causal">${CAUSAL[pw.causal]}</span></span></summary>
+    <div class="body"><div>${esc(pw.mech)}</div>
+    <div><div class="label">Evidence</div>${evs.length ? evs.map(e => `<div class="ev"><a href="${e.url}" target="_blank" rel="noopener">${esc(e.cite)}</a><span class="lim">${esc(e.design)} · ${esc(e.n)}</span><span>${esc(e.finding)}</span><span class="lim">Limits: ${esc(e.limits)}</span></div>`).join('') : '<div class="ev"><span class="lim">No supporting study in the atlas yet. Treat this as an idea to test.</span></div>'}</div>
+    <div><div class="label">Other explanations</div><ul>${pw.alt.map(a => `<li>${esc(a)}</li>`).join('')}</ul></div>
+    <div><div class="label">In the model</div>${esc(pw.model)}</div>
+    <div class="btnrow">${pw.demo ? `<button class="btn sm" data-showpath="${pw.id}" type="button">Show in gait lab</button>` : ''}${pw.ex.filter(id => SBYID[id]).map(id => `<button class="btn sm" data-demo="${id}" data-side="L" type="button">${esc(SBYID[id].name)}</button>`).join('')}</div></div></details>`;
 }
 function suggHTML(x) {
   const lbl = {ok:'Suggested', caution:'Use caution', avoid:'Avoid for now'}[x.status];
   const side = x.st.sided ? (pain.side === 'R' ? 'R' : 'L') : 'L';
-  return `<div class="sugg"><div class="top"><b>${esc(x.st.name)}</b><span class="status ${x.status}">${lbl}</span></div><div class="why">${esc(x.why)}. Hold ${esc(x.hold)}.</div>
+  return `<div class="sugg"><div class="top"><b>${esc(x.st.name)} <span class="type ${x.st.type}">${TYPE_LABEL[x.st.type]}</span></b><span class="status ${x.status}">${lbl}</span></div><div class="why">${esc(x.why)}. ${x.st.type === 'stretch' ? 'Hold' : 'Dose:'} ${esc(x.hold)}</div>
     ${x.reasons.length ? `<ul>${x.reasons.map(r => `<li>${esc(r)}</li>`).join('')}</ul>` : ''}
     ${x.status !== 'avoid' ? `<div><button class="btn sm" data-demo="${x.st.id}" data-side="${side}">Show it</button></div>` : ''}</div>`;
 }
@@ -1032,29 +1325,43 @@ function muscleCard() {
   const p = selected;
   if (p.kind === 'b') return `<div class="card"><div class="label">Bone${p.side ? ' · ' + (p.side === 'l' ? 'Left' : 'Right') : ''}</div><h2>${esc(p.name)}</h2>${p.region ? `<div class="sub">${esc(RBYID[p.region].name)}</div>` : ''}</div>`;
   const d = p.cur && MBYID[p.cur], role = roleOf(p), side = p.side === 'l' ? 'Left' : p.side === 'r' ? 'Right' : 'Midline';
-  let h = `<div class="card"><div class="label">${d ? esc(d.group) + ' · ' : ''}${side}${role ? ` · ${role === 'primary' ? 'Primary target' : 'Secondary'}` : ''}</div><h2>${esc(d ? d.name : p.name)}</h2>`;
+  const roleTxt = !role ? '' : gait.on ? ' · Typically active now' : role === 'primary' ? ' · Primary target' : ' · Secondary';
+  let h = `<div class="card"><div class="label">${d ? esc(d.group) + ' · ' : ''}${side}${roleTxt}</div><h2>${esc(d ? d.name : p.name)}</h2>`;
   if (d && d.name !== p.name) h += `<div class="sub">This part: ${esc(p.name)}</div>`;
   if (d) h += `<dl class="kv"><dt>Origin</dt><dd>${esc(d.origin)}</dd><dt>Insertion</dt><dd>${esc(d.insertion)}</dd><dt>Contracts to</dt><dd>${esc(d.action)}</dd><dt>Lengthened by</dt><dd>${esc(d.lengthened)}</dd><dt>Crosses</dt><dd>${esc(d.joints)}</dd>
       <dt>Right now</dt><dd><span class="live" id="live-len">${fmtPct(p.strain)}</span> length vs standing</dd></dl>`;
   else h += `<dl class="kv"><dt>Area</dt><dd>${p.region ? esc(RBYID[p.region].name) : 'Not mapped'}</dd><dt>Right now</dt><dd><span class="live" id="live-len">${fmtPct(p.strain)}</span> length vs standing</dd></dl><div class="note" style="margin:0">Detailed attachments for this muscle are not in the curated atlas yet.</div>`;
+  if (d) {
+    const rel = STRETCHES.filter(s => s.primary.includes(d.id) || s.secondary.includes(d.id));
+    const grp = t => rel.filter(s => s.type === t);
+    const row = (t, label) => grp(t).length ? `<div class="label">${label}</div><div class="btnrow">${grp(t).map(s => `<button class="btn sm" data-demo="${s.id}" data-side="${p.side === 'r' ? 'R' : 'L'}" type="button">${esc(s.name)}</button>`).join('')}</div>` : '';
+    h += row('stretch', 'Stretches that lengthen it') + row('strength', 'Exercises that strengthen it') + row('control', 'Control drills that use it');
+  }
   if (p.region) h += `<div><button class="btn sm" data-painhere="1">It hurts here</button></div>`;
   return h + '</div>';
 }
 function renderInspector() {
   const blocks = [];
+  if (gait.on) blocks.push(`<div id="gait-card-wrap">${gaitCard()}</div>`);
   if (pain.region) blocks.push(painCard());
   if (active) blocks.push(stretchCard());
   if (selected) blocks.push(muscleCard());
   if (!blocks.length) blocks.push(`<div class="card"><div class="label">Getting started</div><h2>Pick a stretch, or find the pain</h2>
-    <div class="sub" style="margin:0">Choose a stretch from the library to see the body move into it, with primary targets in amber. Or open the Pain tab and tap where it hurts to get stretches screened for the person's age, conditions and warning signs.</div></div>`);
+    <div class="sub" style="margin:0">Choose a stretch or exercise to see the body move through it. Open the Gait tab to watch a walking cycle and compare foot-, knee- and hip-led patterns. Or open the Pain tab and tap where it hurts to see screened exercises and the evidence on how movement might relate.</div></div>`);
   $('#inspector').innerHTML = blocks.join('<div class="divider"></div>');
   $('#inspector').querySelectorAll('.chip[data-cur]').forEach(c => c.onclick = () => selectCur(c.dataset.cur, c.dataset.side));
   $('#inspector').querySelectorAll('[data-demo]').forEach(b => b.onclick = () => demonstrate(b.dataset.demo, b.dataset.side));
   const ph = $('#inspector [data-painhere]'); if (ph) ph.onclick = () => { showTab('pain'); setPainRegion(selected.region, sideOf(selected), selected); };
+  $('#inspector').querySelectorAll('[data-showpath]').forEach(b => b.onclick = () => showPathwayInGait(PBYID[b.dataset.showpath]));
+  $('#inspector').querySelectorAll('details[data-path]').forEach(d => d.ontoggle = () => { if (d.open) openPath = d.dataset.path; else if (openPath === d.dataset.path) openPath = null; });
+  const pz = $('#ex-pause'); if (pz) pz.onclick = () => { if (loop) { loop.paused = !loop.paused; renderInspector(); } };
+  const gx = $('#g-exit'); if (gx) gx.onclick = () => { resetPose(); };
 }
 function renderLegend() {
+  const exType = active && SBYID[active.id].type !== 'stretch';
   $('#legend').innerHTML = mode === 'targets'
-    ? `<div class="row"><span class="dot" style="background:#f29a12"></span>Primary target</div><div class="row"><span class="dot" style="background:#e9c46f"></span>Secondary</div>${pain.region ? '<div class="row"><span class="dot" style="background:#d8326a"></span>Pain area</div>' : ''}`
+    ? gait.on ? `<div class="row"><span class="dot" style="background:#f29a12"></span>Typically active now (EMG studies)</div>${pain.region ? '<div class="row"><span class="dot" style="background:#d8326a"></span>Pain area</div>' : ''}${gait.compare ? '<div class="row"><span class="dot" style="background:#7d93d8"></span>Comparison pattern</div>' : ''}`
+    : `<div class="row"><span class="dot" style="background:#f29a12"></span>${exType ? 'Main muscles working' : 'Primary target'}</div><div class="row"><span class="dot" style="background:#e9c46f"></span>${exType ? 'Assisting' : 'Secondary'}</div>${pain.region ? '<div class="row"><span class="dot" style="background:#d8326a"></span>Pain area</div>' : ''}`
     : `<div class="row"><span class="label">Shorter</span><span class="grad"></span><span class="label">Longer</span></div><div class="label" style="text-transform:none;letter-spacing:0">Scale ±18% vs standing</div>`;
 }
 
@@ -1079,6 +1386,7 @@ function renderPainForm() {
 }
 $('#p-int').oninput = e => { pain.intensity = +e.target.value; $('#p-int-o').textContent = `${pain.intensity} / 10`; painChanged(); };
 function painChanged() { paintDirty = true; renderInspector(); renderLegend(); }
+function openPathway(pw) { openPath = pw.id; if (pain.region !== pw.region) setPainRegion(pw.region, 'B', null); else painChanged(); }
 function setPainRegion(region, side, part, cx, cy) {
   if (region !== pain.region) pain.flags = new Set();
   pain.region = region; pain.side = side || 'B';
@@ -1094,13 +1402,319 @@ function setLocating(on) { locating = on; $('#locate').setAttribute('aria-presse
 $('#locate').onclick = () => setLocating(!locating);
 $('#pain-clear').onclick = () => { pain = {region:null, side:'B', type:null, intensity:3, age:pain.age, conds:new Set(), flags:new Set()}; $('#p-int').value = 3; $('#p-int-o').textContent = '3 / 10'; setPainRegion(null); };
 
+/* ================= gait laboratory ================= */
+const GAIT_CYCLE = 1.1;   // seconds per stride at 1x
+const GAIT_GROUND = ['heelL','heelR','toeL','toeR','heelBackL','heelBackR'];
+const GAIT_DEFAULT = {pushOff:-18, loadKnee:18, swingKnee:62, hipSwing:32, hipExt:-10, pelvicDrop:5, valgus:0, pelvicRot:4, trunkLean:0, trunkFwd:2, armSwing:1, ankleLimit:30, hipExtLimit:-25};
+const GP = [
+ ['pushOff','Push-off: ankle points down',-30,0,1,'°'],
+ ['loadKnee','Knee bend as the leg takes weight',0,40,1,'°'],
+ ['swingKnee','Knee bend in swing',40,75,1,'°'],
+ ['hipSwing','Hip flexion in swing',20,45,1,'°'],
+ ['hipExt','Thigh behind the body in late stance',-20,5,1,'°'],
+ ['pelvicDrop','Pelvic drop on the swing side',0,14,.5,'°'],
+ ['valgus','Knee drifts inward in stance',0,12,.5,'°'],
+ ['pelvicRot','Pelvic rotation',0,12,.5,'°'],
+ ['trunkLean','Trunk lean over the standing leg',0,12,.5,'°'],
+ ['trunkFwd','Forward trunk lean',-5,20,1,'°'],
+ ['armSwing','Arm swing',0,1.5,.05,'×'],
+ ['ankleLimit','Ankle dorsiflexion limit (stiff calf)',-5,30,1,'°'],
+ ['hipExtLimit','Hip extension limit (stiff hip flexors)',-25,10,1,'°'],
+];
+const PATTERNS = {
+ reference:{name:'Reference', p:{}, note:'Typical adult walking at a comfortable speed, shaped to published average joint-angle curves (approximate).'},
+ foot:{name:'Foot-led', p:{pushOff:-25, hipExt:-13, hipSwing:30}, note:'Ankle-dominant: a strong calf push-off and a long heel rise drive the body forward. The calf and Achilles do more of the work.'},
+ knee:{name:'Knee-led', p:{loadKnee:30, hipExt:-5, pushOff:-13, trunkFwd:6}, note:'Knee-dominant: more knee bend while the leg takes weight and through midstance, so the quadriceps work harder and the knee travels forward.'},
+ hip:{name:'Hip-led', p:{pushOff:-8, hipSwing:40, hipExt:-6, pelvicRot:8, swingKnee:66}, note:'Hip-dominant: a small ankle push-off, with the hip flexors pulling the leg forward. Older adults tend to shift work from the ankle to the hip (DeVita & Hortobágyi 2000).'},
+};
+const PATTERN_P = id => ({...GAIT_DEFAULT, ...PATTERNS[id].p});
+const GAIT_PHASES = [
+ [0,.02,'Initial contact','The heel meets the ground. The hamstrings have just slowed the swinging leg.', ['gluteusMaximus','bicepsFemoris','semitendinosus','tibialisAnterior','vastusLateralis','vastusMedialis','vastusIntermedius']],
+ [.02,.12,'Loading response','The knee bends a little to absorb the impact while the foot lowers. The quadriceps control the knee and the hip abductors hold the pelvis level.', ['vastusLateralis','vastusMedialis','vastusIntermedius','gluteusMaximus','gluteusMedius','tibialisAnterior']],
+ [.12,.31,'Midstance','The body passes over the planted foot. The calf controls how far the shin tips forward and the hip abductors keep the pelvis from dropping.', ['soleus','gastrocnemius','gluteusMedius','gluteusMinimus']],
+ [.31,.5,'Terminal stance','The heel rises as the body moves ahead of the foot. The calf works hardest here.', ['soleus','gastrocnemius','fibularis']],
+ [.5,.62,'Pre-swing','The other foot takes the weight. The ankle pushes off and the hip begins to flex.', ['gastrocnemius','soleus','rectusFemoris','adductors','iliopsoas']],
+ [.62,.75,'Initial swing','The foot leaves the ground. The hip flexors lift the leg and the knee bends so the toes clear.', ['iliopsoas','sartorius','gracilis','tibialisAnterior','bicepsFemoris']],
+ [.75,.87,'Mid swing','The leg swings past the other leg while the shin muscles keep the foot up.', ['tibialisAnterior','iliopsoas']],
+ [.87,1,'Terminal swing','The knee straightens and the hamstrings slow the leg, ready for the next heel strike.', ['bicepsFemoris','semitendinosus','vastusLateralis','vastusMedialis','tibialisAnterior']],
+];
+const phaseIdx = t => GAIT_PHASES.findIndex(ph => t >= ph[0] && t < ph[1]);
+function pcurve(keys, t) {
+  const n = keys.length; t = ((t % 1) + 1) % 1;
+  let i = 0; while (i < n - 1 && keys[i+1][0] <= t) i++;
+  const k0 = keys[(i - 1 + n) % n], k1 = keys[i], k2 = keys[(i + 1) % n], k3 = keys[(i + 2) % n];
+  const t1 = k1[0], t2 = i + 1 < n ? k2[0] : k2[0] + 1, u = (t - t1) / (t2 - t1);
+  const p0 = k0[1], p1 = k1[1], p2 = k2[1], p3 = k3[1];
+  return .5 * (2*p1 + (-p0 + p2)*u + (2*p0 - 5*p1 + 4*p2 - p3)*u*u + (-p0 + 3*p1 - 3*p2 + p3)*u*u*u);
+}
+const bump = (t, a, b) => t > a && t < b ? Math.sin(Math.PI * (t - a) / (b - a)) : 0;
+const curveCache = new Map();
+function legCurves(p) {
+  const key = JSON.stringify(p); if (curveCache.has(key)) return curveCache.get(key);
+  const hIC = p.hipSwing - 3;
+  const c = {
+    hip: [[0,hIC],[.12,hIC-4],[.3,(hIC + p.hipExt)/2],[.5,p.hipExt],[.58,p.hipExt+5],[.7,p.hipSwing*.7],[.85,p.hipSwing],[.94,p.hipSwing-1]],
+    knee: [[0,4],[.15,p.loadKnee],[.38,4 + (p.loadKnee - 18)*.5],[.5,8],[.6,p.swingKnee*.6],[.72,p.swingKnee],[.85,p.swingKnee*.4],[.95,3]],
+    ankle: [[0,0],[.07,-6],[.3,6],[.45,10],[.55,p.pushOff*.4],[.62,p.pushOff],[.72,-4],[.85,1],[.95,0]],
+  };
+  if (curveCache.size > 40) curveCache.clear();
+  curveCache.set(key, c); return c;
+}
+function gaitPose(p, t) {
+  const s = neutral(), c = legCurves(p);
+  const sL = bump(t, .08, .5), sR = bump((t + .5) % 1, .08, .5);
+  for (const [side, ph] of [['L', t], ['R', (t + .5) % 1]]) {
+    const l = s[side], st = bump(ph, .02, .55);
+    // gait-lab hip angles include about 10° of anterior pelvic tilt; the model's standing posture has none, so the thigh angle is 10° less
+    l.hipFlex = pcurve(c.hip, ph) - 10; l.knee = Math.max(0, pcurve(c.knee, ph));
+    // stance: keep the foot flat until the push-off curve asks for less dorsiflexion (heel rise), then follow it
+    let a = pcurve(c.ankle, ph);
+    if (ph > .06 && ph < .6) {
+      const flat = l.knee - l.hipFlex, w = clamp((ph - .06) / .06, 0, 1);
+      const target = Math.min(flat, a + Math.max(0, .31 - ph) * 200);
+      a = a + (target - a) * w;
+    } else if (ph >= .6 && ph < .95) {
+      // swing: the shin muscles keep the foot close to level so the toes clear the floor
+      const w2 = clamp((ph - .6) / .08, 0, 1); a = a + (Math.max(a, (l.knee - l.hipFlex) - 8) - a) * w2;
+    }
+    l.ankle = Math.min(a, p.ankleLimit);
+    l.hipAbd = -p.valgus * st; l.hipRot = -1.2 * p.valgus * st;
+  }
+  for (const [side, other] of [['L','R'], ['R','L']]) { const a = s[side]; a.shFlex = p.armSwing * .55 * s[other].hipFlex; a.shAbd = 8; a.elbow = 18 + Math.max(0, a.shFlex) * .5; }
+  s.pelvisDrop = p.pelvicDrop * (sL - sR);
+  s.pelvisRot = -p.pelvicRot * Math.cos(2 * Math.PI * t);
+  s.spineRot = -.6 * s.pelvisRot;
+  s.pelvisTilt = 1.5 * Math.cos(4 * Math.PI * t);
+  s.spineSide = p.trunkLean * (sR - sL);
+  s.spineFlex = p.trunkFwd;
+  // stiff hip flexors: when the thigh needs more extension than the hip allows, the pelvis tips forward instead
+  const rel = Math.min(s.L.hipFlex, s.R.hipFlex) + 10 + s.pelvisTilt;
+  if (rel < p.hipExtLimit) s.pelvisTilt += p.hipExtLimit - rel;
+  return s;
+}
+let gait = {on:false, playing:false, t:0, speed:1, pattern:'reference', compare:null, p:PATTERN_P('reference'), custom:false, phaseKey:-1};
+let gaitActive = new Set();
+
+/* comparison ghost: a line skeleton of the comparison pattern at the same moment */
+const GHOST_PAIRS = [['pelvis','hipL'],['hipL','kneeL'],['kneeL','ankleL'],['ankleL','*toeL'],['ankleL','*heelBackL'],['pelvis','hipR'],['hipR','kneeR'],['kneeR','ankleR'],['ankleR','*toeR'],['ankleR','*heelBackR'],
+  ['pelvis','chest'],['chest','neck'],['neck','*crown'],['neck','shoulderL'],['shoulderL','elbowL'],['elbowL','wristL'],['neck','shoulderR'],['shoulderR','elbowR'],['elbowR','wristR']];
+const ghostPos = new Float32Array(GHOST_PAIRS.length * 6);
+const ghostGeo = new THREE.BufferGeometry(); ghostGeo.setAttribute('position', new THREE.BufferAttribute(ghostPos, 3));
+const ghost = new THREE.LineSegments(ghostGeo, new THREE.LineBasicMaterial({color:'#7d93d8', transparent:true, opacity:.95, depthTest:false}));
+ghost.renderOrder = 9; ghost.frustumCulled = false; ghost.visible = false; scene.add(ghost);
+const ghostPts = new THREE.Points(ghostGeo, new THREE.PointsMaterial({color:'#7d93d8', size:6, sizeAttenuation:false, depthTest:false, transparent:true}));
+ghostPts.renderOrder = 9; ghostPts.frustumCulled = false; ghostPts.visible = false; scene.add(ghostPts);
+const gv = V(0,0,0);
+function worldOf(name) { if (name[0] === '*') { const k = MARK[name.slice(1)]; return gv.copy(k.v).applyMatrix4(k.obj.matrixWorld); } return B[name].getWorldPosition(gv); }
+function captureGhost(st) {
+  const save = state; state = st; applyState();
+  const off = -minY(GAIT_GROUND);
+  GHOST_PAIRS.forEach(([a, b], i) => { for (const [j, n] of [[0, a], [1, b]]) { const w = worldOf(n); ghostPos.set([w.x, w.y + off, w.z], i*6 + j*3); } });
+  ghostGeo.attributes.position.needsUpdate = true;
+  state = save;
+}
+
+function startGait(play = true, fromTab = false) {
+  if (tween) { tween.done(); tween = null; }
+  loop = null; active = null; groundSpec = null;
+  const was = gait.on; gait.on = true; gait.playing = play;
+  ghost.visible = ghostPts.visible = !!gait.compare;
+  if (!was) { camGoal = V(3.3, .25, 1.1); document.querySelectorAll('#views button').forEach(x => x.setAttribute('aria-pressed', 'false')); }
+  gait.phaseKey = -1; renderLibrary(); buildGaitUI(); scheduleSummary(); paintDirty = true; renderInspector(); renderLegend(); setHint();
+}
+function stopGait() {
+  if (!gait.on) return;
+  gait.on = false; gait.playing = false; ghost.visible = ghostPts.visible = false; gaitActive = new Set(); groundSpec = null;
+  paintDirty = true; updateTransport(); renderLegend(); setHint();
+}
+function setGaitParams(p, custom) { gait.p = {...p}; gait.custom = custom; renderChart(); renderGaitParams(); scheduleSummary(); }
+function showPathwayInGait(pw) {
+  showTab('gait');
+  gait.pattern = 'reference'; gait.compare = 'reference';
+  setGaitParams({...PATTERN_P('reference'), ...pw.demo}, true);
+  startGait(true);
+  camGoal = VIEWS[pw.view] ? VIEWS[pw.view].clone() : null;
+  openPathway(pw);
+}
+
+/* gait tab UI */
+function updateTransport() {
+  $('#g-play').textContent = gait.on && gait.playing ? 'Pause' : 'Play';
+  document.querySelectorAll('#g-speed button').forEach(b => b.setAttribute('aria-pressed', +b.dataset.v === gait.speed));
+}
+function buildGaitUI() {
+  updateTransport();
+  pickGroup($('#g-pattern'), Object.entries(PATTERNS).map(([k, v]) => [k, v.name]), () => gait.custom ? null : gait.pattern, v => { gait.pattern = v; setGaitParams(PATTERN_P(v), false); if (!gait.on) startGait(true); buildGaitUI(); });
+  $('#g-pattern-note').textContent = PATTERNS[gait.pattern].note + (gait.custom ? ' You have adjusted it with the sliders below.' : '');
+  pickGroup($('#g-compare'), [['none','None'], ...Object.entries(PATTERNS).map(([k, v]) => [k, v.name])], () => gait.compare || 'none', v => { gait.compare = v === 'none' ? null : v; ghost.visible = ghostPts.visible = gait.on && !!gait.compare; renderChart(); scheduleSummary(); renderLegend(); });
+  renderChart(); renderGaitParams();
+}
+function renderGaitParams() {
+  const ref = PATTERN_P(gait.pattern);
+  $('#g-params').innerHTML = GP.map(([k, label, lo, hi, step, unit]) => {
+    const v = gait.p[k];
+    const none = (k === 'ankleLimit' && v >= 30) || (k === 'hipExtLimit' && v <= -25);
+    return `<div class="gp${Math.abs(v - ref[k]) > 1e-6 ? ' changed' : ''}"><label for="gp-${k}">${esc(label)}</label><output id="gp-${k}-o">${none ? 'none' : (unit === '×' ? v.toFixed(2) + '×' : (+v).toFixed(step < 1 ? 1 : 0) + '°')}</output><input type="range" id="gp-${k}" data-k="${k}" min="${lo}" max="${hi}" step="${step}" value="${v}"></div>`;
+  }).join('');
+  $('#g-params').querySelectorAll('input').forEach(inp => inp.addEventListener('input', () => {
+    gait.p[inp.dataset.k] = +inp.value; gait.custom = true;
+    if (!gait.on) startGait(true);
+    const k = inp.dataset.k, v = +inp.value, g = GP.find(x => x[0] === k);
+    const none = (k === 'ankleLimit' && v >= 30) || (k === 'hipExtLimit' && v <= -25);
+    $('#gp-' + k + '-o').textContent = none ? 'none' : (g[5] === '×' ? v.toFixed(2) + '×' : v.toFixed(g[4] < 1 ? 1 : 0) + '°');
+    inp.parentElement.classList.toggle('changed', Math.abs(v - PATTERN_P(gait.pattern)[k]) > 1e-6);
+    $('#g-pattern-note').textContent = PATTERNS[gait.pattern].note + ' You have adjusted it with the sliders below.';
+    pickGroup($('#g-pattern'), Object.entries(PATTERNS).map(([kk, vv]) => [kk, vv.name]), () => null, vv => { gait.pattern = vv; setGaitParams(PATTERN_P(vv), false); buildGaitUI(); });
+    renderChart(); scheduleSummary();
+  }));
+}
+$('#g-play').onclick = () => { if (!gait.on) startGait(true); else { gait.playing = !gait.playing; updateTransport(); } };
+document.querySelectorAll('#g-speed button').forEach(b => b.onclick = () => { gait.speed = +b.dataset.v; updateTransport(); });
+$('#g-scrub').addEventListener('input', e => { if (!gait.on) startGait(false); gait.playing = false; gait.t = +e.target.value / 100; updateTransport(); });
+$('#g-reset').onclick = () => { setGaitParams(PATTERN_P(gait.pattern), false); buildGaitUI(); };
+
+/* chart: left-leg angles over one cycle */
+const CH = [['Hip flexion (thigh)','hip',-25,50],['Knee flexion','knee',-5,75],['Ankle dorsiflexion','ankle',-32,22],['Pelvis, right side down +','drop',-14,14]];
+const CX0 = 30, CX1 = 274, ROWH = 52, ROW0 = 26, ROWGAP = 16;
+function series(p) {
+  const out = {hip:[], knee:[], ankle:[], drop:[]};
+  for (let i = 0; i <= 100; i++) { const s = gaitPose(p, i/100 % 1); out.hip.push(s.L.hipFlex); out.knee.push(s.L.knee); out.ankle.push(s.L.ankle); out.drop.push(s.pelvisDrop); }
+  return out;
+}
+function pathD(arr, lo, hi, y0) { return arr.map((v, i) => `${i ? 'L' : 'M'}${(CX0 + (CX1 - CX0) * i / 100).toFixed(1)},${(y0 + ROWH - (clamp(v, lo, hi) - lo) / (hi - lo) * ROWH).toFixed(1)}`).join(''); }
+function renderChart() {
+  const cur = series(gait.p), cmp = gait.compare ? series(PATTERN_P(gait.compare)) : null;
+  let h = `<rect class="stance" x="${CX0}" y="4" width="${(CX1-CX0)*.6}" height="9" rx="2"/><rect class="swing" x="${CX0 + (CX1-CX0)*.6}" y="4" width="${(CX1-CX0)*.4}" height="9" rx="2"/>
+    <text x="${CX0 + 3}" y="11.5">Left foot on the ground</text><text x="${CX0 + (CX1-CX0)*.6 + 3}" y="11.5">Swing</text>`;
+  CH.forEach(([title, key, lo, hi], i) => {
+    const y0 = ROW0 + i * (ROWH + ROWGAP), zy = y0 + ROWH - (0 - lo) / (hi - lo) * ROWH;
+    h += `<text class="ttl" x="${CX0}" y="${y0 - 3}">${title}</text><rect class="frame" x="${CX0}" y="${y0}" width="${CX1-CX0}" height="${ROWH}"/>
+      <line class="zero" x1="${CX0}" x2="${CX1}" y1="${zy}" y2="${zy}"/><text x="${CX0 - 4}" y="${y0 + 7}" text-anchor="end">${hi}°</text><text x="${CX0 - 4}" y="${y0 + ROWH}" text-anchor="end">${lo}°</text>`;
+    if (cmp) h += `<path class="cmp" d="${pathD(cmp[key], lo, hi, y0)}"/>`;
+    h += `<path class="cur" d="${pathD(cur[key], lo, hi, y0)}"/>`;
+  });
+  const yb = ROW0 + CH.length * (ROWH + ROWGAP) - ROWGAP;
+  for (const pct of [0, 20, 40, 60, 80, 100]) h += `<text x="${CX0 + (CX1-CX0)*pct/100}" y="${yb + 11}" text-anchor="middle">${pct}%</text>`;
+  if (cmp) h += `<line class="cmp" x1="${CX1 - 76}" x2="${CX1 - 62}" y1="${yb + 21}" y2="${yb + 21}"/><text x="${CX1 - 58}" y="${yb + 24}">${PATTERNS[gait.compare].name}</text>`;
+  h += `<line class="cur" x1="${CX0}" x2="${CX0 + 14}" y1="${yb + 21}" y2="${yb + 21}"/><text x="${CX0 + 18}" y="${yb + 24}">${gait.custom ? 'Adjusted' : PATTERNS[gait.pattern].name}</text>`;
+  h += `<line class="head" id="g-head" x1="${CX0}" x2="${CX0}" y1="4" y2="${yb}"/>`;
+  $('#g-chart').setAttribute('viewBox', `0 0 280 ${yb + 30}`);
+  $('#g-chart').innerHTML = h;
+}
+function chartScrub(e) {
+  const r = $('#g-chart').getBoundingClientRect(), x = (e.clientX - r.left) / r.width * 280;
+  if (!gait.on) startGait(false);
+  gait.playing = false; gait.t = clamp((x - CX0) / (CX1 - CX0), 0, .999); updateTransport();
+}
+$('#g-chart').addEventListener('pointerdown', e => { chartScrub(e); $('#g-chart').setPointerCapture(e.pointerId); });
+$('#g-chart').addEventListener('pointermove', e => { if (e.buttons) chartScrub(e); });
+
+/* per-cycle summary: computed by posing the model through 100 frames */
+const WATCH = ['gluteusMedius','bicepsFemoris','iliopsoas','rectusFemoris','gastrocnemius','soleus'];
+function summarize(p) {
+  const save = state, saveY = root.position.y;
+  const out = {add:0, ext:Infinity, tilt:-Infinity, lumbar:-Infinity, heelRise:null, step:0, knee:0, mus:Object.fromEntries(WATCH.map(id => [id, -Infinity]))};
+  for (let i = 0; i < 100; i++) {
+    const t = i / 100, s = gaitPose(p, t); state = s; applyState();
+    root.position.y -= minY(GAIT_GROUND); root.updateMatrixWorld(true);
+    const st = bump(t, .02, .55);
+    if (st > 0) out.add = Math.max(out.add, s.pelvisDrop + p.valgus * st);
+    out.ext = Math.min(out.ext, s.L.hipFlex + 10 + s.pelvisTilt);
+    out.tilt = Math.max(out.tilt, s.pelvisTilt); out.lumbar = Math.max(out.lumbar, s.pelvisTilt - s.spineFlex);
+    if (t < .55) out.knee = Math.max(out.knee, s.L.knee);
+    if (out.heelRise === null && t > .2 && t < .62) { const k = MARK.heelL; const y = gv.copy(k.v).applyMatrix4(k.obj.matrixWorld).y; if (y > .02) out.heelRise = t; }
+    if (i === 0) { const a = worldOf('*heelL').z, b = worldOf('*heelR').z; out.step = Math.abs(a - b); }
+    measure(); for (const id of WATCH) out.mus[id] = Math.max(out.mus[id], curStrain(id, 'L'));
+  }
+  state = save; root.position.y = saveY; applyState(); measure();
+  return out;
+}
+let sumTimer = 0, lastSum = null, lastCmp = null;
+function scheduleSummary() { clearTimeout(sumTimer); sumTimer = setTimeout(() => { lastSum = summarize(gait.p); lastCmp = gait.compare ? summarize(PATTERN_P(gait.compare)) : null; renderEffects(); renderLinks(); }, 140); }
+const tagHTML = (cls, txt) => `<span class="src-tag ${cls}">${txt}</span>`;
+function renderEffects() {
+  const s = lastSum, c = lastCmp, p = gait.p; if (!s) return;
+  const vs = (v, cv, f) => c ? ` <span class="lim" style="color:var(--muted)">(${PATTERNS[gait.compare].name.toLowerCase()} ${f(cv)})</span>` : '';
+  const deg = v => `${v.toFixed(1)}°`;
+  const items = [];
+  const comp = (title, val, cval, f, src) => items.push(`<div class="effect"><div class="tagrow">${tagHTML('computed', 'Computed · model estimate')}</div><div><b>${title}:</b> ${f(val)}${vs(val, cval, f)}</div>${src ? `<div class="src">${src}</div>` : ''}</div>`);
+  comp('Peak hip adduction while standing (thigh vs pelvis)', s.add, c && c.add, deg);
+  comp('Hip extension at push-off (as measured in gait labs)', -s.ext, c && -c.ext, v => v >= 0 ? `${v.toFixed(1)}° extension` : `${(-v).toFixed(1)}° flexion`);
+  if (p.hipExtLimit > -25) comp('Extra forward pelvic tilt and lower-back arch', s.tilt, c && c.tilt, v => `${v.toFixed(1)}° tilt`, 'The pelvis tips forward so the thigh can trail behind the body. The trunk stays upright, so the lower back arches by the same amount.');
+  comp('Heel starts to lift', s.heelRise, c && c.heelRise, v => v == null ? 'not detected' : `${Math.round(v*100)}% of the cycle`);
+  comp('Step length at heel strike', s.step, c && c.step, v => `${Math.round(v*100)} cm`, 'For this 1.71 m body walking in place.');
+  const ml = id => `${mname(id)} ${fmtPct(s.mus[id])}${c ? ` (${fmtPct(c.mus[id])})` : ''}`;
+  items.push(`<div class="effect"><div class="tagrow">${tagHTML('computed', 'Computed · model estimate')}</div><div><b>Peak lengthening of left-leg muscles vs standing:</b> ${WATCH.map(ml).join(' · ')}</div></div>`);
+  const lit = (txt, cite, kind = 'literature', label = 'From research · direction only') => items.push(`<div class="effect"><div class="tagrow">${tagHTML(kind, label)}</div><div>${txt}</div><div class="src">${cite}</div></div>`);
+  if (p.pelvicDrop >= 7 || p.valgus >= 3) lit('More pelvic drop and inward knee drift raise the load on the outer hip tendons and change how the kneecap is loaded.', 'Allison et al. 2016; Noehren et al. 2013 (running)');
+  if (p.loadKnee >= 24) lit('More knee bend under load means a stronger quadriceps pull and higher kneecap joint force.', 'Lenhart et al. 2014 (running, modelled)');
+  if (p.pushOff <= -22) lit('A bigger push-off asks more of the calf and Achilles tendon.', 'Push-off is driven by the plantar flexors; see DeVita & Hortobágyi 2000');
+  if (p.pushOff >= -12 || p.hipSwing >= 37) lit('Work shifts from the ankle to the hip flexors and extensors, as seen with ageing.', 'DeVita & Hortobágyi 2000');
+  if (p.trunkLean >= 4) lit('Leaning over the standing leg lowers the inner-knee load (knee adduction moment).', 'Silva et al. 2022 meta-analysis');
+  if (p.ankleLimit <= 8) lit('With a stiff calf the heel lifts early, and more load may pass through the forefoot and arch.', 'Riddle et al. 2003 (association)');
+  if (p.hipExtLimit > p.hipExt) lit('Arching the lower back to make up for stiff hip flexors is a common clinical idea, but the atlas has no study showing it causes pain.', 'Untested idea', 'none', 'Idea only');
+  items.push(`<div class="effect"><div class="tagrow">${tagHTML('none', 'Not modelled')}</div><div>Forces, joint moments, ground reaction forces and muscle activation are not calculated. Muscle activity shown in colour comes from published EMG patterns for typical walking.</div></div>`);
+  $('#g-effects').innerHTML = items.join('');
+}
+function renderLinks() {
+  const list = PATHWAYS.filter(pw => pw.trigger && pw.trigger(gait.p));
+  $('#g-links').innerHTML = list.length ? list.map(pw => `<div class="effect"><div class="tagrow"><span class="lvl ${pw.strength}">${STRENGTH[pw.strength]}</span><span class="lvl causal">${CAUSAL[pw.causal]}</span></div><div><b>${esc(pw.title)}</b></div><div class="btnrow"><button class="btn sm" data-openpath="${pw.id}" type="button">See the evidence</button></div></div>`).join('')
+    : `<div class="note" style="margin:0">No pain pathways are linked to these settings. Try more pelvic drop, a knee-led pattern, or a stiff calf.</div>`;
+  $('#g-links').querySelectorAll('[data-openpath]').forEach(b => b.onclick = () => openPathway(PBYID[b.dataset.openpath]));
+}
+function gaitCard() {
+  const iL = Math.max(0, phaseIdx(gait.t)), iR = Math.max(0, phaseIdx((gait.t + .5) % 1)), ph = GAIT_PHASES[iL];
+  const chips = (ids, side) => ids.map(id => `<button class="chip p" data-cur="${id}" data-side="${side}">${esc(mname(id))}</button>`).join('');
+  return `<div class="card"><div class="label">Walking lab · ${esc(gait.custom ? PATTERNS[gait.pattern].name + ' (adjusted)' : PATTERNS[gait.pattern].name)} · <span id="g-live-pct">${Math.round(gait.t*100)}%</span></div>
+    <h2>${ph[2]}</h2><div class="sub">Left leg. The right leg is in ${GAIT_PHASES[iR][2].toLowerCase()}.</div>
+    <div>${esc(ph[3])}</div>
+    <div class="label">Typically active now, left leg (EMG studies)</div><div class="chips">${chips(ph[4], 'L')}</div>
+    <div class="label">Lengthening most now (model estimate)</div><div id="g-lengthening" class="note" style="margin:0"></div>
+    <div><button class="btn sm" id="g-exit" type="button">Stop walking and stand</button></div></div>`;
+}
+function topLengthening() {
+  const arr = MUSCLES.flatMap(m => ['L','R'].map(s => [m.name + (s === 'L' ? ' (L)' : ' (R)'), curStrain(m.id, s)])).sort((a, b) => b[1] - a[1]).slice(0, 4);
+  return arr.map(([n, v]) => `${esc(n)} ${fmtPct(v)}`).join(' · ');
+}
+function gaitTick() {
+  const iL = phaseIdx(gait.t), iR = phaseIdx((gait.t + .5) % 1), key = iL * 10 + iR;
+  if (key !== gait.phaseKey) {
+    gait.phaseKey = key;
+    gaitActive = new Set([...GAIT_PHASES[Math.max(0, iL)][4].map(id => id + 'L'), ...GAIT_PHASES[Math.max(0, iR)][4].map(id => id + 'R')]);
+    paintDirty = true; updateGaitCard();
+  }
+}
+function updateGaitCard() {
+  const w = $('#gait-card-wrap'); if (!w) { renderInspector(); return; }
+  w.innerHTML = gaitCard();
+  w.querySelectorAll('.chip[data-cur]').forEach(c => c.onclick = () => selectCur(c.dataset.cur, c.dataset.side));
+  const gx = $('#g-exit'); if (gx) gx.onclick = () => resetPose();
+  const ln = $('#g-lengthening'); if (ln) ln.innerHTML = topLengthening();
+}
+let lastGaitUi = 0;
+function gaitUi(t) {
+  if (t - lastGaitUi < 60) return; lastGaitUi = t;
+  const pct = gait.t * 100, iL = Math.max(0, phaseIdx(gait.t));
+  const sc = $('#g-scrub'); if (document.activeElement !== sc) sc.value = pct.toFixed(1);
+  $('#g-pct').textContent = `${Math.round(pct)}%`; $('#g-phase').textContent = `Left leg: ${GAIT_PHASES[iL][2].toLowerCase()}`;
+  const hd = $('#g-head'); if (hd) { const x = CX0 + (CX1 - CX0) * gait.t; hd.setAttribute('x1', x); hd.setAttribute('x2', x); }
+  const lp = $('#g-live-pct'); if (lp) lp.textContent = `${Math.round(pct)}%`;
+  const ln = $('#g-lengthening'); if (ln && t - (gaitUi.lt || 0) > 250) { gaitUi.lt = t; ln.innerHTML = topLengthening(); }
+}
+
 /* ================= loop ================= */
 let lastUi = 0, lastPaint = 0;
 const ease = k => k < .5 ? 4*k*k*k : 1 - Math.pow(-2*k + 2, 3)/2;
 const pelvisW = V(0,0,0), tgt = V(0,0,0);
 function frame(t) {
   let finished = null, gY = null, moved = stateDirty || !!tween || !!dragging;
-  if (tween) {
+  const dt = Math.min(.1, (t - (frame.last || t)) / 1000); frame.last = t;
+  if (gait.on) {
+    if (gait.playing) gait.t = (gait.t + dt * gait.speed / GAIT_CYCLE) % 1;
+    if (gait.compare) captureGhost(gaitPose(PATTERN_P(gait.compare), gait.t));
+    state = gaitPose(gait.p, gait.t); applyState(); gY = minY(GAIT_GROUND);
+    moved = true; stateDirty = true; gaitTick(); gaitUi(t);
+  } else if (tween) {
     const k = clamp((t - tween.t0)/tween.dur, 0, 1), e = ease(k), f = tween.from, to = tween.to;
     for (const key of BODY) state[key] = f[key] + (to[key] - f[key])*e;
     for (const s of ['L','R']) for (const key of [...LEG, ...ARM]) state[s][key] = f[s][key] + (to[s][key] - f[s][key])*e;
@@ -1108,6 +1722,13 @@ function frame(t) {
     const a = minY(tween.gFrom), b = minY(tween.gTo); gY = a + (b - a)*e;
     if (k >= 1) { groundSpec = tween.gTo; finished = tween.done; tween = null; }
     stateDirty = true;
+  } else if (loop && !loop.paused) {
+    const ph = ((t - loop.t0) % loop.period) / loop.period, e = (1 - Math.cos(ph * 2 * Math.PI)) / 2, a = loop.a.state, b = loop.b.state;
+    for (const key of BODY) state[key] = a[key] + (b[key] - a[key])*e;
+    for (const s of ['L','R']) for (const key of [...LEG, ...ARM]) state[s][key] = a[s][key] + (b[s][key] - a[s][key])*e;
+    applyState();
+    const ga = minY(loop.a.ground), gb = minY(loop.b.ground); gY = ga + (gb - ga)*e;
+    stateDirty = true; moved = true;
   } else applyState();
   if (!dragging) {
     const m = gY ?? minY(groundSpec), want = root.position.y - m;
@@ -1128,14 +1749,14 @@ function frame(t) {
   if (finished) finished();
   requestAnimationFrame(frame);
 }
-renderLibrary(); renderInspector(); renderLegend(); renderPainForm();
+renderLibrary(); renderInspector(); renderLegend(); renderPainForm(); buildGaitUI();
 camGoal = V(1.9, .2, 3.2);
 $('#loader').hidden = true;
 requestAnimationFrame(frame);
 
 /* ================= instructor ================= */
 const msgs = $('#msgs'), q = $('#q'), sendBtn = $('#send'), stopBtn = $('#stop');
-const STARTERS = ['Show me a stretch for tight hamstrings', 'My client has lower back pain and is 70. What is safe?', 'What happens to my lats when I raise my arm overhead?', 'Why does bending the knee change a calf stretch?'];
+const STARTERS = ['Compare hip-led and foot-led walking', 'Could the way I walk relate to my knee pain?', 'My client has lower back pain and is 70. What is safe?', 'Show me a strengthening exercise for the outer hip'];
 $('#starters').innerHTML = STARTERS.map(s => `<button type="button">${esc(s)}</button>`).join('');
 $('#starters').querySelectorAll('button').forEach(b => b.onclick = () => { q.value = b.textContent; ask(); });
 q.addEventListener('keydown', e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); ask(); } });
@@ -1164,7 +1785,7 @@ function painSummary() {
 }
 const sideArg = v => /right|^r$/i.test(String(v || '')) ? 'R' : 'L';
 const TOOLS = bubbleRef => [
-  {name:'demonstrate_stretch', description:'Move the 3D body into a library stretch and highlight its targets. Refuses stretches the pain screen marks as avoid or gated. Returns targets, cues and measured length changes.',
+  {name:'demonstrate_stretch', description:'Move the 3D body into a library stretch or exercise (strength and control exercises loop through their movement) and highlight its targets. Refuses stretches the pain screen marks as avoid or gated. Returns targets, cues and measured length changes.',
    inputSchema:{type:'object', properties:{stretch_id:{type:'string', enum:STRETCHES.map(s => s.id)}, side:{type:'string', enum:['left','right']}}, required:['stretch_id']},
    async execute(input) {
      const st = SBYID[String(input.stretch_id)]; if (!st) throw new Error('Not in the library. Valid ids: ' + STRETCHES.map(s => s.id).join(', '));
@@ -1191,6 +1812,28 @@ const TOOLS = bubbleRef => [
   {name:'set_pain_area', description:'Mark a pain area on the model and open the screening card. Returns the screening result: any gate (assessment needed) and suggested or avoided stretches for the current age, conditions and warning signs.',
    inputSchema:{type:'object', properties:{region_id:{type:'string', enum:REGIONS.map(r => r.id)}, side:{type:'string', enum:['left','right','both']}}, required:['region_id']},
    execute(input) { const r = RBYID[String(input.region_id)]; if (!r) throw new Error('Unknown region'); setPainRegion(r.id, input.side === 'left' ? 'L' : input.side === 'right' ? 'R' : 'B', null); showTab('pain'); addAct(bubbleRef(), `Marked pain · ${r.name}`); return painSummary(); }},
+  {name:'walk', description:'Run the walking lab: pick a pattern (reference, foot, knee, hip), optionally adjust gait parameters, and choose a comparison. Returns model-computed values (with the comparison) and linked pain pathways.',
+   inputSchema:{type:'object', properties:{pattern:{type:'string', enum:Object.keys(PATTERNS)}, adjust:{type:'object', properties:Object.fromEntries(GP.map(g => [g[0], {type:'number', description:`${g[1]} (${g[2]} to ${g[3]})`}]))}, compare:{type:'string', enum:['none', ...Object.keys(PATTERNS)]}}},
+   execute(input) {
+     const pat = PATTERNS[input.pattern] ? input.pattern : gait.pattern; gait.pattern = pat;
+     const adj = {}; for (const g of GP) if (input.adjust && input.adjust[g[0]] != null) adj[g[0]] = clamp(Number(input.adjust[g[0]]), g[2], g[3]);
+     if (input.compare) gait.compare = input.compare === 'none' ? null : input.compare;
+     setGaitParams({...PATTERN_P(pat), ...adj}, Object.keys(adj).length > 0); showTab('gait'); startGait(true);
+     addAct(bubbleRef(), `Walking · ${PATTERNS[pat].name}${Object.keys(adj).length ? ' (adjusted)' : ''}`);
+     const s = summarize(gait.p), c = gait.compare ? summarize(PATTERN_P(gait.compare)) : null;
+     const fmt = x => x && {peak_stance_hip_adduction_deg:+x.add.toFixed(1), hip_extension_at_pushoff_deg:+(-x.ext).toFixed(1), peak_forward_pelvic_tilt_deg:+x.tilt.toFixed(1), heel_rise_pct:x.heelRise == null ? null : Math.round(x.heelRise*100), step_length_cm:Math.round(x.step*100), peak_lengthening_pct:Object.fromEntries(WATCH.map(id => [mname(id), +(x.mus[id]*100).toFixed(1)]))};
+     return {pattern: PATTERNS[pat].name, note: PATTERNS[pat].note, params: gait.p, computed: fmt(s), comparison: c ? {pattern: PATTERNS[gait.compare].name, computed: fmt(c)} : null,
+       linked_pathways: PATHWAYS.filter(pw => pw.trigger && pw.trigger(gait.p)).map(pw => ({id: pw.id, title: pw.title, evidence: STRENGTH[pw.strength], causal: CAUSAL[pw.causal]})),
+       not_modelled: 'Forces, joint moments and muscle activation are not calculated.'};
+   }},
+  {name:'open_pathway', description:'Open a gait-to-pain pathway card with its evidence, limits, alternative explanations and exercises; optionally demonstrate it in the walking lab. Returns the full pathway data.',
+   inputSchema:{type:'object', properties:{pathway_id:{type:'string', enum:PATHWAYS.map(p => p.id)}, show_in_gait:{type:'boolean'}}, required:['pathway_id']},
+   execute(input) {
+     const pw = PBYID[String(input.pathway_id)]; if (!pw) throw new Error('Unknown pathway');
+     if (input.show_in_gait && pw.demo) showPathwayInGait(pw); else openPathway(pw);
+     addAct(bubbleRef(), `Opened evidence · ${pw.title.split(' →')[0]}`);
+     return {title: pw.title, mechanism: pw.mech, evidence_strength: STRENGTH[pw.strength], causal_level: CAUSAL[pw.causal], studies: pw.ev.map(k => EVIDENCE[k]), alternatives: pw.alt, in_model: pw.model, exercises: pw.ex.filter(id => SBYID[id]).map(id => SBYID[id].name)};
+   }},
   {name:'reset_pose', description:'Return the body to standing neutral.', execute() { addAct(bubbleRef(), 'Reset to standing'); return resetPose().then(() => 'ok'); }},
 ];
 const RULES = `You are the movement instructor inside Stretch Atlas, a 3D anatomy model (Z-Anatomy meshes) that a gym trainer uses to teach stretching. The trainer types; you answer and drive the model with the page tools.
@@ -1200,11 +1843,16 @@ Rules:
 - The model measures muscle LENGTH change from standing, not activation. Say "lengthened" or "shortened"; cite measured percentages rounded, as model estimates.
 - Pain: you cannot diagnose. When the trainer describes pain, call set_pain_area for the matching area, then follow its screening exactly. If it returns a gate, do not suggest or demonstrate stretches; explain the gate and advise the right level of care (emergency means call emergency services now). Never demonstrate a stretch the screen marks avoid. If the trainer mentions age, pregnancy, surgery, a replacement joint, osteoporosis, disc problems, hypermobility, arthritis, blood pressure or falls, tell them to tick it in the Pain tab so the screen accounts for it, and be conservative meanwhile.
 - Pain that is sharp, burning, numb, tingling, severe, or started with a fall, accident or pop needs assessment before stretching.
+- Gait and pain: use walk to show patterns and open_pathway for evidence. Always state the evidence strength and causal level from the pathway data, mention at least one alternative explanation, and never say a movement pattern causes pain unless the pathway data says so. Say which values the model computes and which it does not (forces, joint moments, activation).
+- The library includes strength and control exercises with dosage and precautions; prefer them alongside stretches when a pathway or pain area calls for strengthening.
 - Plain text for a trainer, under 140 words, no headings or tables. Short "- " lists are fine.
 Angle keys (degrees). body: pitch (+ forward, -90 lies on the back, 90 face down), spineFlex, spineSide (+ right), neckFlex, neckSide (+ right). left/right: hipFlex, hipAbd, hipRot (+ external), knee, ankle (+ dorsiflexion), shFlex, shAbd, shHoriz (+ across the body), elbow, wrist (+ extension).
 Ranges: ${JSON.stringify(Object.fromEntries(Object.entries(ROM).map(([k, v]) => [k, [v[0], v[1]]])))}
-Stretch library: ${JSON.stringify(STRETCHES.map(s => ({id:s.id, name:s.name, area:s.area, one_sided:s.sided, primary:s.primary, secondary:s.secondary, tags:s.tags})))}
+Exercise library: ${JSON.stringify(STRETCHES.map(s => ({id:s.id, name:s.name, type:s.type, area:s.area, one_sided:s.sided, primary:s.primary, secondary:s.secondary, tags:s.tags})))}
 Pain areas: ${JSON.stringify(REGIONS.map(r => ({id:r.id, name:r.name, muscles:r.muscles})))}
+Gait patterns: ${JSON.stringify(Object.fromEntries(Object.entries(PATTERNS).map(([k, v]) => [k, v.note])))}
+Gait parameters: ${JSON.stringify(GP.map(g => ({key:g[0], label:g[1], min:g[2], max:g[3], reference:GAIT_DEFAULT[g[0]]})))}
+Gait-to-pain pathways: ${JSON.stringify(PATHWAYS.map(p => ({id:p.id, region:p.region, title:p.title, evidence:STRENGTH[p.strength], causal:CAUSAL[p.causal]})))}
 Muscles: ${JSON.stringify(MUSCLES.map(m => ({id:m.id, name:m.name, origin:m.origin, insertion:m.insertion, contracts_to:m.action, lengthened_by:m.lengthened})))}`;
 
 const turns = []; let ctl = null;
@@ -1212,6 +1860,7 @@ stopBtn.onclick = () => ctl && ctl.abort();
 function modelState() {
   const parts2 = [active ? `showing ${SBYID[active.id].name}${active.side ? ` (${active.side === 'L' ? 'left' : 'right'})` : ''}` : 'no library stretch active'];
   if (selected) parts2.push(`selected ${selected.cur ? mname(selected.cur) : selected.name}`);
+  if (gait.on) parts2.push(`walking lab: ${PATTERNS[gait.pattern].name}${gait.custom ? ' (adjusted ' + JSON.stringify(Object.fromEntries(GP.filter(g => gait.p[g[0]] !== PATTERN_P(gait.pattern)[g[0]]).map(g => [g[0], gait.p[g[0]]]))) + ')' : ''} at ${Math.round(gait.t*100)}% of the cycle`);
   const ps = painSummary(); if (ps) parts2.push('pain screen: ' + JSON.stringify(ps));
   return `[Model state: ${parts2.join('; ')}]`;
 }
@@ -1251,6 +1900,13 @@ const KEYWORDS = [
 const PAIN_WORDS = /pain|hurt|ache|sore|injur|strain|pulled/i;
 function localAnswer(text, b) {
   const t = text.toLowerCase(), side = /\bright\b/.test(t) ? 'R' : 'L';
+  if (/walk|gait|stride|step|foot-led|knee-led|hip-led/.test(t)) {
+    const pat = /hip[- ]led/.test(t) ? 'hip' : /knee[- ]led/.test(t) ? 'knee' : /foot[- ]led|ankle[- ]led/.test(t) ? 'foot' : 'reference';
+    gait.pattern = pat; gait.compare = pat === 'reference' ? null : 'reference'; setGaitParams(PATTERN_P(pat), false); showTab('gait'); startGait(true);
+    const links = PATHWAYS.filter(pw => pw.trigger && pw.trigger(gait.p));
+    setBubbleText(b, `${PATTERNS[pat].name} walking. ${PATTERNS[pat].note}${gait.compare ? ' The blue outline and dashed lines show the reference pattern.' : ''} Use the sliders in the Gait tab to change one thing at a time and watch the computed effects.${links.length ? '\n\nLinked pathways: ' + links.map(pw => pw.title).join('; ') + '.' : ''}`);
+    addAct(b, `Walking · ${PATTERNS[pat].name}`); return;
+  }
   const hit = KEYWORDS.find(([, ws]) => ws.some(w => t.includes(w)));
   if (hit && PAIN_WORDS.test(t)) {
     const reg = REGION_OF[SBYID[hit[0]].primary[0]] || 'lowerBack';
@@ -1266,9 +1922,9 @@ function localAnswer(text, b) {
       addAct(b, `Demonstrated · ${st.name}`);
     }); return;
   }
-  setBubbleText(b, `In library mode I can demonstrate ${STRETCHES.length} stretches. Name a body area or a muscle, or open the Pain tab to screen a specific pain.`);
+  setBubbleText(b, `In library mode I can demonstrate ${STRETCHES.length} stretches and exercises, or run the walking lab. Name a body area or a muscle, or open the Pain tab to screen a specific pain.`);
 }
-if (window.__TEST__) window.__TEST__({demonstrate, parts, curStrain, minY, MARK, root, state: () => state, evaluatePain, setPain: p => Object.assign(pain, p), STRETCHES, gpuPick});
+if (window.__TEST__) window.__TEST__({gait, startGait, stopGait, gaitPose, summarize, setGaitParams, PATTERN_P, PATHWAYS, EVIDENCE, captureGhost, ghostPos, demonstrate, parts, curStrain, minY, MARK, root, state: () => state, evaluatePain, setPain: p => Object.assign(pain, p), STRETCHES, gpuPick});
 })();
 </script>
 

@@ -7,7 +7,7 @@ const io = new NodeIO();
 
 const MUSCLE_BUDGET = +process.env.MB || 170000, BONE_BUDGET = +process.env.BB || 90000;
 
-const EXCLUDE_M = /fascia(?!e latae)|septum|retinacul|aponeurosis|sheath|bursa|ligament|tarsus|tendinous ring|trochlea of superior|^(lateral|medial|superior|inferior) rectus muscle$|^(superior|inferior) oblique muscle$|levator palpebrae|pharyng|arytenoid|cricothyroid|glossus|palato|stylopharyngeus|intercostal|diaphragm|transversus thoracis|levator ani|coccygeus|iliococcygeus|pubo-analis|pubococcygeus|anal sphincter|linea alba|interspinales|intertransversarii|levatores|rotatores|lumbrical|interossei|pterygoid|digastric|hyoid|thyroid|mylohyoid|geniohyoid|capitis muscle|longus colli|scalenus|nasalis|nasi|procerus|corrugator|orbicularis|zygomaticus|risorius|depressor|levator anguli|levator labii|levator nasolabialis|mentalis|bucinator|masseter|temporoparietalis|epicranial|platysma|subclavius|frontalis|occipitalis|pollicis brevis|opponens|adductor pollicis|abductor pollicis brevis|digiti minimi of hand|transversus abdominis|internal abdominal oblique|multifidus colli|semispinalis colli|splenius colli|spinalis colli|iliopectineal arch|quadratus plantae|flexor hallucis brevis|adductor hallucis|extensor hallucis brevis|extensor digitorum brevis|flexor digitorum brevis|digiti minimi of foot|abductor hallucis|inguinal/i;
+const EXCLUDE_M = /fascia(?!e latae)|septum|retinacul|palmar aponeurosis|sheath|bursa|ligament|tarsus|tendinous ring|trochlea of superior|^(lateral|medial|superior|inferior) rectus muscle$|^(superior|inferior) oblique muscle$|levator palpebrae|pharyng|arytenoid|cricothyroid|glossus|palato|stylopharyngeus|intercostal|diaphragm|transversus thoracis|levator ani|coccygeus|iliococcygeus|pubo-analis|pubococcygeus|anal sphincter|linea alba|interspinales|intertransversarii|levatores|rotatores|lumbrical|interossei|pterygoid|digastric|hyoid|thyroid|mylohyoid|geniohyoid|capitis muscle|longus colli|scalenus|subclavius|pollicis brevis|opponens|adductor pollicis|abductor pollicis brevis|digiti minimi of hand|transversus abdominis|internal abdominal oblique|multifidus colli|semispinalis colli|splenius colli|spinalis colli|iliopectineal arch|flexor hallucis brevis|adductor hallucis|extensor hallucis brevis|extensor digitorum brevis|digiti minimi of foot|inguinal/i;
 const EXCLUDE_B = /malleus|incus|stapes|sinus|cells of ethmoid|concha|cartilage$|septal cartilage|alar|lateral process of nasal|thyroid|cricoid|arytenoid|corniculate|sesamoid/i;
 
 async function load(file, kind) {
@@ -161,10 +161,10 @@ function weightsAt(p, side) {
   return [a[0], b[0], w];
 }
 const RIGID = [
-  [/femur/i, 'hip'], [/patella|tibia|fibula/i, 'knee'], [/talus|calcaneus|navicular|cuboid|cuneiform|metatarsal|of foot/i, 'ankle'],
-  [/humerus/i, 'shoulder'], [/radius|ulna/i, 'elbow'], [/scaphoid|lunate|triquetrum|pisiform|trapezi|capitate|hamate|metacarpal|of hand/i, 'wrist'],
-  [/clavicle|scapula|rib|sternum|xiphoid|manubrium|vertebra t/i, 'chest'], [/vertebra c|atlas|axis|bone$|mandible|maxilla|vomer|incisor|canine|premolar|molar|hyoid/i, 'neck'],
   [/hip bone|sacrum|coccyx/i, 'pelvis'],
+  [/femur/i, 'hip'], [/patella|tibia|fibula/i, 'knee'], [/talus|calcaneus|navicular|cuboid|cuneiform|metatarsal|of foot/i, 'ankle'],
+  [/humerus/i, 'shoulder'], [/radius|ulna/i, 'elbow'], [/scaphoid|lunate|triquetrum|pisiform|trapez|capitate|hamate|metacarpal|of hand/i, 'wrist'],
+  [/clavicle|scapula|rib|sternum|xiphoid|manubrium|vertebra t/i, 'chest'], [/vertebra c|atlas|axis|bone$|mandible|maxilla|vomer|incisor|canine|premolar|molar|hyoid/i, 'neck'],
 ];
 function rigidBone(p) {
   if (/vertebra l/i.test(p.name)) { const c = mean(verts(p)); return c[1] > lumbar[1] ? BI.chest : BI.pelvis; }
